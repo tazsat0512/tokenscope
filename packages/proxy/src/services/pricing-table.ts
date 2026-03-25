@@ -1,1 +1,1 @@
-export { PRICING_TABLE, FALLBACK_PRICING, getModelPricing } from '@tokenscope/shared';
+export { FALLBACK_PRICING, getModelPricing, PRICING_TABLE } from '@tokenscope/shared';

@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
-import { sendSlackNotification } from '../../src/services/notifier.js';
 import type { AlertPayload } from '@tokenscope/shared';
+import { describe, expect, it, vi } from 'vitest';
+import { sendSlackNotification } from '../../src/services/notifier.js';
 
 describe('notifier', () => {
   it('sends Slack notification with correct format', async () => {

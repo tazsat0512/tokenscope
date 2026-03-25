@@ -1,13 +1,13 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import { health } from './routes/health.js';
-import { openai } from './routes/openai.js';
-import { anthropic } from './routes/anthropic.js';
-import { google } from './routes/google.js';
 import { authMiddleware } from './middleware/auth.js';
 import { budgetGuardMiddleware } from './middleware/budget-guard.js';
 import { requestLoggerMiddleware } from './middleware/request-logger.js';
+import { anthropic } from './routes/anthropic.js';
+import { google } from './routes/google.js';
+import { health } from './routes/health.js';
+import { openai } from './routes/openai.js';
 import type { Env, UserRecord } from './types/index.js';
 
 type HonoEnv = {
@@ -48,10 +48,7 @@ app.notFound((c) => {
 // Error handler
 app.onError((err, c) => {
   console.error('Unhandled error:', err);
-  return c.json(
-    { error: 'Internal server error', message: err.message },
-    500,
-  );
+  return c.json({ error: 'Internal server error', message: err.message }, 500);
 });
 
 export default app;

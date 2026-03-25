@@ -1,17 +1,14 @@
 import {
-  LOOP_HASH_WINDOW,
-  LOOP_HASH_THRESHOLD,
   LOOP_COSINE_THRESHOLD,
+  LOOP_HASH_THRESHOLD,
+  LOOP_HASH_WINDOW,
   type LoopDetectionResult,
 } from '@tokenscope/shared';
 import type { LoopState } from '../types/index.js';
 
 const LOOP_KEY_PREFIX = 'loop:';
 
-export async function getLoopState(
-  kv: KVNamespace,
-  userId: string,
-): Promise<LoopState> {
+export async function getLoopState(kv: KVNamespace, userId: string): Promise<LoopState> {
   const raw = await kv.get(`${LOOP_KEY_PREFIX}${userId}`);
   if (!raw) return { hashes: [], blocked: false };
   return JSON.parse(raw) as LoopState;
@@ -25,10 +22,7 @@ export async function setLoopState(
   await kv.put(`${LOOP_KEY_PREFIX}${userId}`, JSON.stringify(state));
 }
 
-export function detectLoopByHash(
-  hashes: string[],
-  newHash: string,
-): LoopDetectionResult {
+export function detectLoopByHash(hashes: string[], newHash: string): LoopDetectionResult {
   const window = hashes.slice(-LOOP_HASH_WINDOW);
   const matchCount = window.filter((h) => h === newHash).length + 1; // +1 for current
   return {
@@ -73,9 +67,7 @@ function tokenize(text: string): string[] {
     .filter((t) => t.length > 1);
 }
 
-function buildTfIdfVectors(
-  docs: string[],
-): Map<string, number>[] {
+function buildTfIdfVectors(docs: string[]): Map<string, number>[] {
   const tokenizedDocs = docs.map(tokenize);
   const df = new Map<string, number>();
 
@@ -101,10 +93,7 @@ function buildTfIdfVectors(
   });
 }
 
-function cosineSimilarity(
-  a: Map<string, number>,
-  b: Map<string, number>,
-): number {
+function cosineSimilarity(a: Map<string, number>, b: Map<string, number>): number {
   let dotProduct = 0;
   let normA = 0;
   let normB = 0;

@@ -36,7 +36,9 @@ export function LoopTable({ loops }: LoopTableProps) {
               <td className="p-4 text-sm">{formatDate(loop.detectedAt)}</td>
               <td className="p-4 font-mono text-sm">{loop.sessionId?.slice(0, 12) ?? 'N/A'}</td>
               <td className="p-4 text-sm">{loop.agentId ?? 'Unknown'}</td>
-              <td className="p-4 font-mono text-sm text-muted-foreground">{loop.promptHash.slice(0, 16)}...</td>
+              <td className="p-4 font-mono text-sm text-muted-foreground">
+                {loop.promptHash.slice(0, 16)}...
+              </td>
               <td className="p-4 text-right font-medium text-sm">{loop.matchCount}</td>
               <td className="p-4 text-right text-sm">{loop.similarity?.toFixed(3) ?? 'N/A'}</td>
             </tr>

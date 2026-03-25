@@ -1,8 +1,8 @@
-import { PRICING_TABLE, calculateCost } from '@tokenscope/shared';
+import { calculateCost, PRICING_TABLE } from '@tokenscope/shared';
 
 // Generate test request log data for development
 const models = Object.keys(PRICING_TABLE);
-const providers = ['openai', 'anthropic', 'google'] as const;
+const _providers = ['openai', 'anthropic', 'google'] as const;
 const agents = ['code-reviewer', 'test-writer', 'bug-fixer', 'doc-generator', null];
 const sessions = Array.from({ length: 10 }, () => crypto.randomUUID());
 
@@ -12,11 +12,12 @@ function randomElement<T>(arr: T[]): T {
 
 function generateLog(timestamp: number) {
   const model = randomElement(models);
-  const provider = model.startsWith('gpt') || model.startsWith('o1') || model.startsWith('o3')
-    ? 'openai'
-    : model.startsWith('claude')
-    ? 'anthropic'
-    : 'google';
+  const provider =
+    model.startsWith('gpt') || model.startsWith('o1') || model.startsWith('o3')
+      ? 'openai'
+      : model.startsWith('claude')
+        ? 'anthropic'
+        : 'google';
   const inputTokens = Math.floor(Math.random() * 10000) + 100;
   const outputTokens = Math.floor(Math.random() * 5000) + 50;
   const cost = calculateCost(model, inputTokens, outputTokens);

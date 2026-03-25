@@ -40,9 +40,7 @@ export function createStreamPassthrough(
         for (const line of lines) {
           if (!line.startsWith('data: ') || line === 'data: [DONE]') continue;
           try {
-            const parsed = provider.parseStreamChunk(
-              line.slice(6),
-            );
+            const parsed = provider.parseStreamChunk(line.slice(6));
             if (parsed.usage) {
               accumulatedUsage = parsed.usage;
             }

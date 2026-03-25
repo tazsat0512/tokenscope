@@ -1,4 +1,4 @@
-import { EWMA_ALPHA, ANOMALY_Z_THRESHOLD, type AnomalyResult } from '@tokenscope/shared';
+import { ANOMALY_Z_THRESHOLD, type AnomalyResult, EWMA_ALPHA } from '@tokenscope/shared';
 
 export interface EwmaState {
   ewmaValue: number;
@@ -17,8 +17,7 @@ export function initEwmaState(): EwmaState {
 export function updateEwma(state: EwmaState, newValue: number): EwmaState {
   const diff = newValue - state.ewmaValue;
   const newEwma = state.ewmaValue + EWMA_ALPHA * diff;
-  const newVariance =
-    (1 - EWMA_ALPHA) * (state.ewmaVariance + EWMA_ALPHA * diff * diff);
+  const newVariance = (1 - EWMA_ALPHA) * (state.ewmaVariance + EWMA_ALPHA * diff * diff);
 
   return {
     ewmaValue: newEwma,
@@ -27,10 +26,7 @@ export function updateEwma(state: EwmaState, newValue: number): EwmaState {
   };
 }
 
-export function detectAnomaly(
-  state: EwmaState,
-  currentRate: number,
-): AnomalyResult {
+export function detectAnomaly(state: EwmaState, currentRate: number): AnomalyResult {
   const stdDev = Math.sqrt(state.ewmaVariance);
   const zScore = stdDev === 0 ? 0 : (currentRate - state.ewmaValue) / stdDev;
 

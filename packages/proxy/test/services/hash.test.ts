@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { sha256, normalizePrompt, hashPrompt } from '../../src/utils/hash.js';
+import { describe, expect, it } from 'vitest';
+import { hashPrompt, normalizePrompt, sha256 } from '../../src/utils/hash.js';
 
 describe('hash utils', () => {
   describe('sha256', () => {
@@ -56,9 +56,7 @@ describe('hash utils', () => {
     it('extracts content from Anthropic multipart format', async () => {
       const body = {
         model: 'claude-3-5-sonnet-20241022',
-        messages: [
-          { role: 'user', content: [{ type: 'text', text: 'Hello' }] },
-        ],
+        messages: [{ role: 'user', content: [{ type: 'text', text: 'Hello' }] }],
       };
       const hash = await hashPrompt(body);
       expect(hash).toHaveLength(64);
@@ -66,9 +64,7 @@ describe('hash utils', () => {
 
     it('extracts content from Google format', async () => {
       const body = {
-        contents: [
-          { parts: [{ text: 'Hello' }] },
-        ],
+        contents: [{ parts: [{ text: 'Hello' }] }],
       };
       const hash = await hashPrompt(body);
       expect(hash).toHaveLength(64);

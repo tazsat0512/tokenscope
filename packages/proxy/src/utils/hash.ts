@@ -10,10 +10,7 @@ export function normalizePrompt(text: string): string {
   return text
     .toLowerCase()
     .replace(/\s+/g, ' ')
-    .replace(
-      /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi,
-      '<UUID>',
-    )
+    .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, '<UUID>')
     .replace(/\d{10,}/g, '<TIMESTAMP>')
     .trim();
 }
@@ -34,10 +31,7 @@ function extractMessages(body: unknown): string {
         if (typeof m.content === 'string') return m.content;
         if (Array.isArray(m.content)) {
           return m.content
-            .filter(
-              (p: Record<string, unknown>) =>
-                p.type === 'text' && typeof p.text === 'string',
-            )
+            .filter((p: Record<string, unknown>) => p.type === 'text' && typeof p.text === 'string')
             .map((p: Record<string, unknown>) => p.text)
             .join(' ');
         }
@@ -52,9 +46,7 @@ function extractMessages(body: unknown): string {
       .map((c: Record<string, unknown>) => {
         if (Array.isArray(c.parts)) {
           return c.parts
-            .map((p: Record<string, unknown>) =>
-              typeof p.text === 'string' ? p.text : '',
-            )
+            .map((p: Record<string, unknown>) => (typeof p.text === 'string' ? p.text : ''))
             .join(' ');
         }
         return '';

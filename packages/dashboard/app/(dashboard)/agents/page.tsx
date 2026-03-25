@@ -1,9 +1,9 @@
 'use client';
 
-import { trpc } from '../../../lib/trpc/client';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { AgentBreakdownChart } from '../../../components/charts/agent-breakdown';
 import { ModelUsageChart } from '../../../components/charts/model-usage';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
+import { trpc } from '../../../lib/trpc/client';
 import { formatCost, formatNumber } from '../../../lib/utils';
 
 export default function AgentsPage() {
@@ -57,18 +57,12 @@ export default function AgentsPage() {
             <tbody>
               {data?.byAgent.map((agent) => (
                 <tr key={agent.agentId ?? 'unknown'} className="border-b">
-                  <td className="p-4 text-sm font-medium">
-                    {agent.agentId ?? 'Unknown'}
-                  </td>
+                  <td className="p-4 text-sm font-medium">{agent.agentId ?? 'Unknown'}</td>
                   <td className="p-4 text-right font-mono text-sm">
                     {formatCost(agent.totalCost)}
                   </td>
-                  <td className="p-4 text-right text-sm">
-                    {formatNumber(agent.requestCount)}
-                  </td>
-                  <td className="p-4 text-right text-sm">
-                    {Math.round(agent.avgLatency)}ms
-                  </td>
+                  <td className="p-4 text-right text-sm">{formatNumber(agent.requestCount)}</td>
+                  <td className="p-4 text-right text-sm">{Math.round(agent.avgLatency)}ms</td>
                 </tr>
               ))}
             </tbody>

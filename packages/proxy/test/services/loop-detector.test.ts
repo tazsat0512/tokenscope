@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { detectLoopByHash, detectLoopByCosine } from '../../src/services/loop-detector.js';
+import { describe, expect, it } from 'vitest';
+import { detectLoopByCosine, detectLoopByHash } from '../../src/services/loop-detector.js';
 
 describe('loop-detector', () => {
   describe('detectLoopByHash', () => {
@@ -35,13 +35,14 @@ describe('loop-detector', () => {
   describe('detectLoopByCosine', () => {
     it('detects similar prompts with high cosine similarity', () => {
       // Use prompts that share most words but have enough unique tokens for IDF
-      const base = 'explain the quicksort algorithm step by step with examples showing the partition phase';
+      const base =
+        'explain the quicksort algorithm step by step with examples showing the partition phase';
       const prompts = [
         'describe the mergesort algorithm step by step with examples showing the merge phase',
         base,
-        base + ' and complexity analysis',
-        base + ' please',
-        base + ' in detail',
+        `${base} and complexity analysis`,
+        `${base} please`,
+        `${base} in detail`,
       ];
       const result = detectLoopByCosine(prompts, base);
       // Similarity should be high between the repeated base prompts

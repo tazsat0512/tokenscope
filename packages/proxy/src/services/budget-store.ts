@@ -3,10 +3,7 @@ import type { BudgetState } from '../types/index.js';
 
 const BUDGET_KEY_PREFIX = 'budget:';
 
-export async function getBudgetState(
-  kv: KVNamespace,
-  userId: string,
-): Promise<BudgetState> {
+export async function getBudgetState(kv: KVNamespace, userId: string): Promise<BudgetState> {
   const raw = await kv.get(`${BUDGET_KEY_PREFIX}${userId}`);
   if (!raw) {
     return { usedUsd: 0, blockedUntil: null, lastAlertThreshold: 0 };
@@ -33,10 +30,7 @@ export async function addCost(
   return state;
 }
 
-export function checkBudget(
-  state: BudgetState,
-  limitUsd: number | null,
-): BudgetStatus {
+export function checkBudget(state: BudgetState, limitUsd: number | null): BudgetStatus {
   if (limitUsd === null) {
     return {
       limitUsd: null,
@@ -51,7 +45,8 @@ export function checkBudget(
     limitUsd,
     usedUsd: state.usedUsd,
     remainingUsd: Math.max(0, remaining),
-    blocked: state.usedUsd >= limitUsd || (state.blockedUntil !== null && Date.now() < state.blockedUntil),
+    blocked:
+      state.usedUsd >= limitUsd || (state.blockedUntil !== null && Date.now() < state.blockedUntil),
   };
 }
 

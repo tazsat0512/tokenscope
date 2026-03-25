@@ -1,0 +1,22 @@
+[
+  {
+    "raw": "event: message_start\ndata: {\"type\":\"message_start\",\"message\":{\"id\":\"msg_abc123\",\"type\":\"message\",\"role\":\"assistant\",\"content\":[],\"model\":\"claude-3-5-sonnet-20241022\",\"usage\":{\"input_tokens\":15,\"output_tokens\":0}}}",
+    "data": "{\"type\":\"message_start\",\"message\":{\"id\":\"msg_abc123\",\"type\":\"message\",\"role\":\"assistant\",\"content\":[],\"model\":\"claude-3-5-sonnet-20241022\",\"usage\":{\"input_tokens\":15,\"output_tokens\":0}}}",
+    "expected": { "done": false, "usage": { "inputTokens": 15, "outputTokens": 0 } }
+  },
+  {
+    "raw": "event: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\"Hello\"}}",
+    "data": "{\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":\"Hello\"}}",
+    "expected": { "done": false }
+  },
+  {
+    "raw": "event: message_delta\ndata: {\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"end_turn\"},\"usage\":{\"output_tokens\":10}}",
+    "data": "{\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"end_turn\"},\"usage\":{\"output_tokens\":10}}",
+    "expected": { "done": false, "usage": { "inputTokens": 0, "outputTokens": 10 } }
+  },
+  {
+    "raw": "event: message_stop\ndata: {\"type\":\"message_stop\"}",
+    "data": "{\"type\":\"message_stop\"}",
+    "expected": { "done": true }
+  }
+]

@@ -1,13 +1,13 @@
 'use client';
 
 import {
-  LineChart,
+  CartesianGrid,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from 'recharts';
 
 interface CostTrendProps {
@@ -20,13 +20,8 @@ export function CostTrendChart({ data }: CostTrendProps) {
       <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" fontSize={12} />
-        <YAxis
-          fontSize={12}
-          tickFormatter={(v) => `$${v.toFixed(2)}`}
-        />
-        <Tooltip
-          formatter={(value: number) => [`$${value.toFixed(4)}`, 'Cost']}
-        />
+        <YAxis fontSize={12} tickFormatter={(v) => `$${v.toFixed(2)}`} />
+        <Tooltip formatter={(value: number) => [`$${value.toFixed(4)}`, 'Cost']} />
         <Line
           type="monotone"
           dataKey="cost"

@@ -1,9 +1,9 @@
-import { initTRPC, TRPCError } from '@trpc/server';
 import { auth } from '@clerk/nextjs/server';
-import { db } from '../db';
+import { initTRPC, TRPCError } from '@trpc/server';
+import { and, desc, eq, gte, sql } from 'drizzle-orm';
 import { z } from 'zod';
-import { desc, eq, sql, and, gte } from 'drizzle-orm';
-import { requestLogs, users, loopEvents } from '../../db/schema';
+import { loopEvents, requestLogs, users } from '../../db/schema';
+import { db } from '../db';
 
 const t = initTRPC.create();
 
@@ -29,12 +29,7 @@ export const appRouter = t.router({
           totalOutputTokens: sql<number>`sum(${requestLogs.outputTokens})`,
         })
         .from(requestLogs)
-        .where(
-          and(
-            eq(requestLogs.userId, ctx.userId),
-            gte(requestLogs.timestamp, since),
-          ),
-        );
+        .where(and(eq(requestLogs.userId, ctx.userId), gte(requestLogs.timestamp, since)));
 
       const dailyCosts = await db
         .select({
@@ -43,26 +38,28 @@ export const appRouter = t.router({
           requests: sql<number>`count(*)`,
         })
         .from(requestLogs)
-        .where(
-          and(
-            eq(requestLogs.userId, ctx.userId),
-            gte(requestLogs.timestamp, since),
-          ),
-        )
+        .where(and(eq(requestLogs.userId, ctx.userId), gte(requestLogs.timestamp, since)))
         .groupBy(sql`date(${requestLogs.timestamp} / 1000, 'unixepoch')`)
         .orderBy(sql`date(${requestLogs.timestamp} / 1000, 'unixepoch')`);
 
       return {
-        summary: logs[0] ?? { totalCost: 0, totalRequests: 0, totalInputTokens: 0, totalOutputTokens: 0 },
+        summary: logs[0] ?? {
+          totalCost: 0,
+          totalRequests: 0,
+          totalInputTokens: 0,
+          totalOutputTokens: 0,
+        },
         dailyCosts,
       };
     }),
 
   getSessions: authedProcedure
-    .input(z.object({
-      limit: z.number().default(50),
-      offset: z.number().default(0),
-    }))
+    .input(
+      z.object({
+        limit: z.number().default(50),
+        offset: z.number().default(0),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       const sessions = await db
         .select({
@@ -90,12 +87,7 @@ export const appRouter = t.router({
       const logs = await db
         .select()
         .from(requestLogs)
-        .where(
-          and(
-            eq(requestLogs.userId, ctx.userId),
-            eq(requestLogs.sessionId, input.sessionId),
-          ),
-        )
+        .where(and(eq(requestLogs.userId, ctx.userId), eq(requestLogs.sessionId, input.sessionId)))
         .orderBy(requestLogs.timestamp);
 
       return logs;
@@ -114,12 +106,7 @@ export const appRouter = t.router({
           avgLatency: sql<number>`avg(${requestLogs.latencyMs})`,
         })
         .from(requestLogs)
-        .where(
-          and(
-            eq(requestLogs.userId, ctx.userId),
-            gte(requestLogs.timestamp, since),
-          ),
-        )
+        .where(and(eq(requestLogs.userId, ctx.userId), gte(requestLogs.timestamp, since)))
         .groupBy(requestLogs.agentId)
         .orderBy(desc(sql`sum(${requestLogs.costUsd})`));
 
@@ -130,12 +117,7 @@ export const appRouter = t.router({
           requestCount: sql<number>`count(*)`,
         })
         .from(requestLogs)
-        .where(
-          and(
-            eq(requestLogs.userId, ctx.userId),
-            gte(requestLogs.timestamp, since),
-          ),
-        )
+        .where(and(eq(requestLogs.userId, ctx.userId), gte(requestLogs.timestamp, since)))
         .groupBy(requestLogs.model)
         .orderBy(desc(sql`sum(${requestLogs.costUsd})`));
 
@@ -156,20 +138,18 @@ export const appRouter = t.router({
     }),
 
   getSettings: authedProcedure.query(async ({ ctx }) => {
-    const user = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, ctx.userId))
-      .limit(1);
+    const user = await db.select().from(users).where(eq(users.id, ctx.userId)).limit(1);
 
     return user[0] ?? null;
   }),
 
   updateSettings: authedProcedure
-    .input(z.object({
-      budgetLimitUsd: z.number().nullable().optional(),
-      slackWebhookUrl: z.string().nullable().optional(),
-    }))
+    .input(
+      z.object({
+        budgetLimitUsd: z.number().nullable().optional(),
+        slackWebhookUrl: z.string().nullable().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       await db
         .update(users)

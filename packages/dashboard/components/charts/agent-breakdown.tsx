@@ -1,17 +1,16 @@
 'use client';
 
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from 'recharts';
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 const COLORS = [
-  '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
-  '#ec4899', '#06b6d4', '#84cc16',
+  '#3b82f6',
+  '#10b981',
+  '#f59e0b',
+  '#ef4444',
+  '#8b5cf6',
+  '#ec4899',
+  '#06b6d4',
+  '#84cc16',
 ];
 
 interface AgentBreakdownProps {
@@ -36,8 +35,8 @@ export function AgentBreakdownChart({ data }: AgentBreakdownProps) {
           fill="#8884d8"
           dataKey="value"
         >
-          {chartData.map((_, index) => (
-            <Cell key={index} fill={COLORS[index % COLORS.length]} />
+          {chartData.map((entry, index) => (
+            <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
         <Tooltip formatter={(value: number) => `$${value.toFixed(4)}`} />

@@ -1,17 +1,10 @@
 'use client';
 
+import { UserButton } from '@clerk/nextjs';
+import { Activity, BarChart3, Bot, CreditCard, RotateCcw, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { UserButton } from '@clerk/nextjs';
 import { cn } from '../../lib/utils';
-import {
-  BarChart3,
-  Activity,
-  Bot,
-  RotateCcw,
-  Settings,
-  CreditCard,
-} from 'lucide-react';
 
 const navItems = [
   { href: '/overview', label: 'Overview', icon: BarChart3 },

@@ -1,12 +1,12 @@
 import type { ProviderName, TokenUsage } from '@tokenscope/shared';
 import { createDb } from '../db/client.js';
 import { requestLogs } from '../db/schema.js';
+import { addCost, getTriggeredAlertThreshold, setBudgetState } from '../services/budget-store.js';
 import { estimateCost } from '../services/cost-calculator.js';
-import { addCost, getBudgetState, setBudgetState, getTriggeredAlertThreshold } from '../services/budget-store.js';
-import { getLoopState, setLoopState, detectLoopByHash } from '../services/loop-detector.js';
+import { detectLoopByHash, getLoopState, setLoopState } from '../services/loop-detector.js';
 import { sendSlackNotification } from '../services/notifier.js';
-import { hashPrompt } from '../utils/hash.js';
 import type { Env, UserRecord } from '../types/index.js';
+import { hashPrompt } from '../utils/hash.js';
 
 export interface PipelineInput {
   requestId: string;
@@ -22,10 +22,7 @@ export interface PipelineInput {
   blockReason?: string;
 }
 
-export async function runAsyncPipeline(
-  env: Env,
-  input: PipelineInput,
-): Promise<void> {
+export async function runAsyncPipeline(env: Env, input: PipelineInput): Promise<void> {
   const costUsd = estimateCost(input.model, input.usage);
   const promptHash = await hashPrompt(input.body);
 
@@ -69,10 +66,10 @@ export async function runAsyncPipeline(
           userId: input.user.id,
           message: `Budget usage at ${pct}%: $${budgetState.usedUsd.toFixed(4)} / $${input.user.budgetLimitUsd.toFixed(2)}`,
           details: {
-            'Used': `$${budgetState.usedUsd.toFixed(4)}`,
-            'Limit': `$${input.user.budgetLimitUsd.toFixed(2)}`,
-            'Model': input.model,
-            'Provider': input.provider,
+            Used: `$${budgetState.usedUsd.toFixed(4)}`,
+            Limit: `$${input.user.budgetLimitUsd.toFixed(2)}`,
+            Model: input.model,
+            Provider: input.provider,
           },
           timestamp: Date.now(),
         });
@@ -84,7 +81,7 @@ export async function runAsyncPipeline(
   const loopState = await getLoopState(env.BUDGET_KV, input.user.id);
   const loopResult = detectLoopByHash(loopState.hashes, promptHash);
 
-  loopState.hashes = [...loopState.hashes.slice(-(19)), promptHash]; // Keep last 20
+  loopState.hashes = [...loopState.hashes.slice(-19), promptHash]; // Keep last 20
   if (loopResult.isLoop && !loopState.blocked) {
     loopState.blocked = true;
     loopState.blockedAt = Date.now();
@@ -96,9 +93,9 @@ export async function runAsyncPipeline(
         message: `Repeated prompt detected (${loopResult.matchCount} occurrences in last 20 requests)`,
         details: {
           'Match Count': String(loopResult.matchCount),
-          'Session': input.sessionId ?? 'N/A',
-          'Agent': input.agentId ?? 'N/A',
-          'Model': input.model,
+          Session: input.sessionId ?? 'N/A',
+          Agent: input.agentId ?? 'N/A',
+          Model: input.model,
         },
         timestamp: Date.now(),
       });

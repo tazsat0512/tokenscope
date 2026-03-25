@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { Card, CardContent } from '../../../components/ui/card';
 import { trpc } from '../../../lib/trpc/client';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { formatCost, formatDate, formatNumber } from '../../../lib/utils';
 
 export default function SessionsPage() {
@@ -35,7 +35,10 @@ export default function SessionsPage() {
               </thead>
               <tbody>
                 {data?.map((session) => (
-                  <tr key={session.sessionId ?? 'no-session'} className="border-b hover:bg-muted/50">
+                  <tr
+                    key={session.sessionId ?? 'no-session'}
+                    className="border-b hover:bg-muted/50"
+                  >
                     <td className="p-4">
                       {session.sessionId ? (
                         <Link
@@ -52,9 +55,7 @@ export default function SessionsPage() {
                     <td className="p-4 text-right font-mono text-sm">
                       {formatCost(session.totalCost)}
                     </td>
-                    <td className="p-4 text-right text-sm">
-                      {formatNumber(session.requestCount)}
-                    </td>
+                    <td className="p-4 text-right text-sm">{formatNumber(session.requestCount)}</td>
                     <td className="p-4">
                       {session.hasBlocked ? (
                         <span className="inline-flex items-center rounded-full bg-destructive/10 px-2 py-1 text-xs font-medium text-destructive">

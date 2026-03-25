@@ -1,0 +1,10 @@
+[
+  {
+    "raw": "{\"candidates\":[{\"content\":{\"parts\":[{\"text\":\"Hello\"}],\"role\":\"model\"},\"index\":0}]}",
+    "expected": { "done": false }
+  },
+  {
+    "raw": "{\"candidates\":[{\"content\":{\"parts\":[{\"text\":\"! How can I help?\"}],\"role\":\"model\"},\"finishReason\":\"STOP\",\"index\":0}],\"usageMetadata\":{\"promptTokenCount\":8,\"candidatesTokenCount\":11,\"totalTokenCount\":19}}",
+    "expected": { "done": true, "usage": { "inputTokens": 8, "outputTokens": 11 } }
+  }
+]

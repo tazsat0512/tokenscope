@@ -1,9 +1,19 @@
 'use client';
 
+import {
+  FREE_PLAN_REQUEST_LIMIT,
+  PRO_PLAN_PRICE_USD,
+  PRO_PLAN_REQUEST_LIMIT,
+} from '@tokenscope/shared';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../../components/ui/card';
 import { trpc } from '../../../lib/trpc/client';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../components/ui/card';
 import { formatNumber } from '../../../lib/utils';
-import { FREE_PLAN_REQUEST_LIMIT, PRO_PLAN_REQUEST_LIMIT, PRO_PLAN_PRICE_USD } from '@tokenscope/shared';
 
 export default function BillingPage() {
   const { data: settings, isLoading } = trpc.getSettings.useQuery();
@@ -28,9 +38,7 @@ export default function BillingPage() {
         <Card>
           <CardHeader>
             <CardTitle>Current Plan</CardTitle>
-            <CardDescription>
-              {plan === 'pro' ? 'Pro' : 'Free'} Plan
-            </CardDescription>
+            <CardDescription>{plan === 'pro' ? 'Pro' : 'Free'} Plan</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">
@@ -57,9 +65,7 @@ export default function BillingPage() {
                   style={{ width: `${Math.min(usagePercent, 100)}%` }}
                 />
               </div>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {usagePercent}% used
-              </p>
+              <p className="mt-2 text-sm text-muted-foreground">{usagePercent}% used</p>
             </div>
           </CardContent>
         </Card>
@@ -75,6 +81,7 @@ export default function BillingPage() {
           </CardHeader>
           <CardContent>
             <button
+              type="button"
               onClick={async () => {
                 const res = await fetch('/api/create-checkout', { method: 'POST' });
                 const { url } = await res.json();

@@ -1,5 +1,10 @@
-import { describe, it, expect } from 'vitest';
-import { calculateCost, getModelPricing, PRICING_TABLE, FALLBACK_PRICING } from '@tokenscope/shared';
+import {
+  calculateCost,
+  FALLBACK_PRICING,
+  getModelPricing,
+  PRICING_TABLE,
+} from '@tokenscope/shared';
+import { describe, expect, it } from 'vitest';
 
 describe('cost-calculator', () => {
   it('calculates gpt-4o cost correctly', () => {
@@ -37,7 +42,7 @@ describe('cost-calculator', () => {
 
   it('handles large token counts', () => {
     const cost = calculateCost('gpt-4o', 1_000_000, 1_000_000);
-    expect(cost).toBeCloseTo(2.50 + 10.00, 2);
+    expect(cost).toBeCloseTo(2.5 + 10.0, 2);
   });
 
   it('has valid pricing for all models in table', () => {

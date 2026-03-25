@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { initEwmaState, updateEwma, detectAnomaly } from '../../src/services/anomaly-detector.js';
+import { describe, expect, it } from 'vitest';
+import { detectAnomaly, initEwmaState, updateEwma } from '../../src/services/anomaly-detector.js';
 
 describe('anomaly-detector', () => {
   it('initializes with zero state', () => {

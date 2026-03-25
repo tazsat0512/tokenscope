@@ -15,7 +15,7 @@ export async function sendSlackNotification(
 
 function buildSlackBlocks(alert: AlertPayload) {
   const emoji = alertEmoji(alert.type);
-  const color = alertColor(alert.type);
+  const _color = alertColor(alert.type);
   const title = alertTitle(alert.type);
 
   return [

@@ -1,8 +1,8 @@
 'use client';
 
-import { trpc } from '../../../lib/trpc/client';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { CostTrendChart } from '../../../components/charts/cost-trend';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
+import { trpc } from '../../../lib/trpc/client';
 import { formatCost, formatNumber } from '../../../lib/utils';
 
 export default function OverviewPage() {
@@ -29,9 +29,7 @@ export default function OverviewPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCost(summary?.totalCost ?? 0)}
-            </div>
+            <div className="text-2xl font-bold">{formatCost(summary?.totalCost ?? 0)}</div>
           </CardContent>
         </Card>
 
@@ -42,9 +40,7 @@ export default function OverviewPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {formatNumber(summary?.totalRequests ?? 0)}
-            </div>
+            <div className="text-2xl font-bold">{formatNumber(summary?.totalRequests ?? 0)}</div>
           </CardContent>
         </Card>
 
@@ -55,9 +51,7 @@ export default function OverviewPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {formatNumber(summary?.totalInputTokens ?? 0)}
-            </div>
+            <div className="text-2xl font-bold">{formatNumber(summary?.totalInputTokens ?? 0)}</div>
           </CardContent>
         </Card>
 

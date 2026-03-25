@@ -1,6 +1,6 @@
 // Re-export schema from proxy package for shared types
 // In production, this would use the same Drizzle schema
-import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
+import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const users = sqliteTable('users', {
   id: text('id').primaryKey(),
@@ -13,13 +13,19 @@ export const users = sqliteTable('users', {
   stripeCustomerId: text('stripe_customer_id'),
   requestCount: integer('request_count').notNull().default(0),
   requestCountResetAt: integer('request_count_reset_at').notNull().default(0),
-  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+  updatedAt: integer('updated_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
 });
 
 export const requestLogs = sqliteTable('request_logs', {
   id: text('id').primaryKey(),
-  userId: text('user_id').notNull().references(() => users.id),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id),
   sessionId: text('session_id'),
   agentId: text('agent_id'),
   provider: text('provider').notNull(),
@@ -36,7 +42,9 @@ export const requestLogs = sqliteTable('request_logs', {
 
 export const loopEvents = sqliteTable('loop_events', {
   id: text('id').primaryKey(),
-  userId: text('user_id').notNull().references(() => users.id),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id),
   sessionId: text('session_id'),
   agentId: text('agent_id'),
   promptHash: text('prompt_hash').notNull(),

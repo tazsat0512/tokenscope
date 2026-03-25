@@ -39,15 +39,21 @@ export function SessionTable({ sessions }: SessionTableProps) {
                   <Link href={`/sessions/${s.sessionId}`} className="text-primary hover:underline">
                     {s.sessionId.slice(0, 12)}...
                   </Link>
-                ) : 'N/A'}
+                ) : (
+                  'N/A'
+                )}
               </td>
               <td className="p-4 text-sm">{s.agentId ?? 'Unknown'}</td>
               <td className="p-4 text-right font-mono text-sm">{formatCost(s.totalCost)}</td>
               <td className="p-4 text-right text-sm">{formatNumber(s.requestCount)}</td>
               <td className="p-4">
-                <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                  s.hasBlocked ? 'bg-destructive/10 text-destructive' : 'bg-green-500/10 text-green-600'
-                }`}>
+                <span
+                  className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                    s.hasBlocked
+                      ? 'bg-destructive/10 text-destructive'
+                      : 'bg-green-500/10 text-green-600'
+                  }`}
+                >
                   {s.hasBlocked ? 'Blocked' : 'Active'}
                 </span>
               </td>

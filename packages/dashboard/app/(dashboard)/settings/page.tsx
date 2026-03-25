@@ -1,8 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../../components/ui/card';
 import { trpc } from '../../../lib/trpc/client';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../components/ui/card';
 
 export default function SettingsPage() {
   const { data: settings, isLoading } = trpc.getSettings.useQuery();
@@ -28,18 +34,20 @@ export default function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>API Key</CardTitle>
-          <CardDescription>
-            Use this key as your Authorization bearer token
-          </CardDescription>
+          <CardDescription>Use this key as your Authorization bearer token</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
             <code className="rounded bg-muted px-3 py-2 font-mono text-sm">
-              {settings?.apiKeyHash ? `ts_****${settings.apiKeyHash.slice(-8)}` : 'No key generated'}
+              {settings?.apiKeyHash
+                ? `ts_****${settings.apiKeyHash.slice(-8)}`
+                : 'No key generated'}
             </code>
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
-            Set your base URL to <code className="font-mono">https://proxy.tokenscope.dev/openai/v1</code> to start proxying.
+            Set your base URL to{' '}
+            <code className="font-mono">https://proxy.tokenscope.dev/openai/v1</code> to start
+            proxying.
           </p>
         </CardContent>
       </Card>
@@ -66,6 +74,7 @@ export default function SettingsPage() {
               />
             </div>
             <button
+              type="button"
               onClick={() => {
                 updateSettings.mutate({
                   budgetLimitUsd: budgetLimit ? parseFloat(budgetLimit) : null,
@@ -96,6 +105,7 @@ export default function SettingsPage() {
               className="rounded-md border bg-background px-3 py-2 text-sm flex-1"
             />
             <button
+              type="button"
               onClick={() => {
                 updateSettings.mutate({
                   slackWebhookUrl: slackUrl || null,

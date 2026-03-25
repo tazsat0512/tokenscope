@@ -1,9 +1,18 @@
-import { describe, it, expect } from 'vitest';
-import { PRICING_TABLE, getModelPricing, FALLBACK_PRICING } from '@tokenscope/shared';
+import { FALLBACK_PRICING, getModelPricing, PRICING_TABLE } from '@tokenscope/shared';
+import { describe, expect, it } from 'vitest';
 
 describe('pricing-table', () => {
   it('has pricing for all major OpenAI models', () => {
-    const openaiModels = ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo', 'o1', 'o1-mini', 'o3-mini'];
+    const openaiModels = [
+      'gpt-4o',
+      'gpt-4o-mini',
+      'gpt-4-turbo',
+      'gpt-4',
+      'gpt-3.5-turbo',
+      'o1',
+      'o1-mini',
+      'o3-mini',
+    ];
     for (const model of openaiModels) {
       expect(PRICING_TABLE[model], `Missing pricing for ${model}`).toBeDefined();
     }

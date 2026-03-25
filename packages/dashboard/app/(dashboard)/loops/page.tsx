@@ -1,7 +1,7 @@
 'use client';
 
+import { Card, CardContent } from '../../../components/ui/card';
 import { trpc } from '../../../lib/trpc/client';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { formatDate } from '../../../lib/utils';
 
 export default function LoopsPage() {
@@ -34,22 +34,14 @@ export default function LoopsPage() {
             <tbody>
               {data?.map((loop) => (
                 <tr key={loop.id} className="border-b hover:bg-muted/50">
-                  <td className="p-4 text-sm">
-                    {formatDate(loop.detectedAt)}
-                  </td>
-                  <td className="p-4 font-mono text-sm">
-                    {loop.sessionId?.slice(0, 12) ?? 'N/A'}
-                  </td>
+                  <td className="p-4 text-sm">{formatDate(loop.detectedAt)}</td>
+                  <td className="p-4 font-mono text-sm">{loop.sessionId?.slice(0, 12) ?? 'N/A'}</td>
                   <td className="p-4 text-sm">{loop.agentId ?? 'Unknown'}</td>
                   <td className="p-4 font-mono text-sm text-muted-foreground">
                     {loop.promptHash.slice(0, 16)}...
                   </td>
-                  <td className="p-4 text-right text-sm font-medium">
-                    {loop.matchCount}
-                  </td>
-                  <td className="p-4 text-right text-sm">
-                    {loop.similarity?.toFixed(3) ?? 'N/A'}
-                  </td>
+                  <td className="p-4 text-right text-sm font-medium">{loop.matchCount}</td>
+                  <td className="p-4 text-right text-sm">{loop.similarity?.toFixed(3) ?? 'N/A'}</td>
                 </tr>
               ))}
               {data?.length === 0 && (

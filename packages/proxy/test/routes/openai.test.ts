@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import app from '../../src/index.js';
 
 // Mock KV namespace
@@ -6,8 +6,12 @@ function createMockKV(): KVNamespace {
   const store = new Map<string, string>();
   return {
     get: vi.fn(async (key: string) => store.get(key) ?? null),
-    put: vi.fn(async (key: string, value: string) => { store.set(key, value); }),
-    delete: vi.fn(async (key: string) => { store.delete(key); }),
+    put: vi.fn(async (key: string, value: string) => {
+      store.set(key, value);
+    }),
+    delete: vi.fn(async (key: string) => {
+      store.delete(key);
+    }),
     list: vi.fn(async () => ({ keys: [], list_complete: true, cacheStatus: null })),
     getWithMetadata: vi.fn(async () => ({ value: null, metadata: null, cacheStatus: null })),
   } as unknown as KVNamespace;
@@ -99,7 +103,7 @@ describe('proxy routes', () => {
 
   describe('budget guard', () => {
     it('returns 429 when budget exceeded', async () => {
-      const { env, usersKV, budgetKV } = createMockEnv();
+      const { env } = createMockEnv();
 
       // Register user with a key hash
       // sha256 of "ts_test_key_123" would be computed, but we mock the KV
