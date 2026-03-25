@@ -1,0 +1,14 @@
+{
+  "name": "@tokenscope/scripts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed-pricing": "tsx seed-pricing.ts",
+    "generate-test-data": "tsx generate-test-data.ts"
+  },
+  "dependencies": {
+    "@tokenscope/shared": "workspace:*",
+    "tsx": "^4.0.0"
+  }
+}

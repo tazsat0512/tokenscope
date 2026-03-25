@@ -1,0 +1,20 @@
+{
+  "name": "tokenscope",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI agent token consumption visibility and auto-stop proxy",
+  "scripts": {
+    "dev:proxy": "turbo run dev --filter=@tokenscope/proxy",
+    "dev:dashboard": "turbo run dev --filter=@tokenscope/dashboard",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "db:generate": "turbo run db:generate --filter=@tokenscope/proxy",
+    "db:migrate": "turbo run db:migrate --filter=@tokenscope/proxy"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20"
+  }
+}
