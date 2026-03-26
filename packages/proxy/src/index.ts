@@ -27,6 +27,12 @@ const app = new Hono<HonoEnv>();
 // Global middleware
 app.use('*', cors());
 app.use('*', logger());
+app.use('*', async (c, next) => {
+  await next();
+  c.header('X-Content-Type-Options', 'nosniff');
+  c.header('X-Frame-Options', 'DENY');
+  c.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+});
 
 // Health check (no auth required)
 app.route('/', health);
