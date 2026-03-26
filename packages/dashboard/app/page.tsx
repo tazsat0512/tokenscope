@@ -27,6 +27,9 @@ export default async function LandingPage() {
             <a href="#pricing" className="text-muted-foreground hover:text-foreground">
               Pricing
             </a>
+            <a href="#contact" className="text-muted-foreground hover:text-foreground">
+              Contact
+            </a>
           </nav>
           <div className="flex items-center gap-4">
             <Link href="/sign-in" className="text-sm text-muted-foreground hover:text-foreground">
@@ -422,6 +425,64 @@ TokenScope Dashboard (optional, for detailed analytics)`}
                 </Link>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Contact Form */}
+        <section id="contact" className="border-t bg-muted/30 py-20">
+          <div className="mx-auto max-w-xl px-6">
+            <h2 className="text-center text-3xl font-bold">Get in Touch</h2>
+            <p className="mt-4 text-center text-muted-foreground">
+              Questions, feedback, or partnership inquiries? We&apos;d love to hear from you.
+            </p>
+            <form
+              action="https://formspree.io/f/xeepqnpw"
+              method="POST"
+              className="mt-10 space-y-4"
+            >
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  required
+                  className="mt-1 w-full rounded-md border bg-background px-4 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  className="mt-1 w-full rounded-md border bg-background px-4 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium">
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows={5}
+                  required
+                  className="mt-1 w-full rounded-md border bg-background px-4 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full rounded-md bg-primary py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+              >
+                Send Message
+              </button>
+            </form>
           </div>
         </section>
 
