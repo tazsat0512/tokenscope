@@ -1,32 +1,32 @@
 ---
-name: tokenscope
-description: Track AI agent costs in real-time, set budget limits, and auto-detect runaway loops. Works with OpenAI, Anthropic, and Google models. Free to use — just route your API calls through the TokenScope proxy.
+name: reivo
+description: Track AI agent costs in real-time, set budget limits, and auto-detect runaway loops. Works with OpenAI, Anthropic, and Google models. Free to use — just route your API calls through the Reivo proxy.
 version: 0.1.0
 metadata:
   openclaw:
     requires:
       env:
-        - TOKENSCOPE_API_KEY
+        - REIVO_API_KEY
       bins:
         - curl
       anyBins:
         - jq
         - python3
-    primaryEnv: TOKENSCOPE_API_KEY
+    primaryEnv: REIVO_API_KEY
     emoji: "💰"
-    homepage: https://tokenscope-amber.vercel.app
+    homepage: https://reivo.dev
     os:
       - darwin
       - linux
 ---
 
-# TokenScope — AI Agent Cost Guard
+# Reivo — AI Agent Cost Guard
 
-You are now equipped with TokenScope, a cost monitoring and protection layer for AI API calls.
+You are now equipped with Reivo, a cost monitoring and protection layer for AI API calls.
 
-## What TokenScope Does
+## What Reivo Does
 
-TokenScope is a transparent proxy that sits between your agent and the LLM provider. It:
+Reivo is a transparent proxy that sits between your agent and the LLM provider. It:
 - **Tracks costs** per session, agent, and model in real-time
 - **Enforces budget limits** — blocks requests when spending exceeds the limit
 - **Detects runaway loops** — auto-stops agents stuck in infinite loops
@@ -34,26 +34,26 @@ TokenScope is a transparent proxy that sits between your agent and the LLM provi
 
 ## Configuration
 
-The user's TokenScope API key is available as `$TOKENSCOPE_API_KEY`.
+The user's Reivo API key is available as `$REIVO_API_KEY`.
 
 **Proxy base URLs** (use these instead of direct provider URLs):
-- OpenAI: `https://tokenscope-proxy.tazoelab.workers.dev/openai/v1`
-- Anthropic: `https://tokenscope-proxy.tazoelab.workers.dev/anthropic/v1`
-- Google: `https://tokenscope-proxy.tazoelab.workers.dev/google/v1beta`
+- OpenAI: `https://proxy.reivo.dev/openai/v1`
+- Anthropic: `https://proxy.reivo.dev/anthropic/v1`
+- Google: `https://proxy.reivo.dev/google/v1beta`
 
-**Dashboard:** https://tokenscope-amber.vercel.app
+**Dashboard:** https://app.reivo.dev
 
 ## Available Commands
 
-When the user asks about costs, budgets, or TokenScope, use the following:
+When the user asks about costs, budgets, or Reivo, use the following:
 
 ### Check Costs
 
 When the user asks "how much am I spending?", "show costs", "cost report", or similar:
 
 ```bash
-curl -s -H "Authorization: Bearer $TOKENSCOPE_API_KEY" \
-  "https://tokenscope-amber.vercel.app/api/v1/overview?days=7"
+curl -s -H "Authorization: Bearer $REIVO_API_KEY" \
+  "https://app.reivo.dev/api/v1/overview?days=7"
 ```
 
 Present the response as:
@@ -67,8 +67,8 @@ Present the response as:
 When the user asks "budget status", "am I safe?", "loop status", or similar:
 
 ```bash
-curl -s -H "Authorization: Bearer $TOKENSCOPE_API_KEY" \
-  "https://tokenscope-amber.vercel.app/api/v1/defense-status"
+curl -s -H "Authorization: Bearer $REIVO_API_KEY" \
+  "https://app.reivo.dev/api/v1/defense-status"
 ```
 
 Present as:
@@ -82,10 +82,10 @@ When the user says "set budget to $50", "limit spending", or similar:
 
 ```bash
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKENSCOPE_API_KEY" \
+  -H "Authorization: Bearer $REIVO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"budgetLimitUsd": 50}' \
-  "https://tokenscope-amber.vercel.app/api/v1/settings"
+  "https://app.reivo.dev/api/v1/settings"
 ```
 
 Confirm the budget was set and explain that requests will be blocked once the limit is reached.
@@ -96,10 +96,10 @@ When the user says "remove budget", "clear limit", or similar:
 
 ```bash
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKENSCOPE_API_KEY" \
+  -H "Authorization: Bearer $REIVO_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"budgetLimitUsd": null}' \
-  "https://tokenscope-amber.vercel.app/api/v1/settings"
+  "https://app.reivo.dev/api/v1/settings"
 ```
 
 ### View Agent Breakdown
@@ -107,8 +107,8 @@ curl -s -X POST \
 When the user asks "which agent costs the most?", "cost by agent", or similar:
 
 ```bash
-curl -s -H "Authorization: Bearer $TOKENSCOPE_API_KEY" \
-  "https://tokenscope-amber.vercel.app/api/v1/agents?days=30"
+curl -s -H "Authorization: Bearer $REIVO_API_KEY" \
+  "https://app.reivo.dev/api/v1/agents?days=30"
 ```
 
 Present agent-by-agent and model-by-model cost breakdown.
@@ -117,19 +117,19 @@ Present agent-by-agent and model-by-model cost breakdown.
 
 When the user says "open dashboard", "show dashboard", or "I want more detail":
 
-> **TokenScope Dashboard:** https://tokenscope-amber.vercel.app
+> **Reivo Dashboard:** https://app.reivo.dev
 >
 > Sign in to see interactive cost charts, session replays, loop detection history, and optimization recommendations.
 
 ## Setup Instructions
 
-If the user hasn't set up TokenScope yet, guide them:
+If the user hasn't set up Reivo yet, guide them:
 
-1. **Sign up** at https://tokenscope-amber.vercel.app
-2. **Generate an API key** in Settings (format: `ts_...`)
+1. **Sign up** at https://app.reivo.dev
+2. **Generate an API key** in Settings (format: `rv_...`)
 3. **Set the environment variable:**
    ```bash
-   export TOKENSCOPE_API_KEY="ts_your_key_here"
+   export REIVO_API_KEY="rv_your_key_here"
    ```
 4. **Route API calls through the proxy** by changing the base URL in your provider config.
 
@@ -139,24 +139,24 @@ For OpenClaw specifically, update the provider configuration:
   "providers": [
     {
       "name": "openai",
-      "apiKey": "${TOKENSCOPE_API_KEY}",
-      "baseUrl": "https://tokenscope-proxy.tazoelab.workers.dev/openai/v1"
+      "apiKey": "${REIVO_API_KEY}",
+      "baseUrl": "https://proxy.reivo.dev/openai/v1"
     },
     {
       "name": "anthropic",
-      "apiKey": "${TOKENSCOPE_API_KEY}",
-      "baseUrl": "https://tokenscope-proxy.tazoelab.workers.dev/anthropic/v1"
+      "apiKey": "${REIVO_API_KEY}",
+      "baseUrl": "https://proxy.reivo.dev/anthropic/v1"
     }
   ]
 }
 ```
 
-The proxy forwards your requests to the real provider using the provider key you registered on the dashboard. Your original API keys never leave the TokenScope server.
+The proxy forwards your requests to the real provider using the provider key you registered on the dashboard. Your original API keys never leave the Reivo server.
 
 ## Behavior Guidelines
 
 - Always show costs in USD with 2 decimal places
 - When budget is over 80%, proactively warn the user
-- If an API call fails with 429 from TokenScope proxy, explain it's a budget block (not rate limiting)
-- Never expose the full API key in output — show only `ts_...xxxx` (last 4 chars)
+- If an API call fails with 429 from Reivo proxy, explain it's a budget block (not rate limiting)
+- Never expose the full API key in output — show only `rv_...xxxx` (last 4 chars)
 - Suggest the dashboard for detailed analysis beyond what the API provides

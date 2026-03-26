@@ -7,7 +7,7 @@ const steps = [
   {
     id: 'apiKey',
     title: 'Generate your API key',
-    description: 'Create a TokenScope API key to authenticate proxy requests.',
+    description: 'Create a Reivo API key to authenticate proxy requests.',
     href: '/settings',
     cta: 'Go to Settings',
   },
@@ -45,7 +45,7 @@ export function OnboardingChecklist() {
     <div className="rounded-lg border bg-card p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold">Get started with TokenScope</h2>
+          <h2 className="text-lg font-semibold">Get started with Reivo</h2>
           <p className="text-sm text-muted-foreground">
             Complete these steps to start monitoring your AI costs.
           </p>
@@ -79,7 +79,7 @@ export function OnboardingChecklist() {
                   <div className="mt-3 rounded-md bg-muted p-3">
                     <p className="text-xs font-medium mb-2">Update your base URL:</p>
                     <code className="text-xs block">
-                      baseURL: &quot;https://tokenscope-proxy.tazoelab.workers.dev/anthropic/v1&quot;
+                      baseURL: &quot;https://proxy.reivo.dev/anthropic/v1&quot;
                     </code>
                   </div>
                 )}

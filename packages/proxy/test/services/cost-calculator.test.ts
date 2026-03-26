@@ -3,7 +3,7 @@ import {
   FALLBACK_PRICING,
   getModelPricing,
   PRICING_TABLE,
-} from '@tokenscope/shared';
+} from '@reivo/shared';
 import { describe, expect, it } from 'vitest';
 
 describe('cost-calculator', () => {

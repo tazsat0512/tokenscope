@@ -1,4 +1,4 @@
-import { PROVIDER_URLS, type Provider, type TokenUsage } from '@tokenscope/shared';
+import { PROVIDER_URLS, type Provider, type TokenUsage } from '@reivo/shared';
 
 export const openaiProvider: Provider = {
   name: 'openai',
@@ -26,7 +26,7 @@ export const openaiProvider: Provider = {
   buildHeaders(providerKey: string, originalHeaders: Headers): Headers {
     const headers = new Headers(originalHeaders);
     headers.set('Authorization', `Bearer ${providerKey}`);
-    // Remove tokenscope-specific headers
+    // Remove reivo-specific headers
     headers.delete('x-session-id');
     headers.delete('x-agent-id');
     return headers;

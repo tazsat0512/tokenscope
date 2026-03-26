@@ -1,5 +1,5 @@
 {
-  "name": "@tokenscope/dashboard",
+  "name": "@reivo/dashboard",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -13,8 +13,8 @@
   "dependencies": {
     "@clerk/nextjs": "^7.0.7",
     "@libsql/client": "^0.14.0",
+    "@reivo/shared": "workspace:*",
     "@tanstack/react-query": "^5.60.0",
-    "@tokenscope/shared": "workspace:*",
     "@trpc/client": "^11.0.0-rc.0",
     "@trpc/next": "^11.0.0-rc.0",
     "@trpc/react-query": "^11.0.0-rc.0",
@@ -24,6 +24,7 @@
     "drizzle-orm": "^0.36.0",
     "lucide-react": "^0.460.0",
     "next": "^15.1.0",
+    "next-themes": "^0.4.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "recharts": "^2.14.0",

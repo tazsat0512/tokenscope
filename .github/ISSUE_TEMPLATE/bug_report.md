@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug in TokenScope
+about: Report a bug in Reivo
 title: "[Bug] "
 labels: bug
 assignees: ''

@@ -1,6 +1,6 @@
-# Contributing to TokenScope
+# Contributing to Reivo
 
-Thanks for your interest in contributing to TokenScope! Here's how to get started.
+Thanks for your interest in contributing to Reivo! Here's how to get started.
 
 ## Development Setup
 
@@ -15,8 +15,8 @@ Thanks for your interest in contributing to TokenScope! Here's how to get starte
 
 ```bash
 # Clone the repo
-git clone https://github.com/tazsat0512/tokenscope.git
-cd tokenscope
+git clone https://github.com/tazsat0512/reivo.git
+cd reivo
 
 # Install dependencies
 pnpm install
@@ -35,7 +35,7 @@ pnpm --filter dashboard dev
 ## Project Structure
 
 ```
-tokenscope/
+reivo/
 ├── packages/
 │   ├── proxy/       # Cloudflare Workers + Hono (the proxy)
 │   ├── dashboard/   # Next.js + Vercel (the web dashboard)

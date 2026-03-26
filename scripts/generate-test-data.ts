@@ -1,4 +1,4 @@
-import { calculateCost, PRICING_TABLE } from '@tokenscope/shared';
+import { calculateCost, PRICING_TABLE } from '@reivo/shared';
 
 // Generate test request log data for development
 const models = Object.keys(PRICING_TABLE);

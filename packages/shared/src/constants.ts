@@ -1,9 +1,9 @@
-export const API_KEY_PREFIX = 'ts_';
+export const API_KEY_PREFIX = 'rv_';
 export const HEADER_SESSION_ID = 'x-session-id';
 export const HEADER_AGENT_ID = 'x-agent-id';
-export const HEADER_BUDGET_USED = 'x-tokenscope-budget-used';
-export const HEADER_BUDGET_REMAINING = 'x-tokenscope-budget-remaining';
-export const HEADER_REQUEST_ID = 'x-tokenscope-request-id';
+export const HEADER_BUDGET_USED = 'x-reivo-budget-used';
+export const HEADER_BUDGET_REMAINING = 'x-reivo-budget-remaining';
+export const HEADER_REQUEST_ID = 'x-reivo-request-id';
 
 export const LOOP_HASH_WINDOW = 20;
 export const LOOP_HASH_THRESHOLD = 5;

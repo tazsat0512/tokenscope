@@ -1,4 +1,4 @@
-import type { ProviderName, TokenUsage } from '@tokenscope/shared';
+import type { ProviderName, TokenUsage } from '@reivo/shared';
 import { createDb } from '../db/client.js';
 import { requestLogs } from '../db/schema.js';
 import { addCost, getTriggeredAlertThreshold, setBudgetState } from '../services/budget-store.js';
@@ -28,6 +28,29 @@ export interface PipelineInput {
   toolCount?: number;
   toolsUsed?: string[];
   systemPromptHash?: string;
+}
+
+function getMonthStart(): number {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+}
+
+async function incrementRequestCount(kv: KVNamespace, user: UserRecord): Promise<void> {
+  const keyHash = user.apiKeyHash;
+  const userJson = await kv.get(`key:${keyHash}`);
+  if (!userJson) return;
+
+  const record = JSON.parse(userJson) as UserRecord;
+  const monthStart = getMonthStart();
+
+  // Reset if new month
+  if ((record.requestCountResetAt ?? 0) < monthStart) {
+    record.requestCount = 0;
+    record.requestCountResetAt = monthStart;
+  }
+
+  record.requestCount = (record.requestCount ?? 0) + 1;
+  await kv.put(`key:${keyHash}`, JSON.stringify(record));
 }
 
 export async function runAsyncPipeline(env: Env, input: PipelineInput): Promise<void> {
@@ -60,7 +83,12 @@ export async function runAsyncPipeline(env: Env, input: PipelineInput): Promise<
     systemPromptHash: input.systemPromptHash ?? null,
   });
 
-  // 2. Update budget in KV (sync KV with new cost)
+  // 2. Increment request count in KV (for plan limit enforcement)
+  if (!input.blocked) {
+    await incrementRequestCount(env.USERS_KV, input.user);
+  }
+
+  // 3. Update budget in KV (sync KV with new cost)
   if (!input.blocked) {
     const budgetState = await addCost(env.BUDGET_KV, input.user.id, costUsd);
 
@@ -92,7 +120,7 @@ export async function runAsyncPipeline(env: Env, input: PipelineInput): Promise<
     }
   }
 
-  // 3. Update loop detection state in KV
+  // 4. Update loop detection state in KV
   const loopState = await getLoopState(env.BUDGET_KV, input.user.id);
   const loopResult = detectLoopByHash(loopState.hashes, promptHash);
 

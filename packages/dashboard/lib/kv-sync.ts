@@ -10,6 +10,9 @@ interface UserRecord {
   };
   budgetLimitUsd: number | null;
   slackWebhookUrl?: string;
+  plan: 'free' | 'pro';
+  requestCount: number;
+  requestCountResetAt: number;
 }
 
 const CF_API_BASE = 'https://api.cloudflare.com/client/v4';
@@ -60,6 +63,9 @@ export async function syncUserToKV(user: {
   providerKeysEncrypted: string;
   budgetLimitUsd: number | null;
   slackWebhookUrl: string | null;
+  plan?: string;
+  requestCount?: number;
+  requestCountResetAt?: number;
 }): Promise<void> {
   if (!user.apiKeyHash) return;
 
@@ -101,6 +107,9 @@ export async function syncUserToKV(user: {
     providerKeys,
     budgetLimitUsd: user.budgetLimitUsd,
     slackWebhookUrl: user.slackWebhookUrl ?? undefined,
+    plan: (user.plan as 'free' | 'pro') ?? 'free',
+    requestCount: user.requestCount ?? 0,
+    requestCountResetAt: user.requestCountResetAt ?? 0,
   };
 
   await kvPut(`key:${user.apiKeyHash}`, JSON.stringify(record));

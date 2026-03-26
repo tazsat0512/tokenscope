@@ -1,4 +1,4 @@
-import { HEADER_REQUEST_ID } from '@tokenscope/shared';
+import { HEADER_REQUEST_ID } from '@reivo/shared';
 import { createMiddleware } from 'hono/factory';
 import type { Env, UserRecord } from '../types/index.js';
 

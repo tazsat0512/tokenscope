@@ -79,7 +79,7 @@ describe('Anthropic provider', () => {
     const original = new Headers({
       'Content-Type': 'application/json',
       'anthropic-version': '2023-06-01',
-      Authorization: 'Bearer ts_xxx',
+      Authorization: 'Bearer rv_xxx',
     });
     const headers = anthropicProvider.buildHeaders('sk-ant-test', original);
     expect(headers.get('x-api-key')).toBe('sk-ant-test');

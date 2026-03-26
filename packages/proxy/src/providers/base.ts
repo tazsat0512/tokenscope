@@ -1,1 +1,1 @@
-export type { Provider } from '@tokenscope/shared';
+export type { Provider } from '@reivo/shared';

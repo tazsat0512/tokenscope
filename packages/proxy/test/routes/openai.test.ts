@@ -59,7 +59,7 @@ describe('proxy routes', () => {
       expect(res.status).toBe(401);
     });
 
-    it('rejects request with non-ts_ prefix key', async () => {
+    it('rejects request with non-rv_ prefix key', async () => {
       const { env } = createMockEnv();
       const req = new Request('http://localhost/openai/v1/chat/completions', {
         method: 'POST',
@@ -72,16 +72,16 @@ describe('proxy routes', () => {
       const res = await app.fetch(req, env);
       expect(res.status).toBe(401);
       const body = await res.json();
-      expect(body.error).toContain('ts_');
+      expect(body.error).toContain('rv_');
     });
 
-    it('rejects unknown ts_ key', async () => {
+    it('rejects unknown rv_ key', async () => {
       const { env } = createMockEnv();
       const req = new Request('http://localhost/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ts_unknown_key_123',
+          Authorization: 'Bearer rv_unknown_key_123',
         },
         body: JSON.stringify({ model: 'gpt-4o', messages: [] }),
       });
@@ -106,14 +106,14 @@ describe('proxy routes', () => {
       const { env } = createMockEnv();
 
       // Register user with a key hash
-      // sha256 of "ts_test_key_123" would be computed, but we mock the KV
+      // sha256 of "rv_test_key_123" would be computed, but we mock the KV
       // Instead we test budget-guard in isolation via the budget-store tests
       // This test validates the middleware integration exists
       const req = new Request('http://localhost/anthropic/v1/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ts_no_key',
+          Authorization: 'Bearer rv_no_key',
         },
         body: JSON.stringify({ model: 'claude-3-5-sonnet-20241022', messages: [] }),
       });

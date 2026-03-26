@@ -1,4 +1,4 @@
-# Self-Hosting TokenScope
+# Self-Hosting Reivo
 
 ## Prerequisites
 
@@ -12,17 +12,17 @@
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/your-org/tokenscope.git
-cd tokenscope
+git clone https://github.com/your-org/reivo.git
+cd reivo
 pnpm install
 ```
 
 ### 2. Create Turso database
 
 ```bash
-turso db create tokenscope
-turso db show tokenscope --url   # Copy TURSO_DATABASE_URL
-turso db tokens create tokenscope  # Copy TURSO_AUTH_TOKEN
+turso db create reivo
+turso db show reivo --url   # Copy TURSO_DATABASE_URL
+turso db tokens create reivo  # Copy TURSO_AUTH_TOKEN
 ```
 
 ### 3. Configure Cloudflare KV
@@ -74,7 +74,7 @@ Set environment variables in Vercel:
 ## Architecture
 
 ```
-Client → TokenScope Proxy (CF Workers) → AI Provider (OpenAI/Anthropic/Google)
+Client → Reivo Proxy (CF Workers) → AI Provider (OpenAI/Anthropic/Google)
                 ↓ (waitUntil)
            Async Pipeline
                 ↓

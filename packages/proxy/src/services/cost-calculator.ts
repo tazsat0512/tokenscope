@@ -1,4 +1,4 @@
-import { calculateCost, getModelPricing, type TokenUsage } from '@tokenscope/shared';
+import { calculateCost, getModelPricing, type TokenUsage } from '@reivo/shared';
 
 export { calculateCost, getModelPricing };
 

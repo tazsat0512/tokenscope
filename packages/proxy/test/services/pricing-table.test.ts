@@ -1,4 +1,4 @@
-import { FALLBACK_PRICING, getModelPricing, PRICING_TABLE } from '@tokenscope/shared';
+import { FALLBACK_PRICING, getModelPricing, PRICING_TABLE } from '@reivo/shared';
 import { describe, expect, it } from 'vitest';
 
 describe('pricing-table', () => {

@@ -5,17 +5,17 @@ import { sha256 } from './crypto';
 import { db } from './db';
 
 /**
- * Authenticate REST API requests using TokenScope API key (ts_...).
+ * Authenticate REST API requests using Reivo API key (rv_...).
  * Used by the OpenClaw skill and other external integrations.
  */
 export async function authenticateApiKey(
   req: NextRequest,
 ): Promise<{ userId: string } | { error: NextResponse }> {
   const authHeader = req.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ts_')) {
+  if (!authHeader?.startsWith('Bearer rv_')) {
     return {
       error: NextResponse.json(
-        { error: 'Missing or invalid API key. Use: Authorization: Bearer ts_...' },
+        { error: 'Missing or invalid API key. Use: Authorization: Bearer rv_...' },
         { status: 401 },
       ),
     };

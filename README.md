@@ -1,14 +1,14 @@
-# TokenScope
+# Reivo
 
 **Don't just watch your AI burn money. Stop it.**
 
-TokenScope is a transparent proxy that tracks AI agent costs in real-time, enforces budget limits, and auto-stops runaway loops. Works with OpenAI, Anthropic, and Google. One line change — that's it.
+Reivo is a transparent proxy that tracks AI agent costs in real-time, enforces budget limits, and auto-stops runaway loops. Works with OpenAI, Anthropic, and Google. One line change — that's it.
 
 ## Why
 
 AI agents loop. A single stuck agent can burn $47,000 in 11 days. Existing tools either require code changes (AgentBudget) or only observe without stopping the bleed (Helicone, Langfuse).
 
-TokenScope is a proxy — change your base URL and it handles the rest. No SDK, no code changes, no vendor lock-in.
+Reivo is a proxy — change your base URL and it handles the rest. No SDK, no code changes, no vendor lock-in.
 
 ## Features
 
@@ -23,7 +23,7 @@ TokenScope is a proxy — change your base URL and it handles the rest. No SDK, 
 
 ### 1. Sign up
 
-Create a free account at [tokenscope-amber.vercel.app](https://tokenscope-amber.vercel.app).
+Create a free account at [app.reivo.dev](https://app.reivo.dev).
 
 ### 2. Generate an API key
 
@@ -39,8 +39,8 @@ In **Settings**, add your OpenAI, Anthropic, or Google API key. You can add mult
 # Python — OpenAI
 from openai import OpenAI
 client = OpenAI(
-    base_url="https://tokenscope-proxy.tazoelab.workers.dev/openai/v1",
-    api_key="ts_your_tokenscope_key"
+    base_url="https://proxy.reivo.dev/openai/v1",
+    api_key="rv_your_reivo_key"
 )
 ```
 
@@ -48,23 +48,23 @@ client = OpenAI(
 # Python — Anthropic
 from anthropic import Anthropic
 client = Anthropic(
-    base_url="https://tokenscope-proxy.tazoelab.workers.dev/anthropic/v1",
-    api_key="ts_your_tokenscope_key"
+    base_url="https://proxy.reivo.dev/anthropic/v1",
+    api_key="rv_your_reivo_key"
 )
 ```
 
 ```typescript
 // TypeScript — OpenAI
 const client = new OpenAI({
-  baseURL: "https://tokenscope-proxy.tazoelab.workers.dev/openai/v1",
-  apiKey: "ts_your_tokenscope_key",
+  baseURL: "https://proxy.reivo.dev/openai/v1",
+  apiKey: "rv_your_reivo_key",
 });
 ```
 
 ```bash
 # curl — Google Gemini
-curl https://tokenscope-proxy.tazoelab.workers.dev/google/v1beta/models/gemini-2.5-flash:generateContent \
-  -H "Authorization: Bearer ts_your_tokenscope_key" \
+curl https://proxy.reivo.dev/google/v1beta/models/gemini-2.5-flash:generateContent \
+  -H "Authorization: Bearer rv_your_reivo_key" \
   -H "Content-Type: application/json" \
   -d '{"contents":[{"parts":[{"text":"Hello"}]}]}'
 ```
@@ -86,12 +86,12 @@ curl https://tokenscope-proxy.tazoelab.workers.dev/google/v1beta/models/gemini-2
 
 ## Security
 
-TokenScope does **NOT** store:
+Reivo does **NOT** store:
 - Your API keys (pass-through only)
 - Prompt contents
 - Response contents
 
-TokenScope **DOES** store:
+Reivo **DOES** store:
 - Model name, token count, cost
 - Timestamp, session ID, agent ID
 - Prompt hash (for loop detection, not reversible)
@@ -112,7 +112,7 @@ For maximum security, use our **self-hosted OSS version** where all data stays o
 ## Architecture
 
 ```
-Your App → TokenScope Proxy (CF Workers) → LLM Provider (OpenAI/Anthropic/Google)
+Your App → Reivo Proxy (CF Workers) → LLM Provider (OpenAI/Anthropic/Google)
                     ↓
              Turso DB (metadata only)
                     ↓
@@ -143,11 +143,11 @@ Your App → TokenScope Proxy (CF Workers) → LLM Provider (OpenAI/Anthropic/Go
 
 ## Self-Hosting
 
-TokenScope is fully open source. You can run the entire stack on your own infrastructure:
+Reivo is fully open source. You can run the entire stack on your own infrastructure:
 
 ```bash
-git clone https://github.com/tazsat/tokenscope.git
-cd tokenscope
+git clone https://github.com/tazsat/reivo.git
+cd reivo
 pnpm install
 ```
 
@@ -171,7 +171,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed setup instructions.
 
 ## Comparison
 
-| Feature | TokenScope | Helicone | Langfuse | AgentBudget |
+| Feature | Reivo | Helicone | Langfuse | AgentBudget |
 |---------|-----------|----------|----------|-------------|
 | Proxy-based (1 line change) | Yes | Yes | No (SDK) | No (library) |
 | Budget enforcement | Yes | No | No | Yes |

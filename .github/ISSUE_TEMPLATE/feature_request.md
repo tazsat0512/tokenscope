@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest a new feature for TokenScope
+about: Suggest a new feature for Reivo
 title: "[Feature] "
 labels: enhancement
 assignees: ''

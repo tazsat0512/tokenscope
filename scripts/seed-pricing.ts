@@ -1,7 +1,7 @@
-import { PRICING_TABLE } from '@tokenscope/shared';
+import { PRICING_TABLE } from '@reivo/shared';
 
 // Script to verify and display all pricing data
-console.log('TokenScope Pricing Table');
+console.log('Reivo Pricing Table');
 console.log('========================\n');
 
 const models = Object.entries(PRICING_TABLE).sort(([a], [b]) => a.localeCompare(b));

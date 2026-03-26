@@ -1,12 +1,12 @@
-# TokenScope REST API Reference
+# Reivo REST API Reference
 
 All endpoints require authentication via API key header:
 
 ```
-Authorization: Bearer ts_your_api_key
+Authorization: Bearer rv_your_api_key
 ```
 
-Base URL: `https://tokenscope-amber.vercel.app/api/v1`
+Base URL: `https://app.reivo.dev/api/v1`
 
 ---
 

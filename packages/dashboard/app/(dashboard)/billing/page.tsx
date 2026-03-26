@@ -4,7 +4,7 @@ import {
   FREE_PLAN_REQUEST_LIMIT,
   PRO_PLAN_PRICE_USD,
   PRO_PLAN_REQUEST_LIMIT,
-} from '@tokenscope/shared';
+} from '@reivo/shared';
 import { Button } from '../../../components/ui/button';
 import {
   Card,

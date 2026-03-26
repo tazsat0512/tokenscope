@@ -3,7 +3,7 @@ import {
   LOOP_HASH_THRESHOLD,
   LOOP_HASH_WINDOW,
   type LoopDetectionResult,
-} from '@tokenscope/shared';
+} from '@reivo/shared';
 import type { LoopState } from '../types/index.js';
 
 const LOOP_KEY_PREFIX = 'loop:';

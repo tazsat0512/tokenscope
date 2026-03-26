@@ -5,14 +5,14 @@ import { Providers } from './providers';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'TokenScope - AI Agent Cost Visibility',
+  title: 'Reivo - AI Agent Cost Visibility',
   description: 'Visualize token consumption and auto-stop runaway AI agents',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body className="min-h-screen antialiased">
           <TRPCProvider>
             <Providers>{children}</Providers>

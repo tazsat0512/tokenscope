@@ -1,5 +1,5 @@
 {
-  "name": "@tokenscope/scripts",
+  "name": "@reivo/scripts",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
-    "@tokenscope/shared": "workspace:*",
+    "@reivo/shared": "workspace:*",
     "drizzle-orm": "^0.36.4",
     "tsx": "^4.0.0"
   }

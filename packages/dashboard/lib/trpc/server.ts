@@ -80,9 +80,21 @@ async function saveProviderKeys(userId: string, keys: ProviderKeysMap): Promise<
 
 export const appRouter = t.router({
   getOverview: authedProcedure
-    .input(z.object({ days: z.number().default(30) }))
+    .input(z.object({ days: z.number().default(30), tz: z.string().default('UTC') }))
     .query(async ({ ctx, input }) => {
       const since = Date.now() - input.days * 24 * 60 * 60 * 1000;
+
+      // Calculate UTC offset in seconds for the client's timezone
+      const tzOffsetSec = (() => {
+        try {
+          const now = new Date();
+          const utcStr = now.toLocaleString('en-US', { timeZone: 'UTC' });
+          const tzStr = now.toLocaleString('en-US', { timeZone: input.tz });
+          return (new Date(tzStr).getTime() - new Date(utcStr).getTime()) / 1000;
+        } catch {
+          return 0;
+        }
+      })();
 
       const logs = await db
         .select({
@@ -96,14 +108,14 @@ export const appRouter = t.router({
 
       const dailyCosts = await db
         .select({
-          date: sql<string>`date(${requestLogs.timestamp} / 1000, 'unixepoch')`,
+          date: sql<string>`date(${requestLogs.timestamp} / 1000 + ${tzOffsetSec}, 'unixepoch')`,
           cost: sql<number>`sum(${requestLogs.costUsd})`,
           requests: sql<number>`count(*)`,
         })
         .from(requestLogs)
         .where(and(eq(requestLogs.userId, ctx.userId), gte(requestLogs.timestamp, since)))
-        .groupBy(sql`date(${requestLogs.timestamp} / 1000, 'unixepoch')`)
-        .orderBy(sql`date(${requestLogs.timestamp} / 1000, 'unixepoch')`);
+        .groupBy(sql`date(${requestLogs.timestamp} / 1000 + ${tzOffsetSec}, 'unixepoch')`)
+        .orderBy(sql`date(${requestLogs.timestamp} / 1000 + ${tzOffsetSec}, 'unixepoch')`);
 
       return {
         summary: logs[0] ?? {
@@ -373,7 +385,7 @@ export const appRouter = t.router({
     }),
 
   generateApiKey: authedProcedure.mutation(async ({ ctx }) => {
-    const apiKey = `ts_${crypto.randomUUID().replace(/-/g, '')}`;
+    const apiKey = `rv_${crypto.randomUUID().replace(/-/g, '')}`;
     const apiKeyHash = await sha256(apiKey);
 
     // Get old hash to clean up KV

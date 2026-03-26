@@ -16,6 +16,9 @@ export interface UserRecord {
   };
   budgetLimitUsd: number | null;
   slackWebhookUrl?: string;
+  plan: 'free' | 'pro';
+  requestCount: number;
+  requestCountResetAt: number;
 }
 
 export interface BudgetState {

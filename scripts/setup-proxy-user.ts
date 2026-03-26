@@ -22,8 +22,8 @@ const users = sqliteTable('users', {
 const USER_ID = 'REDACTED_USER_ID';
 const ANTHROPIC_KEY = 'REDACTED_ANTHROPIC_KEY';
 
-// Generate a TokenScope API key
-const TS_API_KEY = `ts_${crypto.randomUUID().replace(/-/g, '')}`;
+// Generate a Reivo API key
+const RV_API_KEY = `rv_${crypto.randomUUID().replace(/-/g, '')}`;
 
 function sha256(input: string): string {
   return createHash('sha256').update(input).digest('hex');
@@ -36,7 +36,7 @@ const client = createClient({
 const db = drizzle(client);
 
 async function main() {
-  const apiKeyHash = sha256(TS_API_KEY);
+  const apiKeyHash = sha256(RV_API_KEY);
 
   // Update user with API key hash and provider keys
   await db
@@ -57,8 +57,8 @@ async function main() {
     slackWebhookUrl: undefined,
   };
 
-  console.log('\n=== TokenScope API Key (save this!) ===');
-  console.log(TS_API_KEY);
+  console.log('\n=== Reivo API Key (save this!) ===');
+  console.log(RV_API_KEY);
   console.log('\n=== API Key Hash ===');
   console.log(apiKeyHash);
   console.log('\n=== KV Record (for USERS_KV) ===');

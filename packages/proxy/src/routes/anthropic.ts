@@ -1,8 +1,10 @@
-import { HEADER_AGENT_ID, HEADER_SESSION_ID } from '@tokenscope/shared';
+import { HEADER_AGENT_ID } from '@reivo/shared';
 import { Hono } from 'hono';
 import { runAsyncPipeline } from '../async/pipeline.js';
 import { anthropicProvider } from '../providers/anthropic.js';
 import type { Env, UserRecord } from '../types/index.js';
+import { fetchUpstream } from '../utils/error.js';
+import { resolveSessionId } from '../utils/session.js';
 import { createStreamPassthrough } from '../utils/streaming.js';
 import { extractRequestTelemetry, extractResponseTelemetry } from '../utils/telemetry.js';
 
@@ -17,12 +19,12 @@ anthropic.all('/anthropic/*', async (c) => {
   const user = c.get('user');
   const requestId = c.get('requestId');
   const startTime = c.get('startTime');
-  const sessionId = c.req.header(HEADER_SESSION_ID) ?? null;
+  const sessionId = await resolveSessionId(c, user.id);
   const agentId = c.req.header(HEADER_AGENT_ID) ?? null;
 
   const providerKey = user.providerKeys.anthropic;
   if (!providerKey) {
-    return c.json({ error: 'No Anthropic API key configured' }, 400);
+    return c.json({ error: 'no_provider_key', message: 'No Anthropic API key configured', request_id: requestId }, 400);
   }
 
   const upstreamUrl = anthropicProvider.buildUpstreamUrl(c.req.path);
@@ -40,11 +42,15 @@ anthropic.all('/anthropic/*', async (c) => {
   const headers = anthropicProvider.buildHeaders(providerKey, c.req.raw.headers);
   headers.set('Content-Type', 'application/json');
 
-  const upstreamResponse = await fetch(upstreamUrl, {
-    method: c.req.method,
-    headers,
-    body: c.req.method !== 'GET' ? body : undefined,
-  });
+  const result = await fetchUpstream(
+    upstreamUrl,
+    { method: c.req.method, headers, body: c.req.method !== 'GET' ? body : undefined },
+    c,
+    requestId,
+  );
+
+  if ('error' in result) return result.response;
+  const upstreamResponse = result;
 
   const latencyMs = Date.now() - startTime;
 
@@ -57,7 +63,8 @@ anthropic.all('/anthropic/*', async (c) => {
     latencyMs,
     sessionId,
     agentId,
-    blocked: false,
+    blocked: !upstreamResponse.ok,
+    blockReason: upstreamResponse.ok ? undefined : `upstream_${upstreamResponse.status}`,
     ...reqTelemetry,
   };
 

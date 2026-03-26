@@ -1,4 +1,4 @@
-import { API_KEY_PREFIX } from '@tokenscope/shared';
+import { API_KEY_PREFIX } from '@reivo/shared';
 import { createMiddleware } from 'hono/factory';
 import type { Env, UserRecord } from '../types/index.js';
 import { sha256 } from '../utils/hash.js';
@@ -8,7 +8,7 @@ type HonoEnv = { Bindings: Env; Variables: { user: UserRecord } };
 export const authMiddleware = createMiddleware<HonoEnv>(async (c, next) => {
   const authHeader = c.req.header('Authorization');
   if (!authHeader?.startsWith(`Bearer ${API_KEY_PREFIX}`)) {
-    return c.json({ error: 'Invalid API key. Use a TokenScope key (ts_...)' }, 401);
+    return c.json({ error: 'Invalid API key. Use a Reivo key (rv_...)' }, 401);
   }
 
   const apiKey = authHeader.slice(7); // Remove "Bearer "

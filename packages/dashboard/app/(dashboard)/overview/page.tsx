@@ -40,7 +40,8 @@ function OverviewSkeleton() {
 }
 
 export default function OverviewPage() {
-  const { data, isLoading } = trpc.getOverview.useQuery({ days: 30 });
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const { data, isLoading } = trpc.getOverview.useQuery({ days: 30, tz });
 
   if (isLoading) {
     return <OverviewSkeleton />;

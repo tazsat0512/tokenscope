@@ -1,4 +1,4 @@
-import { HEADER_BUDGET_REMAINING, HEADER_BUDGET_USED } from '@tokenscope/shared';
+import { HEADER_BUDGET_REMAINING, HEADER_BUDGET_USED } from '@reivo/shared';
 import { createMiddleware } from 'hono/factory';
 import { checkBudget, getBudgetState } from '../services/budget-store.js';
 import type { Env, UserRecord } from '../types/index.js';

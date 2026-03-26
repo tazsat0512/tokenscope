@@ -3,6 +3,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { authMiddleware } from './middleware/auth.js';
 import { budgetGuardMiddleware } from './middleware/budget-guard.js';
+import { planGuardMiddleware } from './middleware/plan-guard.js';
 import { requestLoggerMiddleware } from './middleware/request-logger.js';
 import { anthropic } from './routes/anthropic.js';
 import { google } from './routes/google.js';
@@ -24,10 +25,10 @@ app.use('*', logger());
 // Health check (no auth required)
 app.route('/', health);
 
-// Auth + budget guard for proxy routes
-app.use('/openai/*', requestLoggerMiddleware, authMiddleware, budgetGuardMiddleware);
-app.use('/anthropic/*', requestLoggerMiddleware, authMiddleware, budgetGuardMiddleware);
-app.use('/google/*', requestLoggerMiddleware, authMiddleware, budgetGuardMiddleware);
+// Auth + plan guard + budget guard for proxy routes
+app.use('/openai/*', requestLoggerMiddleware, authMiddleware, planGuardMiddleware, budgetGuardMiddleware);
+app.use('/anthropic/*', requestLoggerMiddleware, authMiddleware, planGuardMiddleware, budgetGuardMiddleware);
+app.use('/google/*', requestLoggerMiddleware, authMiddleware, planGuardMiddleware, budgetGuardMiddleware);
 
 // Provider routes
 app.route('/', openai);
@@ -47,8 +48,9 @@ app.notFound((c) => {
 
 // Error handler
 app.onError((err, c) => {
-  console.error('Unhandled error:', err);
-  return c.json({ error: 'Internal server error', message: err.message }, 500);
+  const requestId = c.get('requestId' as never) ?? 'unknown';
+  console.error(`[${requestId}] Unhandled error:`, err);
+  return c.json({ error: 'internal_error', message: err.message, request_id: requestId }, 500);
 });
 
 export default app;

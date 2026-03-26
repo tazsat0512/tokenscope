@@ -11,7 +11,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@tokenscope/shared': path.resolve(__dirname, '../shared/src'),
+      '@reivo/shared': path.resolve(__dirname, '../shared/src'),
     },
   },
 });

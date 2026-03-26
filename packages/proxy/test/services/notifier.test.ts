@@ -1,4 +1,4 @@
-import type { AlertPayload } from '@tokenscope/shared';
+import type { AlertPayload } from '@reivo/shared';
 import { describe, expect, it, vi } from 'vitest';
 import { sendSlackNotification } from '../../src/services/notifier.js';
 

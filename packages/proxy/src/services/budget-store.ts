@@ -1,4 +1,4 @@
-import { BUDGET_ALERT_THRESHOLDS, type BudgetStatus } from '@tokenscope/shared';
+import { BUDGET_ALERT_THRESHOLDS, type BudgetStatus } from '@reivo/shared';
 import type { BudgetState } from '../types/index.js';
 
 const BUDGET_KEY_PREFIX = 'budget:';

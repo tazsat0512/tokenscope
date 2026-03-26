@@ -1,6 +1,6 @@
 import { createClient } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
-import { calculateCost, PRICING_TABLE } from '@tokenscope/shared';
+import { calculateCost, PRICING_TABLE } from '@reivo/shared';
 
 // Schema inline to avoid cross-package import issues
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';

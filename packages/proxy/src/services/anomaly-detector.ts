@@ -1,4 +1,4 @@
-import { ANOMALY_Z_THRESHOLD, type AnomalyResult, EWMA_ALPHA } from '@tokenscope/shared';
+import { ANOMALY_Z_THRESHOLD, type AnomalyResult, EWMA_ALPHA } from '@reivo/shared';
 
 export interface EwmaState {
   ewmaValue: number;

@@ -10,7 +10,7 @@
     "skipLibCheck": true,
     "noEmit": true,
     "paths": {
-      "@tokenscope/shared": ["../shared/src"]
+      "@reivo/shared": ["../shared/src"]
     }
   },
   "include": ["src"],

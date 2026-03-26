@@ -1,4 +1,4 @@
-import type { Provider, TokenUsage } from '@tokenscope/shared';
+import type { Provider, TokenUsage } from '@reivo/shared';
 
 export interface StreamResult {
   readable: ReadableStream<Uint8Array>;

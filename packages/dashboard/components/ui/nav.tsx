@@ -5,6 +5,8 @@ import { Activity, BarChart3, Bot, CreditCard, RotateCcw, Settings } from 'lucid
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '../../lib/utils';
+import { Logo } from '../logo';
+import { ThemeToggle } from '../theme-toggle';
 
 const navItems = [
   { href: '/overview', label: 'Overview', icon: BarChart3 },
@@ -21,11 +23,8 @@ export function Sidebar() {
   return (
     <aside className="flex h-screen w-64 flex-col border-r bg-card">
       <div className="flex h-16 items-center border-b px-6">
-        <Link href="/overview" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-sm">TS</span>
-          </div>
-          <span className="font-semibold text-lg">TokenScope</span>
+        <Link href="/overview" className="flex items-center">
+          <Logo className="h-7" />
         </Link>
       </div>
 
@@ -47,8 +46,9 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div className="border-t p-4">
+      <div className="flex items-center justify-between border-t p-4">
         <UserButton />
+        <ThemeToggle />
       </div>
     </aside>
   );

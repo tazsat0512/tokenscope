@@ -9,7 +9,20 @@ export async function GET(req: NextRequest) {
   if ('error' in auth) return auth.error;
 
   const days = Number(req.nextUrl.searchParams.get('days') ?? '30');
+  const tz = req.nextUrl.searchParams.get('tz') ?? 'UTC';
   const since = Date.now() - days * 24 * 60 * 60 * 1000;
+
+  // Calculate UTC offset in seconds for the requested timezone
+  const tzOffsetSec = (() => {
+    try {
+      const now = new Date();
+      const utcStr = now.toLocaleString('en-US', { timeZone: 'UTC' });
+      const tzStr = now.toLocaleString('en-US', { timeZone: tz });
+      return (new Date(tzStr).getTime() - new Date(utcStr).getTime()) / 1000;
+    } catch {
+      return 0;
+    }
+  })();
 
   const [summary, dailyCosts, topModels] = await Promise.all([
     db
@@ -23,14 +36,14 @@ export async function GET(req: NextRequest) {
       .where(and(eq(requestLogs.userId, auth.userId), gte(requestLogs.timestamp, since))),
     db
       .select({
-        date: sql<string>`date(${requestLogs.timestamp} / 1000, 'unixepoch')`,
+        date: sql<string>`date(${requestLogs.timestamp} / 1000 + ${tzOffsetSec}, 'unixepoch')`,
         cost: sql<number>`sum(${requestLogs.costUsd})`,
         requests: sql<number>`count(*)`,
       })
       .from(requestLogs)
       .where(and(eq(requestLogs.userId, auth.userId), gte(requestLogs.timestamp, since)))
-      .groupBy(sql`date(${requestLogs.timestamp} / 1000, 'unixepoch')`)
-      .orderBy(sql`date(${requestLogs.timestamp} / 1000, 'unixepoch')`),
+      .groupBy(sql`date(${requestLogs.timestamp} / 1000 + ${tzOffsetSec}, 'unixepoch')`)
+      .orderBy(sql`date(${requestLogs.timestamp} / 1000 + ${tzOffsetSec}, 'unixepoch')`),
     db
       .select({
         model: requestLogs.model,

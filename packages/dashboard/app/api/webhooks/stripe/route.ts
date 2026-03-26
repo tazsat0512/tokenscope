@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { NextResponse } from 'next/server';
 import { users } from '../../../../db/schema';
 import { db } from '../../../../lib/db';
+import { syncUserToKV } from '../../../../lib/kv-sync';
 import { stripe } from '../../../../lib/stripe';
 
 export async function POST(request: Request) {
@@ -32,6 +33,9 @@ export async function POST(request: Request) {
             updatedAt: new Date(),
           })
           .where(eq(users.id, userId));
+        // Sync updated plan to proxy KV
+        const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+        if (user[0]) await syncUserToKV(user[0]).catch(console.error);
       }
       break;
     }
@@ -42,6 +46,9 @@ export async function POST(request: Request) {
         .update(users)
         .set({ plan: 'free', updatedAt: new Date() })
         .where(eq(users.stripeCustomerId, customerId));
+      // Sync downgrade to proxy KV
+      const downgraded = await db.select().from(users).where(eq(users.stripeCustomerId, customerId)).limit(1);
+      if (downgraded[0]) await syncUserToKV(downgraded[0]).catch(console.error);
       break;
     }
   }

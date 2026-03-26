@@ -1,4 +1,4 @@
-import { PROVIDER_URLS, type Provider, type TokenUsage } from '@tokenscope/shared';
+import { PROVIDER_URLS, type Provider, type TokenUsage } from '@reivo/shared';
 
 export const googleProvider: Provider = {
   name: 'google',

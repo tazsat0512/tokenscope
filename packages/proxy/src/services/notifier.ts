@@ -1,4 +1,4 @@
-import type { AlertPayload, AlertType } from '@tokenscope/shared';
+import type { AlertPayload, AlertType } from '@reivo/shared';
 
 export async function sendSlackNotification(
   webhookUrl: string,
@@ -45,7 +45,7 @@ function buildSlackBlocks(alert: AlertPayload) {
       elements: [
         {
           type: 'mrkdwn',
-          text: `TokenScope Alert • ${new Date(alert.timestamp).toISOString()}`,
+          text: `Reivo Alert • ${new Date(alert.timestamp).toISOString()}`,
         },
       ],
     },

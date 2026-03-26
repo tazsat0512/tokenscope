@@ -228,13 +228,13 @@ export default function SettingsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">Configure your TokenScope proxy</p>
+        <p className="text-muted-foreground">Configure your Reivo proxy</p>
       </div>
 
       {/* API Key */}
       <Card>
         <CardHeader>
-          <CardTitle>TokenScope API Key</CardTitle>
+          <CardTitle>Reivo API Key</CardTitle>
           <CardDescription>
             Use this key as your Authorization bearer token when calling the proxy
           </CardDescription>
@@ -261,7 +261,7 @@ export default function SettingsPage() {
               <div className="flex items-center gap-4">
                 <code className="rounded bg-muted px-3 py-2 font-mono text-sm">
                   {settings?.apiKeyHash
-                    ? `ts_****${settings.apiKeyHash.slice(-8)}`
+                    ? `rv_****${settings.apiKeyHash.slice(-8)}`
                     : 'No key generated'}
                 </code>
               </div>

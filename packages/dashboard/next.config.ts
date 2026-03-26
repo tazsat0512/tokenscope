@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@tokenscope/shared'],
+  transpilePackages: ['@reivo/shared'],
 };
 
 export default nextConfig;

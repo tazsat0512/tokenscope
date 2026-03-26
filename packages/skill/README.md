@@ -1,10 +1,10 @@
-# TokenScope Skill for OpenClaw
+# Reivo Skill for OpenClaw
 
 Track AI agent costs, set budget limits, and auto-detect runaway loops — directly from your OpenClaw agent.
 
 ## What It Does
 
-TokenScope adds cost awareness to your AI agent. Every API call is tracked, budgets are enforced, and runaway loops are automatically detected and stopped.
+Reivo adds cost awareness to your AI agent. Every API call is tracked, budgets are enforced, and runaway loops are automatically detected and stopped.
 
 | Feature | Description |
 |---------|-------------|
@@ -18,28 +18,28 @@ TokenScope adds cost awareness to your AI agent. Every API call is tracked, budg
 ### 1. Install from ClawHub
 
 ```bash
-npx clawhub@latest install tokenscope
+npx clawhub@latest install reivo
 ```
 
 ### 2. Get Your API Key
 
-1. Sign up at [tokenscope-amber.vercel.app](https://tokenscope-amber.vercel.app)
+1. Sign up at [app.reivo.dev](https://app.reivo.dev)
 2. Go to Settings → Generate API Key
 3. Set the environment variable:
 
 ```bash
-export TOKENSCOPE_API_KEY="ts_your_key_here"
+export REIVO_API_KEY="rv_your_key_here"
 ```
 
 ### 3. Route API Calls Through Proxy
 
-Update your OpenClaw provider config to use TokenScope proxy URLs:
+Update your OpenClaw provider config to use Reivo proxy URLs:
 
 | Provider | Proxy Base URL |
 |----------|---------------|
-| OpenAI | `https://tokenscope-proxy.tazoelab.workers.dev/openai/v1` |
-| Anthropic | `https://tokenscope-proxy.tazoelab.workers.dev/anthropic/v1` |
-| Google | `https://tokenscope-proxy.tazoelab.workers.dev/google/v1beta` |
+| OpenAI | `https://proxy.reivo.dev/openai/v1` |
+| Anthropic | `https://proxy.reivo.dev/anthropic/v1` |
+| Google | `https://proxy.reivo.dev/google/v1beta` |
 
 ### 4. Talk to Your Agent
 
@@ -53,11 +53,11 @@ Once installed, just ask:
 ## How It Works
 
 ```
-Your Agent → TokenScope Proxy → LLM Provider (OpenAI/Anthropic/Google)
+Your Agent → Reivo Proxy → LLM Provider (OpenAI/Anthropic/Google)
                   ↓
           Cost tracking, loop detection, budget enforcement
                   ↓
-          TokenScope Dashboard (detailed analytics)
+          Reivo Dashboard (detailed analytics)
 ```
 
 The proxy is transparent — your agent works exactly the same, but every request is monitored for cost and anomalies.
@@ -79,6 +79,6 @@ The skill itself is **completely free**. The dashboard offers extended history a
 
 ## Links
 
-- **Dashboard:** [tokenscope-amber.vercel.app](https://tokenscope-amber.vercel.app)
-- **GitHub:** [github.com/tazsat0512/tokenscope](https://github.com/tazsat0512/tokenscope)
+- **Dashboard:** [app.reivo.dev](https://app.reivo.dev)
+- **GitHub:** [github.com/tazsat0512/reivo](https://github.com/tazsat0512/reivo)
 - **Docs:** See `references/` directory

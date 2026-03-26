@@ -1,4 +1,5 @@
 import { auth } from '@clerk/nextjs/server';
+import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -11,11 +12,23 @@ export default async function LandingPage() {
       {/* Header */}
       <header className="border-b">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <span className="text-sm font-bold text-primary-foreground">TS</span>
-            </div>
-            <span className="text-lg font-semibold">TokenScope</span>
+          <div className="flex items-center">
+            <Image
+              src="/logo-light.png"
+              alt="Reivo"
+              width={400}
+              height={100}
+              className="h-7 w-auto dark:hidden"
+              priority
+            />
+            <Image
+              src="/logo-dark.png"
+              alt="Reivo"
+              width={400}
+              height={100}
+              className="hidden h-7 w-auto dark:block"
+              priority
+            />
           </div>
           <nav className="hidden items-center gap-6 text-sm md:flex">
             <a href="#how-it-works" className="text-muted-foreground hover:text-foreground">
@@ -57,7 +70,7 @@ export default async function LandingPage() {
             <span className="text-primary">Stop it.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            TokenScope is a transparent proxy that tracks AI agent costs in real-time, enforces
+            Reivo is a transparent proxy that tracks AI agent costs in real-time, enforces
             budget limits, and auto-stops runaway loops. Works with OpenAI, Anthropic, and Google.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -81,7 +94,7 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-5xl px-6">
             <h2 className="text-center text-3xl font-bold">One line change. Full visibility.</h2>
             <p className="mt-4 text-center text-muted-foreground">
-              Replace your provider&apos;s base URL with TokenScope&apos;s proxy. That&apos;s it.
+              Replace your provider&apos;s base URL with Reivo&apos;s proxy. That&apos;s it.
             </p>
 
             <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -91,7 +104,7 @@ export default async function LandingPage() {
                 </div>
                 <h3 className="mt-4 font-semibold">Sign up & get API key</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Create an account and generate your <code className="rounded bg-muted px-1">ts_</code> API key in Settings.
+                  Create an account and generate your <code className="rounded bg-muted px-1">rv_</code> API key in Settings.
                 </p>
               </div>
               <div className="rounded-lg border bg-card p-6 text-center">
@@ -100,7 +113,7 @@ export default async function LandingPage() {
                 </div>
                 <h3 className="mt-4 font-semibold">Change your base URL</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Point your SDK to the TokenScope proxy. Your code works exactly the same.
+                  Point your SDK to the Reivo proxy. Your code works exactly the same.
                 </p>
               </div>
               <div className="rounded-lg border bg-card p-6 text-center">
@@ -123,8 +136,8 @@ export default async function LandingPage() {
                   {`from openai import OpenAI
 
 client = OpenAI(
-    base_url="https://tokenscope-proxy.tazoelab.workers.dev/openai/v1",
-    api_key="ts_your_tokenscope_key",
+    base_url="https://proxy.reivo.dev/openai/v1",
+    api_key="rv_your_reivo_key",
     default_headers={
         "X-Session-Id": "my-session",
         "X-Agent-Id": "my-agent"
@@ -141,7 +154,7 @@ client = OpenAI(
           <div className="mx-auto max-w-5xl px-6">
             <h2 className="text-center text-3xl font-bold">Observe + Defend</h2>
             <p className="mt-4 text-center text-muted-foreground">
-              Unlike tools that only log, TokenScope actively protects your budget.
+              Unlike tools that only log, Reivo actively protects your budget.
             </p>
 
             <div className="mt-12 grid gap-8 md:grid-cols-3">
@@ -194,9 +207,9 @@ client = OpenAI(
               <div className="mb-4 inline-block rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
                 Free OpenClaw Skill
               </div>
-              <h2 className="text-3xl font-bold">Use TokenScope from OpenClaw</h2>
+              <h2 className="text-3xl font-bold">Use Reivo from OpenClaw</h2>
               <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-                Install the TokenScope skill and manage costs directly from your OpenClaw agent.
+                Install the Reivo skill and manage costs directly from your OpenClaw agent.
                 No dashboard needed for basic usage.
               </p>
             </div>
@@ -208,7 +221,7 @@ client = OpenAI(
                 <div className="mt-4 overflow-hidden rounded-lg border bg-background">
                   <div className="border-b px-4 py-2 text-xs text-muted-foreground">Terminal</div>
                   <pre className="p-4 text-sm">
-                    <code>{`npx clawhub@latest install tokenscope`}</code>
+                    <code>{`npx clawhub@latest install reivo`}</code>
                   </pre>
                 </div>
                 <p className="mt-4 text-sm text-muted-foreground">
@@ -216,7 +229,7 @@ client = OpenAI(
                 </p>
                 <div className="mt-2 overflow-hidden rounded-lg border bg-background">
                   <pre className="p-4 text-sm">
-                    <code>{`export TOKENSCOPE_API_KEY="ts_your_key"`}</code>
+                    <code>{`export REIVO_API_KEY="rv_your_key"`}</code>
                   </pre>
                 </div>
               </div>
@@ -256,11 +269,11 @@ client = OpenAI(
     │
     │  API calls routed through proxy
     ▼
-TokenScope Proxy  ──────►  LLM Provider (OpenAI / Anthropic / Google)
+Reivo Proxy  ──────►  LLM Provider (OpenAI / Anthropic / Google)
     │
     │  telemetry: cost, tokens, loops
     ▼
-TokenScope Dashboard (optional, for detailed analytics)`}
+Reivo Dashboard (optional, for detailed analytics)`}
                 </code>
               </pre>
             </div>
@@ -270,14 +283,14 @@ TokenScope Dashboard (optional, for detailed analytics)`}
         {/* Comparison */}
         <section className="py-20">
           <div className="mx-auto max-w-4xl px-6">
-            <h2 className="text-center text-3xl font-bold">Why TokenScope?</h2>
+            <h2 className="text-center text-3xl font-bold">Why Reivo?</h2>
             <div className="mt-12 overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b">
                     <th className="px-4 py-3 text-left font-medium" />
                     <th className="px-4 py-3 text-center font-medium">Helicone</th>
-                    <th className="px-4 py-3 text-center font-medium text-primary">TokenScope</th>
+                    <th className="px-4 py-3 text-center font-medium text-primary">Reivo</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -501,7 +514,7 @@ TokenScope Dashboard (optional, for detailed analytics)`}
                 Get Started Free
               </Link>
               <a
-                href="https://github.com/tazsat0512/tokenscope"
+                href="https://github.com/tazsat0512/reivo"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-md border px-8 py-3 text-sm font-medium hover:bg-accent"
@@ -516,10 +529,10 @@ TokenScope Dashboard (optional, for detailed analytics)`}
       {/* Footer */}
       <footer className="border-t py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-muted-foreground sm:flex-row">
-          <p>&copy; {new Date().getFullYear()} TokenScope. The AI proxy with built-in guardrails.</p>
+          <p>&copy; {new Date().getFullYear()} Reivo. The AI proxy with built-in guardrails.</p>
           <div className="flex gap-6">
             <a
-              href="https://github.com/tazsat0512/tokenscope"
+              href="https://github.com/tazsat0512/reivo"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-foreground"
