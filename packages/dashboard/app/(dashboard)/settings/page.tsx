@@ -86,16 +86,15 @@ function ProviderKeySection({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <Label className="text-sm font-semibold capitalize">{provider}</Label>
-        <span className="text-xs text-muted-foreground">{keys.length} key{keys.length !== 1 ? 's' : ''}</span>
+        <span className="text-xs text-muted-foreground">
+          {keys.length} key{keys.length !== 1 ? 's' : ''}
+        </span>
       </div>
 
       {keys.length > 0 && (
         <div className="space-y-2">
           {keys.map((k) => (
-            <div
-              key={k.id}
-              className="flex items-center gap-3 rounded-md border px-3 py-2"
-            >
+            <div key={k.id} className="flex items-center gap-3 rounded-md border px-3 py-2">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">{k.label}</span>
@@ -291,11 +290,7 @@ export default function SettingsPage() {
                       ? 'This will invalidate your current key. Continue?'
                       : 'Generate a new API key?'}
                   </p>
-                  <Button
-                    onClick={handleGenerateKey}
-                    disabled={generateApiKey.isPending}
-                    size="sm"
-                  >
+                  <Button onClick={handleGenerateKey} disabled={generateApiKey.isPending} size="sm">
                     {generateApiKey.isPending ? 'Generating...' : 'Confirm'}
                   </Button>
                   <Button variant="outline" size="sm" onClick={() => setShowConfirm(false)}>
@@ -346,7 +341,9 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between">
             <div>
               <Label>Enable Smart Routing</Label>
-              <p className="text-sm text-muted-foreground">Route simple requests to cheaper models automatically</p>
+              <p className="text-sm text-muted-foreground">
+                Route simple requests to cheaper models automatically
+              </p>
             </div>
             <button
               type="button"
@@ -371,12 +368,18 @@ export default function SettingsPage() {
               <Label>Routing Mode</Label>
               <select
                 value={settings?.routingMode ?? 'auto'}
-                onChange={(e) => updateSettings.mutate({ routingMode: e.target.value as 'auto' | 'conservative' | 'aggressive' | 'off' })}
+                onChange={(e) =>
+                  updateSettings.mutate({
+                    routingMode: e.target.value as 'auto' | 'conservative' | 'aggressive' | 'off',
+                  })
+                }
                 className="mt-1 block w-full max-w-xs rounded-md border bg-background px-3 py-2 text-sm"
               >
                 <option value="auto">Auto (Conservative)</option>
                 <option value="conservative">Conservative - downgrade only when confident</option>
-                <option value="aggressive">Aggressive - downgrade unless complexity detected</option>
+                <option value="aggressive">
+                  Aggressive - downgrade unless complexity detected
+                </option>
                 <option value="off">Off - passthrough only</option>
               </select>
             </div>
@@ -433,7 +436,8 @@ export default function SettingsPage() {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            <strong>Block</strong> = reject requests (429). <strong>Alert</strong> = notify via Slack but continue. <strong>Downgrade</strong> = auto-switch to cheaper models.
+            <strong>Block</strong> = reject requests (429). <strong>Alert</strong> = notify via
+            Slack but continue. <strong>Downgrade</strong> = auto-switch to cheaper models.
           </p>
         </CardContent>
       </Card>
@@ -443,26 +447,31 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle>Agent Budgets</CardTitle>
           <CardDescription>
-            Set individual spending limits per agent. Overrides the global budget for matching agents.
+            Set individual spending limits per agent. Overrides the global budget for matching
+            agents.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {budgetPoliciesData?.filter((p) => p.agentId).map((policy) => (
-            <div key={policy.id} className="flex items-center gap-3 rounded-md border px-3 py-2">
-              <code className="text-sm font-medium">{policy.agentId}</code>
-              <span className="text-sm text-muted-foreground">${policy.limitUsd.toFixed(2)}</span>
-              <span className="rounded-full bg-muted px-2 py-0.5 text-xs capitalize">{policy.action}</span>
-              <div className="flex-1" />
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => deletePolicy.mutate({ id: policy.id })}
-                className="text-xs text-destructive hover:text-destructive"
-              >
-                Remove
-              </Button>
-            </div>
-          ))}
+          {budgetPoliciesData
+            ?.filter((p) => p.agentId)
+            .map((policy) => (
+              <div key={policy.id} className="flex items-center gap-3 rounded-md border px-3 py-2">
+                <code className="text-sm font-medium">{policy.agentId}</code>
+                <span className="text-sm text-muted-foreground">${policy.limitUsd.toFixed(2)}</span>
+                <span className="rounded-full bg-muted px-2 py-0.5 text-xs capitalize">
+                  {policy.action}
+                </span>
+                <div className="flex-1" />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => deletePolicy.mutate({ id: policy.id })}
+                  className="text-xs text-destructive hover:text-destructive"
+                >
+                  Remove
+                </Button>
+              </div>
+            ))}
           <div className="flex items-center gap-2">
             <Input
               placeholder="Agent ID"

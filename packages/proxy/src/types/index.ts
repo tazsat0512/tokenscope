@@ -1,7 +1,7 @@
 export type BudgetAction = 'block' | 'alert' | 'downgrade';
 
 export interface BudgetPolicy {
-  agentId: string | null;  // null = global
+  agentId: string | null; // null = global
   limitUsd: number;
   action: BudgetAction;
 }

@@ -15,7 +15,7 @@ const MODEL_DOWNGRADE_MAP: Record<string, Record<string, string>> = {
   openai: {
     'gpt-4o': 'gpt-4o-mini',
     'gpt-4-turbo': 'gpt-4o-mini',
-    'o3': 'o3-mini',
+    o3: 'o3-mini',
   },
   anthropic: {
     'claude-sonnet-4-20250514': 'claude-haiku-4-5-20251001',
@@ -49,7 +49,8 @@ function analyzeComplexity(parsedBody: unknown): ComplexitySignals {
   }
 
   // tools or tool_choice present -> complex
-  const hasTools = Array.isArray(body.tools) && body.tools.length > 0 || body.tool_choice !== undefined;
+  const hasTools =
+    (Array.isArray(body.tools) && body.tools.length > 0) || body.tool_choice !== undefined;
 
   // response_format with json_schema -> complex
   const responseFormat = body.response_format as Record<string, unknown> | undefined;
@@ -69,7 +70,8 @@ function analyzeComplexity(parsedBody: unknown): ComplexitySignals {
 
   // temperature < 0.3 or not set -> can downgrade (factual = likely simple)
   const temperature = body.temperature as number | undefined;
-  const lowTemperature = temperature === undefined || (typeof temperature === 'number' && temperature < 0.3);
+  const lowTemperature =
+    temperature === undefined || (typeof temperature === 'number' && temperature < 0.3);
 
   // system prompt > 2000 chars -> complex
   let systemPromptLength = 0;
@@ -87,7 +89,14 @@ function analyzeComplexity(parsedBody: unknown): ComplexitySignals {
   }
   const longSystemPrompt = systemPromptLength > 2000;
 
-  return { hasTools, hasJsonSchema, longConversation, shortOutput, lowTemperature, longSystemPrompt };
+  return {
+    hasTools,
+    hasJsonSchema,
+    longConversation,
+    shortOutput,
+    lowTemperature,
+    longSystemPrompt,
+  };
 }
 
 /**
@@ -143,7 +152,11 @@ export function routeModel(
   user: UserRecord,
   forceAggressive?: boolean,
 ): RoutingDecision {
-  const passthrough: RoutingDecision = { originalModel: model, routedModel: model, reason: 'passthrough' };
+  const passthrough: RoutingDecision = {
+    originalModel: model,
+    routedModel: model,
+    reason: 'passthrough',
+  };
 
   // When budget-driven downgrade is active, force aggressive routing even if
   // the user hasn't explicitly enabled routing.

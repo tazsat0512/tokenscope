@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { users } from '../db/schema';
 import { sha256 } from './crypto';
 import { db } from './db';

@@ -68,9 +68,9 @@ export default async function LandingPage() {
             Same output. <span className="text-primary">Half the cost.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Reivo routes every API call to the cheapest model that delivers the same quality.
-            One line change. Savings start immediately.
-            Budget protection and loop detection included &mdash; free.
+            Reivo routes every API call to the cheapest model that delivers the same quality. One
+            line change. Savings start immediately. Budget protection and loop detection included
+            &mdash; free.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
@@ -117,7 +117,9 @@ export default async function LandingPage() {
         {/* How It Works */}
         <section id="how-it-works" className="py-20">
           <div className="mx-auto max-w-5xl px-6">
-            <h2 className="text-center text-3xl font-bold">One line change. Savings start immediately.</h2>
+            <h2 className="text-center text-3xl font-bold">
+              One line change. Savings start immediately.
+            </h2>
             <p className="mt-4 text-center text-muted-foreground">
               Replace your provider&apos;s base URL with Reivo&apos;s proxy. That&apos;s it.
             </p>
@@ -129,7 +131,8 @@ export default async function LandingPage() {
                 </div>
                 <h3 className="mt-4 font-semibold">Sign up & get API key</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Create an account and generate your <code className="rounded bg-muted px-1">rv_</code> API key in Settings.
+                  Create an account and generate your{' '}
+                  <code className="rounded bg-muted px-1">rv_</code> API key in Settings.
                 </p>
               </div>
               <div className="rounded-lg border bg-card p-6 text-center">
@@ -147,8 +150,8 @@ export default async function LandingPage() {
                 </div>
                 <h3 className="mt-4 font-semibold">Save automatically</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Reivo analyzes each request and routes it to the optimal model.
-                  Your dashboard shows exactly how much you saved.
+                  Reivo analyzes each request and routes it to the optimal model. Your dashboard
+                  shows exactly how much you saved.
                 </p>
               </div>
             </div>
@@ -187,17 +190,29 @@ client = OpenAI(
               <div className="rounded-lg border-2 border-primary p-6">
                 <div className="flex items-center gap-2">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                    <svg className="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    <svg
+                      className="h-5 w-5 text-primary"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
                     </svg>
                   </div>
-                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">Core</span>
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                    Core
+                  </span>
                 </div>
                 <h3 className="mt-4 text-lg font-semibold">Smart Model Routing</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Automatically routes each request to the optimal model based on task complexity.
-                  High-precision requests stay on the full model.
-                  Lightweight tasks go to cost-efficient alternatives. Real-time analysis, zero latency added.
+                  High-precision requests stay on the full model. Lightweight tasks go to
+                  cost-efficient alternatives. Real-time analysis, zero latency added.
                 </p>
               </div>
 
@@ -205,24 +220,46 @@ client = OpenAI(
               <div className="rounded-lg border-2 border-primary p-6">
                 <div className="flex items-center gap-2">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                    <svg className="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    <svg
+                      className="h-5 w-5 text-primary"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                      />
                     </svg>
                   </div>
-                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">Core</span>
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                    Core
+                  </span>
                 </div>
                 <h3 className="mt-4 text-lg font-semibold">Quality Guarantee</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  If a routed response doesn&apos;t meet quality thresholds,
-                  Reivo automatically re-sends to the full model. You never see a bad response.
+                  If a routed response doesn&apos;t meet quality thresholds, Reivo automatically
+                  re-sends to the full model. You never see a bad response.
                 </p>
               </div>
 
               {/* Cost Visibility */}
               <div className="rounded-lg border p-6">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                  <svg className="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  <svg
+                    className="h-5 w-5 text-primary"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
                   </svg>
                 </div>
                 <h3 className="mt-4 text-lg font-semibold">Cost Visibility</h3>
@@ -235,8 +272,18 @@ client = OpenAI(
               {/* Budget + Loop combined */}
               <div className="rounded-lg border p-6">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                  <svg className="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  <svg
+                    className="h-5 w-5 text-primary"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
                   </svg>
                 </div>
                 <h3 className="mt-4 text-lg font-semibold">Budget Guardrails & Loop Detection</h3>
@@ -254,15 +301,26 @@ client = OpenAI(
           <div className="mx-auto max-w-5xl px-6">
             <h2 className="text-center text-3xl font-bold">How Smart Routing Works</h2>
             <p className="mx-auto mt-4 max-w-2xl text-center text-muted-foreground">
-              Reivo analyzes every request in real-time and selects the optimal model based on task complexity.
-              Complex tasks stay on the full model. Simple ones get routed to a cheaper alternative.
+              Reivo analyzes every request in real-time and selects the optimal model based on task
+              complexity. Complex tasks stay on the full model. Simple ones get routed to a cheaper
+              alternative.
             </p>
 
             <div className="mt-12 grid gap-6 md:grid-cols-3">
               <div className="rounded-lg border bg-card p-6 text-center">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-xl">
-                  <svg className="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  <svg
+                    className="h-6 w-6 text-primary"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
                   </svg>
                 </div>
                 <h3 className="mt-4 font-semibold">Request Analysis</h3>
@@ -272,31 +330,53 @@ client = OpenAI(
               </div>
               <div className="rounded-lg border bg-card p-6 text-center">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-xl">
-                  <svg className="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  <svg
+                    className="h-6 w-6 text-primary"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                    />
                   </svg>
                 </div>
                 <h3 className="mt-4 font-semibold">Auto Routing</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Keeps the full model for high-precision tasks. Routes lightweight tasks to cost-optimal models automatically.
+                  Keeps the full model for high-precision tasks. Routes lightweight tasks to
+                  cost-optimal models automatically.
                 </p>
               </div>
               <div className="rounded-lg border bg-card p-6 text-center">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-xl">
-                  <svg className="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <svg
+                    className="h-6 w-6 text-primary"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
                   </svg>
                 </div>
                 <h3 className="mt-4 font-semibold">Full Audit Log</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  See exactly which model handled each request and why. Every routing decision is logged in your dashboard.
+                  See exactly which model handled each request and why. Every routing decision is
+                  logged in your dashboard.
                 </p>
               </div>
             </div>
 
             <p className="mt-8 text-center text-sm text-muted-foreground">
-              Switch between <strong>conservative</strong>, <strong>aggressive</strong>, or <strong>off</strong> modes anytime in Settings.
-              You&apos;re always in control.
+              Switch between <strong>conservative</strong>, <strong>aggressive</strong>, or{' '}
+              <strong>off</strong> modes anytime in Settings. You&apos;re always in control.
             </p>
           </div>
         </section>
@@ -308,11 +388,12 @@ client = OpenAI(
               <div className="mb-4 inline-block rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
                 Free OpenClaw Skill
               </div>
-              <h2 className="text-3xl font-bold">$100/month used to buy 15 days. Now it buys 30.</h2>
+              <h2 className="text-3xl font-bold">
+                $100/month used to buy 15 days. Now it buys 30.
+              </h2>
               <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-                Your OpenClaw hits the monthly budget cap mid-month.
-                Reivo routes 70% of requests to cheaper models automatically.
-                Same quality. Full month of uptime.
+                Your OpenClaw hits the monthly budget cap mid-month. Reivo routes 70% of requests to
+                cheaper models automatically. Same quality. Full month of uptime.
               </p>
             </div>
 
@@ -326,9 +407,7 @@ client = OpenAI(
                     <code>{`npx clawhub@latest install reivo`}</code>
                   </pre>
                 </div>
-                <p className="mt-4 text-sm text-muted-foreground">
-                  Then set your API key:
-                </p>
+                <p className="mt-4 text-sm text-muted-foreground">Then set your API key:</p>
                 <div className="mt-2 overflow-hidden rounded-lg border bg-background">
                   <pre className="p-4 text-sm">
                     <code>{`export REIVO_API_KEY="rv_your_key"`}</code>
@@ -400,17 +479,25 @@ LLM Provider (OpenAI / Anthropic / Google)`}
                   </tr>
                 </thead>
                 <tbody>
-                  {([
-                    ['Proxy-based (1-line setup)', true, false, false, true],
-                    ['Cost tracking & analytics', true, true, false, true],
-                    ['Budget enforcement', false, false, true, true],
-                    ['Loop detection & auto-stop', false, false, 'partial', true],
-                    ['Smart model routing', false, false, false, 'star'],
-                    ['Quality verification', false, false, false, 'star'],
-                    ['Auto cost reduction', false, false, false, '40-60%'],
-                    ['OpenClaw skill', false, false, false, true],
-                    ['Open source', true, true, true, true],
-                  ] as [string, boolean | string, boolean | string, boolean | string, boolean | string][]).map(([feature, h, l, a, r]) => (
+                  {(
+                    [
+                      ['Proxy-based (1-line setup)', true, false, false, true],
+                      ['Cost tracking & analytics', true, true, false, true],
+                      ['Budget enforcement', false, false, true, true],
+                      ['Loop detection & auto-stop', false, false, 'partial', true],
+                      ['Smart model routing', false, false, false, 'star'],
+                      ['Quality verification', false, false, false, 'star'],
+                      ['Auto cost reduction', false, false, false, '40-60%'],
+                      ['OpenClaw skill', false, false, false, true],
+                      ['Open source', true, true, true, true],
+                    ] as [
+                      string,
+                      boolean | string,
+                      boolean | string,
+                      boolean | string,
+                      boolean | string,
+                    ][]
+                  ).map(([feature, h, l, a, r]) => (
                     <tr key={feature} className="border-b">
                       <td className="px-4 py-3">{feature}</td>
                       {[h, l, a].map((val, i) => (
@@ -499,7 +586,8 @@ LLM Provider (OpenAI / Anthropic / Google)`}
                     <span className="text-green-600">&#10003;</span> Everything in Free
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="font-bold text-primary">&#9733;</span> Smart Model Routing (auto)
+                    <span className="font-bold text-primary">&#9733;</span> Smart Model Routing
+                    (auto)
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="font-bold text-primary">&#9733;</span> Quality Verification
@@ -524,7 +612,9 @@ LLM Provider (OpenAI / Anthropic / Google)`}
 
               <div className="rounded-lg border bg-card p-6">
                 <h3 className="text-lg font-semibold">Team</h3>
-                <p className="mt-1 text-sm text-muted-foreground">For organizations running multiple agents</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  For organizations running multiple agents
+                </p>
                 <p className="mt-4 text-3xl font-bold">
                   $199<span className="text-base font-normal text-muted-foreground">/mo</span>
                 </p>
@@ -647,7 +737,10 @@ LLM Provider (OpenAI / Anthropic / Google)`}
       {/* Footer */}
       <footer className="border-t py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-muted-foreground sm:flex-row">
-          <p>&copy; {new Date().getFullYear()} Reivo. The smart proxy that cuts your AI costs in half.</p>
+          <p>
+            &copy; {new Date().getFullYear()} Reivo. The smart proxy that cuts your AI costs in
+            half.
+          </p>
           <div className="flex gap-6">
             <a
               href="https://github.com/tazsat0512/reivo"

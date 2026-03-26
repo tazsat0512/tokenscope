@@ -1,47 +1,9 @@
 ---
 name: reivo
-description: >
-  Proxy for LLM APIs that reduces costs 40-60% by routing each request to the cheapest model
-  that maintains output quality. Tracks spending per session and agent, enforces budget limits,
-  detects agent loops, and auto-stops runaway agents. Supports OpenAI, Anthropic, and Google.
-  Install by changing the base URL — no SDK or code changes required.
-triggers:
-  - cost too high
-  - spending too much
-  - budget limit
-  - save money on API
-  - reduce token cost
-  - agent loop
-  - runaway agent
-  - model routing
-  - cheaper model
-  - optimize cost
-  - API bill
-  - how much am I spending
-  - which model should I use
-  - GPT-4o too expensive
-  - Claude too expensive
-  - switch to cheaper model
-  - cost per session
-  - monthly budget
-  - token usage
-  - overspending
-categories:
-  - cost-optimization
-  - budget-management
-  - model-routing
-  - agent-safety
+description: LLM proxy that cuts API costs 40-60% via smart model routing. Tracks spending, enforces budgets, detects loops, auto-stops runaway agents. Supports OpenAI, Anthropic, Google. One base URL change to install.
 homepage: https://reivo.dev
-requirements:
-  - Reivo account (free at reivo.dev)
-  - At least one LLM provider API key (OpenAI, Anthropic, or Google)
-tags:
-  - llm
-  - proxy
-  - cost
-  - routing
-  - budget
-  - safety
+user-invocable: true
+metadata: {"openclaw": {"emoji": "🦞", "homepage": "https://reivo.dev", "requires": {"env": ["REIVO_API_KEY"]}, "envVars": [{"name": "REIVO_API_KEY", "required": true, "description": "Reivo API key (starts with rv_). Get at reivo.dev/settings"}], "author": "tazsat0512", "links": {"homepage": "https://reivo.dev", "repository": "https://github.com/tazsat0512/reivo", "documentation": "https://reivo.dev/llms-full.txt"}}}
 ---
 
 # Reivo — LLM Cost Optimizer

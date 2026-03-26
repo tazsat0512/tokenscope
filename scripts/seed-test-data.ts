@@ -1,6 +1,6 @@
 import { createClient } from '@libsql/client';
-import { drizzle } from 'drizzle-orm/libsql';
 import { calculateCost, PRICING_TABLE } from '@reivo/shared';
+import { drizzle } from 'drizzle-orm/libsql';
 
 // Schema inline to avoid cross-package import issues
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
@@ -78,14 +78,17 @@ function randomElement<T>(arr: T[]): T {
 async function main() {
   // 1. Create user
   const apiKeyHash = crypto.randomUUID().replace(/-/g, '');
-  await db.insert(users).values({
-    id: USER_ID,
-    email: USER_EMAIL,
-    apiKeyHash,
-    plan: 'free',
-    requestCount: 0,
-    requestCountResetAt: Date.now(),
-  }).onConflictDoNothing();
+  await db
+    .insert(users)
+    .values({
+      id: USER_ID,
+      email: USER_EMAIL,
+      apiKeyHash,
+      plan: 'free',
+      requestCount: 0,
+      requestCountResetAt: Date.now(),
+    })
+    .onConflictDoNothing();
 
   console.log(`User created/exists: ${USER_ID}`);
 

@@ -131,7 +131,8 @@ export default function OverviewPage() {
                 <p className="text-2xl font-bold">
                   {routingStats.totalRequests > 0
                     ? Math.round((routingStats.totalRouted / routingStats.totalRequests) * 100)
-                    : 0}%
+                    : 0}
+                  %
                 </p>
               </div>
               <div>
@@ -141,7 +142,9 @@ export default function OverviewPage() {
                     <div key={d.id} className="flex items-center gap-2 text-xs">
                       <code className="rounded bg-muted px-1">{d.model}</code>
                       <span className="text-muted-foreground">&rarr;</span>
-                      <code className="rounded bg-primary/10 px-1 text-primary">{d.routedModel}</code>
+                      <code className="rounded bg-primary/10 px-1 text-primary">
+                        {d.routedModel}
+                      </code>
                       <span className="text-muted-foreground">{d.routingReason}</span>
                     </div>
                   ))}

@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  FREE_PLAN_REQUEST_LIMIT,
-  PRO_PLAN_PRICE_USD,
-  PRO_PLAN_REQUEST_LIMIT,
-} from '@reivo/shared';
+import { FREE_PLAN_REQUEST_LIMIT, PRO_PLAN_PRICE_USD, PRO_PLAN_REQUEST_LIMIT } from '@reivo/shared';
 import { Button } from '../../../components/ui/button';
 import {
   Card,

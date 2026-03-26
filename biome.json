@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.9/schema.json",
   "linter": {
     "enabled": true,
     "rules": {
@@ -9,10 +9,19 @@
         "noUnusedImports": "warn"
       },
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "warn"
       },
       "style": {
         "noNonNullAssertion": "off"
+      },
+      "complexity": {
+        "noUselessTernary": "warn"
+      },
+      "a11y": {
+        "noSvgWithoutTitle": "warn",
+        "useButtonType": "warn",
+        "noLabelWithoutControl": "warn"
       }
     }
   },
@@ -30,6 +39,16 @@
     }
   },
   "files": {
-    "includes": ["packages/**/*.ts", "packages/**/*.tsx", "scripts/**/*.ts"]
+    "includes": [
+      "packages/proxy/**/*.ts",
+      "packages/shared/**/*.ts",
+      "packages/dashboard/app/**/*.tsx",
+      "packages/dashboard/app/**/*.ts",
+      "packages/dashboard/lib/**/*.ts",
+      "packages/dashboard/components/**/*.tsx",
+      "packages/dashboard/db/**/*.ts",
+      "packages/dashboard/middleware.ts",
+      "scripts/**/*.ts"
+    ]
   }
 }

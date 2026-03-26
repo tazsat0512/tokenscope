@@ -4,7 +4,13 @@ import type { Env, UserRecord } from '../types/index.js';
 
 type HonoEnv = {
   Bindings: Env;
-  Variables: { user: UserRecord; requestId: string; startTime: number; budgetAlert?: boolean; forceAggressiveRouting?: boolean };
+  Variables: {
+    user: UserRecord;
+    requestId: string;
+    startTime: number;
+    budgetAlert?: boolean;
+    forceAggressiveRouting?: boolean;
+  };
 };
 
 export const requestLoggerMiddleware = createMiddleware<HonoEnv>(async (c, next) => {

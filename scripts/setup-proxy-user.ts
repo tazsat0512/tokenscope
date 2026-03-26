@@ -1,8 +1,8 @@
-import { createClient } from '@libsql/client';
-import { drizzle } from 'drizzle-orm/libsql';
-import { eq } from 'drizzle-orm';
-import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import { createHash } from 'node:crypto';
+import { createClient } from '@libsql/client';
+import { eq } from 'drizzle-orm';
+import { drizzle } from 'drizzle-orm/libsql';
+import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 const users = sqliteTable('users', {
   id: text('id').primaryKey(),
@@ -15,8 +15,12 @@ const users = sqliteTable('users', {
   stripeCustomerId: text('stripe_customer_id'),
   requestCount: integer('request_count').notNull().default(0),
   requestCountResetAt: integer('request_count_reset_at').notNull().default(0),
-  createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
-  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()),
+  createdAt: integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
+  updatedAt: integer('updated_at', { mode: 'timestamp' })
+    .notNull()
+    .$defaultFn(() => new Date()),
 });
 
 const USER_ID = process.env.CLERK_USER_ID;

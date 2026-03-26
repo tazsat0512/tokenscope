@@ -47,7 +47,11 @@ export async function POST(request: Request) {
         .set({ plan: 'free', updatedAt: new Date() })
         .where(eq(users.stripeCustomerId, customerId));
       // Sync downgrade to proxy KV
-      const downgraded = await db.select().from(users).where(eq(users.stripeCustomerId, customerId)).limit(1);
+      const downgraded = await db
+        .select()
+        .from(users)
+        .where(eq(users.stripeCustomerId, customerId))
+        .limit(1);
       if (downgraded[0]) await syncUserToKV(downgraded[0]).catch(console.error);
       break;
     }

@@ -8,7 +8,11 @@ async function ensureUser() {
   const { userId } = await auth();
   if (!userId) return;
 
-  const existing = await db.select({ id: users.id }).from(users).where(eq(users.id, userId)).limit(1);
+  const existing = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
   if (existing.length > 0) return;
 
   const clerkUser = await currentUser();

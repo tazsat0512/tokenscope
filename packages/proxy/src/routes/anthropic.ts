@@ -2,16 +2,22 @@ import { HEADER_AGENT_ID } from '@reivo/shared';
 import { Hono } from 'hono';
 import { runAsyncPipeline } from '../async/pipeline.js';
 import { anthropicProvider } from '../providers/anthropic.js';
+import { routeModel } from '../services/router.js';
 import type { Env, UserRecord } from '../types/index.js';
 import { fetchUpstream } from '../utils/error.js';
 import { resolveSessionId } from '../utils/session.js';
 import { createStreamPassthrough } from '../utils/streaming.js';
-import { routeModel } from '../services/router.js';
 import { extractRequestTelemetry, extractResponseTelemetry } from '../utils/telemetry.js';
 
 type HonoEnv = {
   Bindings: Env;
-  Variables: { user: UserRecord; requestId: string; startTime: number; budgetAlert?: boolean; forceAggressiveRouting?: boolean };
+  Variables: {
+    user: UserRecord;
+    requestId: string;
+    startTime: number;
+    budgetAlert?: boolean;
+    forceAggressiveRouting?: boolean;
+  };
 };
 
 const anthropic = new Hono<HonoEnv>();
@@ -25,7 +31,14 @@ anthropic.all('/anthropic/*', async (c) => {
 
   const providerKey = user.providerKeys.anthropic;
   if (!providerKey) {
-    return c.json({ error: 'no_provider_key', message: 'No Anthropic API key configured', request_id: requestId }, 400);
+    return c.json(
+      {
+        error: 'no_provider_key',
+        message: 'No Anthropic API key configured',
+        request_id: requestId,
+      },
+      400,
+    );
   }
 
   const upstreamUrl = anthropicProvider.buildUpstreamUrl(c.req.path);
@@ -87,9 +100,7 @@ anthropic.all('/anthropic/*', async (c) => {
     );
 
     c.executionCtx.waitUntil(
-      usagePromise.then((usage) =>
-        runAsyncPipeline(c.env, { ...basePipelineInput, usage }),
-      ),
+      usagePromise.then((usage) => runAsyncPipeline(c.env, { ...basePipelineInput, usage })),
     );
 
     return new Response(readable, {

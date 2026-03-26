@@ -41,7 +41,10 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-lg font-semibold text-foreground">2. What We Do NOT Collect</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5">
-            <li>Raw prompt or completion content — the proxy forwards payloads without reading or storing them.</li>
+            <li>
+              Raw prompt or completion content — the proxy forwards payloads without reading or
+              storing them.
+            </li>
             <li>Conversation history or message bodies.</li>
             <li>Personal data beyond what is needed for authentication.</li>
           </ul>
@@ -70,19 +73,33 @@ export default function PrivacyPage() {
           <h2 className="text-lg font-semibold text-foreground">5. Third-Party Services</h2>
           <p className="mt-2">We use the following third-party services:</p>
           <ul className="mt-2 list-disc space-y-1 pl-5">
-            <li><strong className="text-foreground">Clerk</strong> — authentication and user management.</li>
-            <li><strong className="text-foreground">Cloudflare Workers</strong> — proxy runtime and KV storage.</li>
-            <li><strong className="text-foreground">Turso</strong> — database for request logs and user settings.</li>
-            <li><strong className="text-foreground">Stripe</strong> — payment processing (we do not store card details).</li>
-            <li><strong className="text-foreground">Vercel</strong> — dashboard hosting.</li>
+            <li>
+              <strong className="text-foreground">Clerk</strong> — authentication and user
+              management.
+            </li>
+            <li>
+              <strong className="text-foreground">Cloudflare Workers</strong> — proxy runtime and KV
+              storage.
+            </li>
+            <li>
+              <strong className="text-foreground">Turso</strong> — database for request logs and
+              user settings.
+            </li>
+            <li>
+              <strong className="text-foreground">Stripe</strong> — payment processing (we do not
+              store card details).
+            </li>
+            <li>
+              <strong className="text-foreground">Vercel</strong> — dashboard hosting.
+            </li>
           </ul>
         </section>
 
         <section>
           <h2 className="text-lg font-semibold text-foreground">6. Data Retention</h2>
           <p className="mt-2">
-            Request logs are retained for 7 days on the Free plan and 90 days on the Pro plan.
-            You can delete your account and all associated data at any time from the Settings page.
+            Request logs are retained for 7 days on the Free plan and 90 days on the Pro plan. You
+            can delete your account and all associated data at any time from the Settings page.
           </p>
         </section>
 

@@ -28,7 +28,10 @@ function extractJsonPayloads(line: string, providerName: string): string[] {
   if (providerName === 'google') {
     // Remove leading `[`, trailing `]`, or trailing commas left over from
     // the JSON-array envelope that Google uses for streamGenerateContent.
-    const stripped = trimmed.replace(/^\[|\]$/g, '').replace(/,\s*$/, '').trim();
+    const stripped = trimmed
+      .replace(/^\[|\]$/g, '')
+      .replace(/,\s*$/, '')
+      .trim();
     if (stripped && stripped.startsWith('{')) {
       return [stripped];
     }
@@ -93,7 +96,11 @@ export function createStreamPassthrough(
     } finally {
       // Google streams return a JSON array spanning multiple lines.
       // If line-by-line parsing didn't capture usage, parse the full buffer.
-      if (provider.name === 'google' && accumulatedUsage.inputTokens === 0 && accumulatedUsage.outputTokens === 0) {
+      if (
+        provider.name === 'google' &&
+        accumulatedUsage.inputTokens === 0 &&
+        accumulatedUsage.outputTokens === 0
+      ) {
         // Google streams return a JSON array. fullBuffer contains the
         // complete response. Trim trailing whitespace/newlines.
         const combined = fullBuffer.trim();

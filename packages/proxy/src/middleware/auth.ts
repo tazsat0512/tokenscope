@@ -3,7 +3,10 @@ import { createMiddleware } from 'hono/factory';
 import type { Env, UserRecord } from '../types/index.js';
 import { sha256 } from '../utils/hash.js';
 
-type HonoEnv = { Bindings: Env; Variables: { user: UserRecord; budgetAlert?: boolean; forceAggressiveRouting?: boolean } };
+type HonoEnv = {
+  Bindings: Env;
+  Variables: { user: UserRecord; budgetAlert?: boolean; forceAggressiveRouting?: boolean };
+};
 
 export const authMiddleware = createMiddleware<HonoEnv>(async (c, next) => {
   const authHeader = c.req.header('Authorization');

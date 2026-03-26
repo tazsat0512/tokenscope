@@ -1,9 +1,9 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Skeleton } from './ui/skeleton';
 import { trpc } from '../lib/trpc/client';
 import { formatCost } from '../lib/utils';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Skeleton } from './ui/skeleton';
 
 export function DefenseStatus() {
   const { data, isLoading } = trpc.getDefenseStatus.useQuery();
@@ -50,16 +50,12 @@ export function DefenseStatus() {
       {/* Budget */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            Budget Status
-          </CardTitle>
+          <CardTitle className="text-sm font-medium text-muted-foreground">Budget Status</CardTitle>
         </CardHeader>
         <CardContent>
           {data.budgetLimit ? (
             <>
-              <div className={`text-2xl font-bold ${budgetColor}`}>
-                {data.budgetPercent}%
-              </div>
+              <div className={`text-2xl font-bold ${budgetColor}`}>{data.budgetPercent}%</div>
               <p className="mt-1 text-xs text-muted-foreground">
                 {formatCost(data.budgetUsed)} / {formatCost(data.budgetLimit)}
               </p>
@@ -87,13 +83,13 @@ export function DefenseStatus() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className={`text-2xl font-bold ${data.loopsToday > 0 ? 'text-yellow-600' : 'text-green-600'}`}>
+          <div
+            className={`text-2xl font-bold ${data.loopsToday > 0 ? 'text-yellow-600' : 'text-green-600'}`}
+          >
             {data.loopsToday}
             <span className="ml-1 text-sm font-normal text-muted-foreground">today</span>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {data.loopsWeek} this week
-          </p>
+          <p className="mt-1 text-xs text-muted-foreground">{data.loopsWeek} this week</p>
         </CardContent>
       </Card>
 
@@ -105,13 +101,13 @@ export function DefenseStatus() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className={`text-2xl font-bold ${data.blockedToday > 0 ? 'text-red-600' : 'text-green-600'}`}>
+          <div
+            className={`text-2xl font-bold ${data.blockedToday > 0 ? 'text-red-600' : 'text-green-600'}`}
+          >
             {data.blockedToday}
             <span className="ml-1 text-sm font-normal text-muted-foreground">today</span>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {data.blockedWeek} this week
-          </p>
+          <p className="mt-1 text-xs text-muted-foreground">{data.blockedWeek} this week</p>
         </CardContent>
       </Card>
     </div>

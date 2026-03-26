@@ -1,9 +1,4 @@
-import {
-  calculateCost,
-  FALLBACK_PRICING,
-  getModelPricing,
-  PRICING_TABLE,
-} from '@reivo/shared';
+import { calculateCost, FALLBACK_PRICING, getModelPricing, PRICING_TABLE } from '@reivo/shared';
 import { describe, expect, it } from 'vitest';
 
 describe('cost-calculator', () => {

@@ -13,7 +13,13 @@ import type { Env, UserRecord } from './types/index.js';
 
 type HonoEnv = {
   Bindings: Env;
-  Variables: { user: UserRecord; requestId: string; startTime: number; budgetAlert?: boolean; forceAggressiveRouting?: boolean };
+  Variables: {
+    user: UserRecord;
+    requestId: string;
+    startTime: number;
+    budgetAlert?: boolean;
+    forceAggressiveRouting?: boolean;
+  };
 };
 
 const app = new Hono<HonoEnv>();
@@ -26,9 +32,27 @@ app.use('*', logger());
 app.route('/', health);
 
 // Auth + plan guard + budget guard for proxy routes
-app.use('/openai/*', requestLoggerMiddleware, authMiddleware, planGuardMiddleware, budgetGuardMiddleware);
-app.use('/anthropic/*', requestLoggerMiddleware, authMiddleware, planGuardMiddleware, budgetGuardMiddleware);
-app.use('/google/*', requestLoggerMiddleware, authMiddleware, planGuardMiddleware, budgetGuardMiddleware);
+app.use(
+  '/openai/*',
+  requestLoggerMiddleware,
+  authMiddleware,
+  planGuardMiddleware,
+  budgetGuardMiddleware,
+);
+app.use(
+  '/anthropic/*',
+  requestLoggerMiddleware,
+  authMiddleware,
+  planGuardMiddleware,
+  budgetGuardMiddleware,
+);
+app.use(
+  '/google/*',
+  requestLoggerMiddleware,
+  authMiddleware,
+  planGuardMiddleware,
+  budgetGuardMiddleware,
+);
 
 // Provider routes
 app.route('/', openai);

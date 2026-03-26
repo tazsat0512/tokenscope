@@ -69,18 +69,21 @@ async function kvDelete(key: string): Promise<void> {
   });
 }
 
-export async function syncUserToKV(user: {
-  id: string;
-  apiKeyHash: string | null;
-  providerKeysEncrypted: string;
-  budgetLimitUsd: number | null;
-  slackWebhookUrl: string | null;
-  plan?: string;
-  requestCount?: number;
-  requestCountResetAt?: number;
-  routingEnabled?: number | boolean;
-  routingMode?: string;
-}, agentBudgets?: BudgetPolicy[]): Promise<void> {
+export async function syncUserToKV(
+  user: {
+    id: string;
+    apiKeyHash: string | null;
+    providerKeysEncrypted: string;
+    budgetLimitUsd: number | null;
+    slackWebhookUrl: string | null;
+    plan?: string;
+    requestCount?: number;
+    requestCountResetAt?: number;
+    routingEnabled?: number | boolean;
+    routingMode?: string;
+  },
+  agentBudgets?: BudgetPolicy[],
+): Promise<void> {
   if (!user.apiKeyHash) return;
 
   let providerKeys: UserRecord['providerKeys'] = {};

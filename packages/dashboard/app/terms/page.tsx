@@ -24,7 +24,9 @@ export default function TermsPage() {
         <section>
           <h2 className="text-lg font-semibold text-foreground">2. Account & API Keys</h2>
           <ul className="mt-2 list-disc space-y-1 pl-5">
-            <li>You are responsible for keeping your Reivo API key and provider API keys secure.</li>
+            <li>
+              You are responsible for keeping your Reivo API key and provider API keys secure.
+            </li>
             <li>
               Provider API keys are encrypted at rest. However, you acknowledge that Reivo
               necessarily decrypts them at runtime to forward requests to providers.
@@ -40,7 +42,9 @@ export default function TermsPage() {
           <p className="mt-2">You agree not to:</p>
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>Use the service to violate any applicable law or regulation.</li>
-            <li>Attempt to circumvent rate limits, budget enforcement, or other safety mechanisms.</li>
+            <li>
+              Attempt to circumvent rate limits, budget enforcement, or other safety mechanisms.
+            </li>
             <li>Reverse-engineer the proxy or routing logic for competitive purposes.</li>
             <li>Use the service to attack, degrade, or interfere with LLM provider services.</li>
           </ul>
@@ -61,8 +65,8 @@ export default function TermsPage() {
           <p className="mt-2">
             Budget limits, loop detection, and anomaly detection are best-effort safety mechanisms.
             Due to the eventually-consistent nature of edge caching, there may be brief windows
-            where spending slightly exceeds configured limits. Reivo is not liable for costs incurred
-            through your LLM provider accounts.
+            where spending slightly exceeds configured limits. Reivo is not liable for costs
+            incurred through your LLM provider accounts.
           </p>
         </section>
 
@@ -71,7 +75,8 @@ export default function TermsPage() {
           <p className="mt-2">
             When enabled, Smart Routing may automatically substitute the requested model with a
             cost-efficient alternative based on request analysis. Routing decisions are logged and
-            visible on your dashboard. You can disable routing or choose a specific mode at any time.
+            visible on your dashboard. You can disable routing or choose a specific mode at any
+            time.
           </p>
         </section>
 
@@ -80,7 +85,9 @@ export default function TermsPage() {
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>Free tier includes 10,000 requests per month.</li>
             <li>Pro and Team plans are billed monthly via Stripe.</li>
-            <li>You may cancel at any time. Access continues until the end of your billing period.</li>
+            <li>
+              You may cancel at any time. Access continues until the end of your billing period.
+            </li>
             <li>We reserve the right to change pricing with 30 days notice.</li>
           </ul>
         </section>
