@@ -878,7 +878,7 @@ LLM Provider (OpenAI / Anthropic / Google)`}
             &copy; {new Date().getFullYear()} Reivo. The smart proxy that cuts your AI costs in
             half.
           </p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap gap-6">
             <a
               href="https://github.com/tazsat0512/reivo"
               target="_blank"
@@ -886,6 +886,14 @@ LLM Provider (OpenAI / Anthropic / Google)`}
               className="hover:text-foreground"
             >
               GitHub
+            </a>
+            <a
+              href="https://clawhub.org/skills/reivo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground"
+            >
+              ClawHub
             </a>
             <Link href="/privacy" className="hover:text-foreground">
               Privacy
