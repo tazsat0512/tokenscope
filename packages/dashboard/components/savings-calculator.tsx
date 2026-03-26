@@ -77,27 +77,82 @@ const MODELS = [
   },
 ] as const;
 
-// Assume ~30% input, ~70% output token cost ratio (typical for chat/agent usage)
-const INPUT_RATIO = 0.3;
-const OUTPUT_RATIO = 0.7;
-// Routing rate: % of requests that can be safely downgraded
-const ROUTE_RATE = 0.65;
+// Use cases with different routing rates
+const USE_CASES = [
+  {
+    id: 'chatbot',
+    label: 'Customer Support / Chatbot',
+    routeRate: 0.75,
+    inputRatio: 0.25,
+    outputRatio: 0.75,
+    description: 'FAQ, simple Q&A — most requests are routine',
+  },
+  {
+    id: 'rag',
+    label: 'RAG / Document Q&A',
+    routeRate: 0.6,
+    inputRatio: 0.6,
+    outputRatio: 0.4,
+    description: 'Retrieval-heavy, long context input',
+  },
+  {
+    id: 'coding',
+    label: 'Coding Agent',
+    routeRate: 0.45,
+    inputRatio: 0.35,
+    outputRatio: 0.65,
+    description: 'Code generation and review — moderate complexity mix',
+  },
+  {
+    id: 'content',
+    label: 'Content Generation',
+    routeRate: 0.55,
+    inputRatio: 0.2,
+    outputRatio: 0.8,
+    description: 'Blog posts, summaries, translations',
+  },
+  {
+    id: 'data',
+    label: 'Data Extraction / Classification',
+    routeRate: 0.8,
+    inputRatio: 0.7,
+    outputRatio: 0.3,
+    description: 'Structured output — highly routable to smaller models',
+  },
+  {
+    id: 'agent',
+    label: 'Autonomous Agent (Multi-step)',
+    routeRate: 0.35,
+    inputRatio: 0.4,
+    outputRatio: 0.6,
+    description: 'Complex reasoning chains — fewer downgrade opportunities',
+  },
+  {
+    id: 'mixed',
+    label: 'Mixed / General',
+    routeRate: 0.55,
+    inputRatio: 0.3,
+    outputRatio: 0.7,
+    description: 'Variety of tasks across the board',
+  },
+] as const;
 
-function computeSavings(monthlySpend: number, selectedModels: string[]) {
+type UseCaseId = (typeof USE_CASES)[number]['id'];
+
+function computeSavings(monthlySpend: number, selectedModels: string[], useCaseId: UseCaseId) {
   if (selectedModels.length === 0) return { savings: 0, percent: 0, breakdown: [] };
 
-  // Split spend evenly across selected models
+  const useCase = USE_CASES.find((u) => u.id === useCaseId)!;
   const perModel = monthlySpend / selectedModels.length;
 
   const breakdown = selectedModels.map((id) => {
     const m = MODELS.find((x) => x.id === id)!;
-    // Weighted average cost per token for this model
-    const originalCostPerM = m.input * INPUT_RATIO + m.output * OUTPUT_RATIO;
-    const routedCostPerM = m.routeInput * INPUT_RATIO + m.routeOutput * OUTPUT_RATIO;
+    const originalCostPerM = m.input * useCase.inputRatio + m.output * useCase.outputRatio;
+    const routedCostPerM = m.routeInput * useCase.inputRatio + m.routeOutput * useCase.outputRatio;
 
-    // Cost if we route ROUTE_RATE of requests to the cheaper model
     const afterRouting =
-      perModel * (1 - ROUTE_RATE) + perModel * ROUTE_RATE * (routedCostPerM / originalCostPerM);
+      perModel * (1 - useCase.routeRate) +
+      perModel * useCase.routeRate * (routedCostPerM / originalCostPerM);
     const saved = perModel - afterRouting;
 
     return {
@@ -119,26 +174,49 @@ function computeSavings(monthlySpend: number, selectedModels: string[]) {
 export function SavingsCalculator() {
   const [spend, setSpend] = useState(500);
   const [selected, setSelected] = useState<string[]>(['gpt-4o', 'claude-sonnet']);
+  const [useCase, setUseCase] = useState<UseCaseId>('mixed');
 
   const toggleModel = (id: string) => {
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
   const { savings, percent, breakdown } = useMemo(
-    () => computeSavings(spend, selected),
-    [spend, selected],
+    () => computeSavings(spend, selected, useCase),
+    [spend, selected, useCase],
   );
+
+  const activeUseCase = USE_CASES.find((u) => u.id === useCase)!;
 
   return (
     <div className="rounded-xl border-2 border-primary/20 bg-card p-8">
       <h3 className="text-center text-2xl font-bold">How much would you save?</h3>
       <p className="mt-2 text-center text-sm text-muted-foreground">
-        Select the models you use and your monthly spend
+        Select your use case, models, and monthly spend
       </p>
 
       <div className="mx-auto mt-8 max-w-2xl">
-        {/* Model selector */}
+        {/* Use case selector */}
         <div>
+          <p className="text-sm font-medium">Primary use case</p>
+          <select
+            value={useCase}
+            onChange={(e) => setUseCase(e.target.value as UseCaseId)}
+            className="mt-2 w-full rounded-md border bg-background px-3 py-2 text-sm"
+          >
+            {USE_CASES.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.label}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {activeUseCase.description} &mdash; ~{Math.round(activeUseCase.routeRate * 100)}% of
+            requests routable
+          </p>
+        </div>
+
+        {/* Model selector */}
+        <div className="mt-6">
           <p className="text-sm font-medium">Models you use</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {MODELS.map((m) => (
@@ -240,8 +318,11 @@ export function SavingsCalculator() {
             </div>
 
             <p className="mt-3 text-center text-[11px] text-muted-foreground">
-              Assumes 65% of requests are routable to lighter models. Actual savings depend on task
-              complexity. Token cost split: 30% input / 70% output.
+              Routing rate ({Math.round(activeUseCase.routeRate * 100)}%) and token split (
+              {Math.round(activeUseCase.inputRatio * 100)}/
+              {Math.round(activeUseCase.outputRatio * 100)} in/out) are estimated for{' '}
+              {activeUseCase.label.toLowerCase()} workloads. Actual savings depend on your specific
+              tasks.
             </p>
           </>
         ) : (

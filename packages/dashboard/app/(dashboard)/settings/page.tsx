@@ -222,6 +222,10 @@ export default function SettingsPage() {
   const [newAgentId, setNewAgentId] = useState('');
   const [newAgentLimit, setNewAgentLimit] = useState('');
   const [newAgentAction, setNewAgentAction] = useState<string>('block');
+  const { data: agentBreakdown } = trpc.getAgentBreakdown.useQuery({ days: 90 });
+  const knownAgents = (agentBreakdown?.byAgent ?? [])
+    .map((a) => a.agentId)
+    .filter((id): id is string => id !== null);
 
   const [activeTab, setActiveTab] = useState<'api-keys' | 'budget' | 'routing' | 'notifications'>(
     'api-keys',
@@ -461,12 +465,29 @@ export default function SettingsPage() {
                   </div>
                 ))}
               <div className="flex items-center gap-2">
-                <Input
-                  placeholder="Agent ID"
-                  value={newAgentId}
-                  onChange={(e) => setNewAgentId(e.target.value)}
-                  className="w-40"
-                />
+                {knownAgents.length > 0 ? (
+                  <select
+                    value={newAgentId}
+                    onChange={(e) => setNewAgentId(e.target.value)}
+                    className="w-48 rounded-md border bg-background px-3 py-2 text-sm"
+                  >
+                    <option value="">Select agent...</option>
+                    {knownAgents
+                      .filter((id) => !budgetPoliciesData?.some((p) => p.agentId === id))
+                      .map((id) => (
+                        <option key={id} value={id}>
+                          {id}
+                        </option>
+                      ))}
+                  </select>
+                ) : (
+                  <Input
+                    placeholder="Agent ID"
+                    value={newAgentId}
+                    onChange={(e) => setNewAgentId(e.target.value)}
+                    className="w-48"
+                  />
+                )}
                 <div className="flex items-center gap-1">
                   <span className="text-sm text-muted-foreground">$</span>
                   <Input

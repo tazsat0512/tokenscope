@@ -65,7 +65,9 @@ export default async function LandingPage() {
           <div className="grid items-center gap-12 md:grid-cols-2">
             <div>
               <h1 className="text-5xl font-bold tracking-tight">
-                Same output. <span className="text-primary">Half the cost.</span>
+                Same output.
+                <br />
+                <span className="text-primary">Half the cost.</span>
               </h1>
               <p className="mt-6 text-lg text-muted-foreground">
                 Reivo routes every API call to the cheapest model that delivers the same quality.
@@ -768,12 +770,12 @@ LLM Provider (OpenAI / Anthropic / Google)`}
                     <span className="text-green-600">&#10003;</span> REST API access
                   </li>
                 </ul>
-                <Link
-                  href="/sign-up"
+                <a
+                  href="#contact"
                   className="mt-6 block rounded-md border py-2 text-center text-sm font-medium hover:bg-accent"
                 >
-                  Start Free Trial
-                </Link>
+                  Talk to Us
+                </a>
               </div>
             </div>
             <p className="mt-6 text-center text-xs text-muted-foreground">
