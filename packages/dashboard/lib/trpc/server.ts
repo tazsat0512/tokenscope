@@ -18,6 +18,66 @@ const authedProcedure = t.procedure.use(async ({ next }) => {
   return next({ ctx: { userId } });
 });
 
+// --- Provider key helpers ---
+interface ProviderKeyEntry {
+  id: string;
+  label: string;
+  key: string;
+  isDefault: boolean;
+}
+type ProviderKeysMap = Record<'openai' | 'anthropic' | 'google', ProviderKeyEntry[]>;
+
+async function loadProviderKeys(userId: string): Promise<ProviderKeysMap> {
+  const empty: ProviderKeysMap = { openai: [], anthropic: [], google: [] };
+  const user = await db
+    .select({ providerKeysEncrypted: users.providerKeysEncrypted })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+
+  const raw = user[0]?.providerKeysEncrypted;
+  if (!raw || raw === '{}') return empty;
+
+  let parsed: Record<string, unknown>;
+  try {
+    parsed = JSON.parse(await decrypt(raw));
+  } catch {
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return empty;
+    }
+  }
+
+  // Migrate legacy format: { openai: "sk-..." } → { openai: [{...}] }
+  for (const provider of ['openai', 'anthropic', 'google'] as const) {
+    const val = parsed[provider];
+    if (typeof val === 'string') {
+      parsed[provider] = [{ id: crypto.randomUUID(), label: 'Default', key: val, isDefault: true }];
+    } else if (!Array.isArray(val)) {
+      parsed[provider] = [];
+    }
+  }
+
+  return parsed as ProviderKeysMap;
+}
+
+async function saveProviderKeys(userId: string, keys: ProviderKeysMap): Promise<void> {
+  const encrypted = await encrypt(JSON.stringify(keys));
+  await db
+    .update(users)
+    .set({ providerKeysEncrypted: encrypted, updatedAt: new Date() })
+    .where(eq(users.id, userId));
+
+  // Sync default keys to KV (proxy expects flat { openai: "key", ... })
+  try {
+    const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    if (user[0]) await syncUserToKV(user[0]);
+  } catch (err) {
+    console.error('KV sync failed:', err);
+  }
+}
+
 export const appRouter = t.router({
   getOverview: authedProcedure
     .input(z.object({ days: z.number().default(30) }))
@@ -240,38 +300,77 @@ export const appRouter = t.router({
   }),
 
   getProviderKeyStatus: authedProcedure.query(async ({ ctx }) => {
-    const user = await db
-      .select({ providerKeysEncrypted: users.providerKeysEncrypted })
-      .from(users)
-      .where(eq(users.id, ctx.userId))
-      .limit(1);
-
-    if (!user[0]?.providerKeysEncrypted || user[0].providerKeysEncrypted === '{}') {
-      return { openai: false, anthropic: false, google: false };
-    }
-
-    try {
-      const decrypted = await decrypt(user[0].providerKeysEncrypted);
-      const keys = JSON.parse(decrypted);
-      return {
-        openai: !!keys.openai,
-        anthropic: !!keys.anthropic,
-        google: !!keys.google,
-      };
-    } catch {
-      // Legacy unencrypted data
-      try {
-        const keys = JSON.parse(user[0].providerKeysEncrypted);
-        return {
-          openai: !!keys.openai,
-          anthropic: !!keys.anthropic,
-          google: !!keys.google,
-        };
-      } catch {
-        return { openai: false, anthropic: false, google: false };
-      }
-    }
+    const keys = await loadProviderKeys(ctx.userId);
+    return {
+      openai: keys.openai.length > 0,
+      anthropic: keys.anthropic.length > 0,
+      google: keys.google.length > 0,
+    };
   }),
+
+  getProviderKeys: authedProcedure.query(async ({ ctx }) => {
+    const keys = await loadProviderKeys(ctx.userId);
+    // Return keys with masked values
+    const mask = (list: ProviderKeyEntry[]) =>
+      list.map((k) => ({
+        id: k.id,
+        label: k.label,
+        keyPreview: `${k.key.slice(0, 7)}...${k.key.slice(-4)}`,
+        isDefault: k.isDefault,
+      }));
+    return {
+      openai: mask(keys.openai),
+      anthropic: mask(keys.anthropic),
+      google: mask(keys.google),
+    };
+  }),
+
+  addProviderKey: authedProcedure
+    .input(
+      z.object({
+        provider: z.enum(['openai', 'anthropic', 'google']),
+        label: z.string().min(1).max(50),
+        key: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const keys = await loadProviderKeys(ctx.userId);
+      const list = keys[input.provider];
+      const isFirst = list.length === 0;
+      list.push({
+        id: crypto.randomUUID(),
+        label: input.label,
+        key: input.key,
+        isDefault: isFirst,
+      });
+      await saveProviderKeys(ctx.userId, keys);
+      return { success: true };
+    }),
+
+  removeProviderKey: authedProcedure
+    .input(z.object({ provider: z.enum(['openai', 'anthropic', 'google']), keyId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const keys = await loadProviderKeys(ctx.userId);
+      const list = keys[input.provider];
+      const idx = list.findIndex((k) => k.id === input.keyId);
+      if (idx === -1) return { success: false };
+      const wasDefault = list[idx].isDefault;
+      list.splice(idx, 1);
+      if (wasDefault && list.length > 0) list[0].isDefault = true;
+      await saveProviderKeys(ctx.userId, keys);
+      return { success: true };
+    }),
+
+  setDefaultProviderKey: authedProcedure
+    .input(z.object({ provider: z.enum(['openai', 'anthropic', 'google']), keyId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const keys = await loadProviderKeys(ctx.userId);
+      for (const k of keys[input.provider]) {
+        k.isDefault = k.id === input.keyId;
+      }
+      await saveProviderKeys(ctx.userId, keys);
+      return { success: true };
+    }),
 
   generateApiKey: authedProcedure.mutation(async ({ ctx }) => {
     const apiKey = `ts_${crypto.randomUUID().replace(/-/g, '')}`;

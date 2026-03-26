@@ -37,9 +37,153 @@ function SettingsSkeleton() {
   );
 }
 
+const PROVIDERS = ['openai', 'anthropic', 'google'] as const;
+type Provider = (typeof PROVIDERS)[number];
+
+function ProviderKeySection({
+  provider,
+  keys,
+}: {
+  provider: Provider;
+  keys: { id: string; label: string; keyPreview: string; isDefault: boolean }[];
+}) {
+  const utils = trpc.useUtils();
+  const { toast } = useToast();
+  const [adding, setAdding] = useState(false);
+  const [newLabel, setNewLabel] = useState('');
+  const [newKey, setNewKey] = useState('');
+
+  const addKey = trpc.addProviderKey.useMutation({
+    onSuccess: () => {
+      utils.getProviderKeys.invalidate();
+      utils.getProviderKeyStatus.invalidate();
+      utils.getOnboardingStatus.invalidate();
+      setAdding(false);
+      setNewLabel('');
+      setNewKey('');
+      toast({ title: 'Key added' });
+    },
+    onError: () => toast({ title: 'Failed to add key', variant: 'destructive' }),
+  });
+
+  const removeKey = trpc.removeProviderKey.useMutation({
+    onSuccess: () => {
+      utils.getProviderKeys.invalidate();
+      utils.getProviderKeyStatus.invalidate();
+      toast({ title: 'Key removed' });
+    },
+    onError: () => toast({ title: 'Failed to remove key', variant: 'destructive' }),
+  });
+
+  const setDefault = trpc.setDefaultProviderKey.useMutation({
+    onSuccess: () => {
+      utils.getProviderKeys.invalidate();
+      toast({ title: 'Default key updated' });
+    },
+  });
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <Label className="text-sm font-semibold capitalize">{provider}</Label>
+        <span className="text-xs text-muted-foreground">{keys.length} key{keys.length !== 1 ? 's' : ''}</span>
+      </div>
+
+      {keys.length > 0 && (
+        <div className="space-y-2">
+          {keys.map((k) => (
+            <div
+              key={k.id}
+              className="flex items-center gap-3 rounded-md border px-3 py-2"
+            >
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">{k.label}</span>
+                  {k.isDefault && (
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                      Default
+                    </span>
+                  )}
+                </div>
+                <code className="text-xs text-muted-foreground">{k.keyPreview}</code>
+              </div>
+              <div className="flex items-center gap-1">
+                {!k.isDefault && keys.length > 1 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setDefault.mutate({ provider, keyId: k.id })}
+                    disabled={setDefault.isPending}
+                    className="text-xs"
+                  >
+                    Set Default
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeKey.mutate({ provider, keyId: k.id })}
+                  disabled={removeKey.isPending}
+                  className="text-xs text-destructive hover:text-destructive"
+                >
+                  Remove
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {adding ? (
+        <div className="space-y-2 rounded-md border border-dashed p-3">
+          <div className="flex gap-2">
+            <Input
+              placeholder="Label (e.g. Production)"
+              value={newLabel}
+              onChange={(e) => setNewLabel(e.target.value)}
+              className="w-40"
+            />
+            <Input
+              type="password"
+              placeholder="API key"
+              value={newKey}
+              onChange={(e) => setNewKey(e.target.value)}
+              className="flex-1"
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              onClick={() => addKey.mutate({ provider, label: newLabel || 'Default', key: newKey })}
+              disabled={!newKey || addKey.isPending}
+            >
+              {addKey.isPending ? 'Adding...' : 'Add'}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setAdding(false);
+                setNewLabel('');
+                setNewKey('');
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <Button variant="outline" size="sm" onClick={() => setAdding(true)}>
+          + Add Key
+        </Button>
+      )}
+    </div>
+  );
+}
+
 export default function SettingsPage() {
   const { data: settings, isLoading } = trpc.getSettings.useQuery();
-  const { data: providerStatus } = trpc.getProviderKeyStatus.useQuery();
+  const { data: providerKeys } = trpc.getProviderKeys.useQuery();
   const utils = trpc.useUtils();
   const { toast } = useToast();
 
@@ -50,7 +194,6 @@ export default function SettingsPage() {
   const updateSettings = trpc.updateSettings.useMutation({
     onSuccess: () => {
       utils.getSettings.invalidate();
-      utils.getProviderKeyStatus.invalidate();
       toast({ title: 'Settings saved' });
     },
     onError: () => toast({ title: 'Failed to save settings', variant: 'destructive' }),
@@ -60,11 +203,6 @@ export default function SettingsPage() {
   const [copied, setCopied] = useState(false);
   const [budgetLimit, setBudgetLimit] = useState<string>('');
   const [slackUrl, setSlackUrl] = useState<string>('');
-  const [providerKeys, setProviderKeys] = useState({
-    openai: '',
-    anthropic: '',
-    google: '',
-  });
   const [showConfirm, setShowConfirm] = useState(false);
 
   if (isLoading) {
@@ -96,7 +234,7 @@ export default function SettingsPage() {
       {/* API Key */}
       <Card>
         <CardHeader>
-          <CardTitle>API Key</CardTitle>
+          <CardTitle>TokenScope API Key</CardTitle>
           <CardDescription>
             Use this key as your Authorization bearer token when calling the proxy
           </CardDescription>
@@ -117,11 +255,6 @@ export default function SettingsPage() {
                   </Button>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Set your base URL to{' '}
-                <code className="font-mono">https://proxy.tokenscope.dev/anthropic/v1</code> and
-                use this key as the bearer token.
-              </p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -165,55 +298,19 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle>Provider API Keys</CardTitle>
           <CardDescription>
-            Enter your API keys for the providers you want to proxy. Keys are encrypted at rest.
+            Add your API keys for each provider. You can add multiple keys and choose a default.
+            Keys are encrypted at rest.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {(['openai', 'anthropic', 'google'] as const).map((provider) => (
-              <div key={provider} className="flex items-center gap-4">
-                <Label className="w-24 capitalize">{provider}</Label>
-                <div className="flex flex-1 items-center gap-2">
-                  <Input
-                    type="password"
-                    placeholder={
-                      providerStatus?.[provider]
-                        ? '••••••••••••  (key is set)'
-                        : 'Not configured'
-                    }
-                    value={providerKeys[provider]}
-                    onChange={(e) =>
-                      setProviderKeys((prev) => ({ ...prev, [provider]: e.target.value }))
-                    }
-                  />
-                  {providerStatus?.[provider] && (
-                    <span className="text-xs text-green-600 font-medium whitespace-nowrap">
-                      Active
-                    </span>
-                  )}
-                </div>
-              </div>
+          <div className="space-y-6">
+            {PROVIDERS.map((provider) => (
+              <ProviderKeySection
+                key={provider}
+                provider={provider}
+                keys={providerKeys?.[provider] ?? []}
+              />
             ))}
-            <Button
-              onClick={() => {
-                const keys: Record<string, string | null> = {};
-                for (const [p, v] of Object.entries(providerKeys)) {
-                  if (v) keys[p] = v;
-                }
-                if (Object.keys(keys).length === 0) return;
-                updateSettings.mutate(
-                  { providerKeys: keys },
-                  {
-                    onSuccess: () => setProviderKeys({ openai: '', anthropic: '', google: '' }),
-                  },
-                );
-              }}
-              disabled={
-                updateSettings.isPending || !Object.values(providerKeys).some((v) => v)
-              }
-            >
-              {updateSettings.isPending ? 'Saving...' : 'Save Keys'}
-            </Button>
           </div>
         </CardContent>
       </Card>
@@ -243,7 +340,7 @@ export default function SettingsPage() {
             <Button
               onClick={() => {
                 updateSettings.mutate({
-                  budgetLimitUsd: budgetLimit ? parseFloat(budgetLimit) : null,
+                  budgetLimitUsd: budgetLimit ? Number.parseFloat(budgetLimit) : null,
                 });
               }}
             >

@@ -65,17 +65,34 @@ export async function syncUserToKV(user: {
 
   let providerKeys: UserRecord['providerKeys'] = {};
   try {
+    let parsed: Record<string, unknown> = {};
     if (user.providerKeysEncrypted && user.providerKeysEncrypted !== '{}') {
-      const decrypted = await decrypt(user.providerKeysEncrypted);
-      providerKeys = JSON.parse(decrypted);
+      try {
+        parsed = JSON.parse(await decrypt(user.providerKeysEncrypted));
+      } catch {
+        try {
+          parsed = JSON.parse(user.providerKeysEncrypted);
+        } catch {
+          parsed = {};
+        }
+      }
+    }
+    // Handle both legacy (string) and new (array) formats
+    for (const provider of ['openai', 'anthropic', 'google'] as const) {
+      const val = parsed[provider];
+      if (typeof val === 'string') {
+        providerKeys[provider] = val;
+      } else if (Array.isArray(val)) {
+        const def = val.find((k: Record<string, unknown>) => k.isDefault);
+        const first = val[0] as Record<string, unknown> | undefined;
+        const entry = def ?? first;
+        if (entry && typeof entry.key === 'string') {
+          providerKeys[provider] = entry.key;
+        }
+      }
     }
   } catch {
-    // If decryption fails (e.g. unencrypted legacy data), try parsing directly
-    try {
-      providerKeys = JSON.parse(user.providerKeysEncrypted);
-    } catch {
-      providerKeys = {};
-    }
+    providerKeys = {};
   }
 
   const record: UserRecord = {
