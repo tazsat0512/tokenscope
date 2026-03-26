@@ -35,7 +35,7 @@ google.all('/google/*', async (c) => {
   const sessionId = await resolveSessionId(c, user.id);
   const agentId = c.req.header(HEADER_AGENT_ID) ?? null;
 
-  const providerKey = user.providerKeys.google;
+  const providerKey = user.providerKeys?.google;
   if (!providerKey) {
     return c.json(
       { error: 'no_provider_key', message: 'No Google API key configured', request_id: requestId },

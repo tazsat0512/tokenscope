@@ -11,17 +11,22 @@ export interface Env {
   USERS_KV: KVNamespace;
   TURSO_DATABASE_URL: string;
   TURSO_AUTH_TOKEN: string;
+  ENCRYPTION_KEY: string;
   ENVIRONMENT: string;
+}
+
+export interface ProviderKeys {
+  openai?: string;
+  anthropic?: string;
+  google?: string;
 }
 
 export interface UserRecord {
   id: string;
   apiKeyHash: string;
-  providerKeys: {
-    openai?: string;
-    anthropic?: string;
-    google?: string;
-  };
+  providerKeysEncrypted: string;
+  /** Populated at runtime after decryption — never stored */
+  providerKeys?: ProviderKeys;
   budgetLimitUsd: number | null;
   slackWebhookUrl?: string;
   plan: 'free' | 'pro';

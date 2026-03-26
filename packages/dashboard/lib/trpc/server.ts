@@ -42,11 +42,7 @@ async function loadProviderKeys(userId: string): Promise<ProviderKeysMap> {
   try {
     parsed = JSON.parse(await decrypt(raw));
   } catch {
-    try {
-      parsed = JSON.parse(raw);
-    } catch {
-      return empty;
-    }
+    return empty;
   }
 
   // Migrate legacy format: { openai: "sk-..." } → { openai: [{...}] }

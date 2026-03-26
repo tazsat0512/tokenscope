@@ -1,6 +1,7 @@
 import { API_KEY_PREFIX } from '@reivo/shared';
 import { createMiddleware } from 'hono/factory';
-import type { Env, UserRecord } from '../types/index.js';
+import type { Env, ProviderKeys, UserRecord } from '../types/index.js';
+import { decryptAES } from '../utils/encryption.js';
 import { sha256 } from '../utils/hash.js';
 
 type HonoEnv = {
@@ -23,6 +24,20 @@ export const authMiddleware = createMiddleware<HonoEnv>(async (c, next) => {
   }
 
   const user = JSON.parse(userJson) as UserRecord;
+
+  // Decrypt provider keys from KV record
+  if (user.providerKeysEncrypted && user.providerKeysEncrypted !== '{}') {
+    try {
+      user.providerKeys = JSON.parse(
+        await decryptAES(user.providerKeysEncrypted, c.env.ENCRYPTION_KEY),
+      ) as ProviderKeys;
+    } catch {
+      user.providerKeys = {};
+    }
+  } else {
+    user.providerKeys = {};
+  }
+
   c.set('user', user);
   await next();
 });

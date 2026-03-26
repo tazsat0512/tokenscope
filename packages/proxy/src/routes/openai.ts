@@ -30,7 +30,7 @@ openai.all('/openai/*', async (c) => {
   const sessionId = await resolveSessionId(c, user.id);
   const agentId = c.req.header(HEADER_AGENT_ID) ?? null;
 
-  const providerKey = user.providerKeys.openai;
+  const providerKey = user.providerKeys?.openai;
   if (!providerKey) {
     return c.json(
       { error: 'no_provider_key', message: 'No OpenAI API key configured', request_id: requestId },

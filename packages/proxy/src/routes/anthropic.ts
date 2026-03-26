@@ -29,7 +29,7 @@ anthropic.all('/anthropic/*', async (c) => {
   const sessionId = await resolveSessionId(c, user.id);
   const agentId = c.req.header(HEADER_AGENT_ID) ?? null;
 
-  const providerKey = user.providerKeys.anthropic;
+  const providerKey = user.providerKeys?.anthropic;
   if (!providerKey) {
     return c.json(
       {

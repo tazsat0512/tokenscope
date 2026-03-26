@@ -1,4 +1,4 @@
-import { decrypt } from './encryption';
+import { decrypt, encrypt } from './encryption';
 
 type BudgetAction = 'block' | 'alert' | 'downgrade';
 
@@ -11,11 +11,7 @@ interface BudgetPolicy {
 interface UserRecord {
   id: string;
   apiKeyHash: string;
-  providerKeys: {
-    openai?: string;
-    anthropic?: string;
-    google?: string;
-  };
+  providerKeysEncrypted: string;
   budgetLimitUsd: number | null;
   budgetAction: BudgetAction;
   agentBudgets?: BudgetPolicy[];
@@ -86,42 +82,35 @@ export async function syncUserToKV(
 ): Promise<void> {
   if (!user.apiKeyHash) return;
 
-  let providerKeys: UserRecord['providerKeys'] = {};
+  // Extract default keys from encrypted storage, then re-encrypt as flat map for proxy
+  let encryptedForKV = '{}';
   try {
-    let parsed: Record<string, unknown> = {};
     if (user.providerKeysEncrypted && user.providerKeysEncrypted !== '{}') {
-      try {
-        parsed = JSON.parse(await decrypt(user.providerKeysEncrypted));
-      } catch {
-        try {
-          parsed = JSON.parse(user.providerKeysEncrypted);
-        } catch {
-          parsed = {};
+      const parsed = JSON.parse(await decrypt(user.providerKeysEncrypted));
+      const flat: Record<string, string> = {};
+      for (const provider of ['openai', 'anthropic', 'google'] as const) {
+        const val = parsed[provider];
+        if (typeof val === 'string') {
+          flat[provider] = val;
+        } else if (Array.isArray(val)) {
+          const def = val.find((k: Record<string, unknown>) => k.isDefault);
+          const first = val[0] as Record<string, unknown> | undefined;
+          const entry = def ?? first;
+          if (entry && typeof entry.key === 'string') {
+            flat[provider] = entry.key;
+          }
         }
       }
-    }
-    // Handle both legacy (string) and new (array) formats
-    for (const provider of ['openai', 'anthropic', 'google'] as const) {
-      const val = parsed[provider];
-      if (typeof val === 'string') {
-        providerKeys[provider] = val;
-      } else if (Array.isArray(val)) {
-        const def = val.find((k: Record<string, unknown>) => k.isDefault);
-        const first = val[0] as Record<string, unknown> | undefined;
-        const entry = def ?? first;
-        if (entry && typeof entry.key === 'string') {
-          providerKeys[provider] = entry.key;
-        }
-      }
+      encryptedForKV = await encrypt(JSON.stringify(flat));
     }
   } catch {
-    providerKeys = {};
+    encryptedForKV = '{}';
   }
 
   const record: UserRecord = {
     id: user.id,
     apiKeyHash: user.apiKeyHash,
-    providerKeys,
+    providerKeysEncrypted: encryptedForKV,
     budgetLimitUsd: user.budgetLimitUsd,
     budgetAction: 'block',
     agentBudgets: agentBudgets ?? undefined,
