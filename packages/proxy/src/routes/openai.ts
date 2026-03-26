@@ -4,6 +4,7 @@ import { runAsyncPipeline } from '../async/pipeline.js';
 import { openaiProvider } from '../providers/openai.js';
 import type { Env, UserRecord } from '../types/index.js';
 import { createStreamPassthrough } from '../utils/streaming.js';
+import { extractRequestTelemetry, extractResponseTelemetry } from '../utils/telemetry.js';
 
 type HonoEnv = {
   Bindings: Env;
@@ -33,8 +34,8 @@ openai.all('/openai/*', async (c) => {
     parsedBody = {};
   }
 
-  const isStream = (parsedBody as Record<string, unknown>)?.stream === true;
   const model = openaiProvider.extractModel(parsedBody);
+  const reqTelemetry = await extractRequestTelemetry(parsedBody);
 
   const headers = openaiProvider.buildHeaders(providerKey, c.req.raw.headers);
   headers.set('Content-Type', 'application/json');
@@ -47,27 +48,28 @@ openai.all('/openai/*', async (c) => {
 
   const latencyMs = Date.now() - startTime;
 
-  if (isStream && upstreamResponse.body) {
+  const basePipelineInput = {
+    requestId,
+    user,
+    provider: 'openai' as const,
+    model,
+    body: parsedBody,
+    latencyMs,
+    sessionId,
+    agentId,
+    blocked: false,
+    ...reqTelemetry,
+  };
+
+  if (reqTelemetry.isStreaming && upstreamResponse.body) {
     const { readable, usagePromise } = createStreamPassthrough(
       upstreamResponse.body,
       openaiProvider,
     );
 
-    // Async pipeline after stream completes
     c.executionCtx.waitUntil(
       usagePromise.then((usage) =>
-        runAsyncPipeline(c.env, {
-          requestId,
-          user,
-          provider: 'openai',
-          model,
-          body: parsedBody,
-          usage,
-          latencyMs,
-          sessionId,
-          agentId,
-          blocked: false,
-        }),
+        runAsyncPipeline(c.env, { ...basePipelineInput, usage }),
       ),
     );
 
@@ -87,19 +89,14 @@ openai.all('/openai/*', async (c) => {
   }
 
   const usage = openaiProvider.extractUsage(parsedResponse);
+  const resTelemetry = extractResponseTelemetry(parsedResponse, 'openai');
 
   c.executionCtx.waitUntil(
     runAsyncPipeline(c.env, {
-      requestId,
-      user,
-      provider: 'openai',
-      model,
-      body: parsedBody,
+      ...basePipelineInput,
       usage,
-      latencyMs,
-      sessionId,
-      agentId,
-      blocked: false,
+      cachedTokens: resTelemetry.cachedTokens,
+      toolsUsed: resTelemetry.toolsUsed,
     }),
   );
 

@@ -4,6 +4,7 @@ import { runAsyncPipeline } from '../async/pipeline.js';
 import { anthropicProvider } from '../providers/anthropic.js';
 import type { Env, UserRecord } from '../types/index.js';
 import { createStreamPassthrough } from '../utils/streaming.js';
+import { extractRequestTelemetry, extractResponseTelemetry } from '../utils/telemetry.js';
 
 type HonoEnv = {
   Bindings: Env;
@@ -33,8 +34,8 @@ anthropic.all('/anthropic/*', async (c) => {
     parsedBody = {};
   }
 
-  const isStream = (parsedBody as Record<string, unknown>)?.stream === true;
   const model = anthropicProvider.extractModel(parsedBody);
+  const reqTelemetry = await extractRequestTelemetry(parsedBody);
 
   const headers = anthropicProvider.buildHeaders(providerKey, c.req.raw.headers);
   headers.set('Content-Type', 'application/json');
@@ -47,7 +48,20 @@ anthropic.all('/anthropic/*', async (c) => {
 
   const latencyMs = Date.now() - startTime;
 
-  if (isStream && upstreamResponse.body) {
+  const basePipelineInput = {
+    requestId,
+    user,
+    provider: 'anthropic' as const,
+    model,
+    body: parsedBody,
+    latencyMs,
+    sessionId,
+    agentId,
+    blocked: false,
+    ...reqTelemetry,
+  };
+
+  if (reqTelemetry.isStreaming && upstreamResponse.body) {
     const { readable, usagePromise } = createStreamPassthrough(
       upstreamResponse.body,
       anthropicProvider,
@@ -55,18 +69,7 @@ anthropic.all('/anthropic/*', async (c) => {
 
     c.executionCtx.waitUntil(
       usagePromise.then((usage) =>
-        runAsyncPipeline(c.env, {
-          requestId,
-          user,
-          provider: 'anthropic',
-          model,
-          body: parsedBody,
-          usage,
-          latencyMs,
-          sessionId,
-          agentId,
-          blocked: false,
-        }),
+        runAsyncPipeline(c.env, { ...basePipelineInput, usage }),
       ),
     );
 
@@ -85,19 +88,14 @@ anthropic.all('/anthropic/*', async (c) => {
   }
 
   const usage = anthropicProvider.extractUsage(parsedResponse);
+  const resTelemetry = extractResponseTelemetry(parsedResponse, 'anthropic');
 
   c.executionCtx.waitUntil(
     runAsyncPipeline(c.env, {
-      requestId,
-      user,
-      provider: 'anthropic',
-      model,
-      body: parsedBody,
+      ...basePipelineInput,
       usage,
-      latencyMs,
-      sessionId,
-      agentId,
-      blocked: false,
+      cachedTokens: resTelemetry.cachedTokens,
+      toolsUsed: resTelemetry.toolsUsed,
     }),
   );
 

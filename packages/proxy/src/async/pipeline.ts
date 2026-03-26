@@ -20,6 +20,14 @@ export interface PipelineInput {
   agentId: string | null;
   blocked: boolean;
   blockReason?: string;
+  // Telemetry expansion
+  cachedTokens?: number;
+  hasCacheControl?: boolean;
+  maxTokensSetting?: number;
+  isStreaming?: boolean;
+  toolCount?: number;
+  toolsUsed?: string[];
+  systemPromptHash?: string;
 }
 
 export async function runAsyncPipeline(env: Env, input: PipelineInput): Promise<void> {
@@ -43,6 +51,13 @@ export async function runAsyncPipeline(env: Env, input: PipelineInput): Promise<
     timestamp: Date.now(),
     blocked: input.blocked,
     blockReason: input.blockReason,
+    cachedTokens: input.cachedTokens ?? null,
+    hasCacheControl: input.hasCacheControl ?? null,
+    maxTokensSetting: input.maxTokensSetting ?? null,
+    isStreaming: input.isStreaming ?? null,
+    toolCount: input.toolCount ?? null,
+    toolsUsed: input.toolsUsed ? JSON.stringify(input.toolsUsed) : null,
+    systemPromptHash: input.systemPromptHash ?? null,
   });
 
   // 2. Update budget in KV (sync KV with new cost)

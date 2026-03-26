@@ -4,6 +4,7 @@ import { runAsyncPipeline } from '../async/pipeline.js';
 import { googleProvider } from '../providers/google.js';
 import type { Env, UserRecord } from '../types/index.js';
 import { createStreamPassthrough } from '../utils/streaming.js';
+import { extractRequestTelemetry, extractResponseTelemetry } from '../utils/telemetry.js';
 
 type HonoEnv = {
   Bindings: Env;
@@ -40,7 +41,10 @@ google.all('/google/*', async (c) => {
     parsedBody = {};
   }
 
+  const reqTelemetry = await extractRequestTelemetry(parsedBody);
+  // Google streaming is determined by URL path, not body field
   const isStream = c.req.path.includes('streamGenerateContent');
+  reqTelemetry.isStreaming = isStream;
 
   const headers = googleProvider.buildHeaders(providerKey, c.req.raw.headers);
 
@@ -52,6 +56,19 @@ google.all('/google/*', async (c) => {
 
   const latencyMs = Date.now() - startTime;
 
+  const basePipelineInput = {
+    requestId,
+    user,
+    provider: 'google' as const,
+    model,
+    body: parsedBody,
+    latencyMs,
+    sessionId,
+    agentId,
+    blocked: false,
+    ...reqTelemetry,
+  };
+
   if (isStream && upstreamResponse.body) {
     const { readable, usagePromise } = createStreamPassthrough(
       upstreamResponse.body,
@@ -60,18 +77,7 @@ google.all('/google/*', async (c) => {
 
     c.executionCtx.waitUntil(
       usagePromise.then((usage) =>
-        runAsyncPipeline(c.env, {
-          requestId,
-          user,
-          provider: 'google',
-          model,
-          body: parsedBody,
-          usage,
-          latencyMs,
-          sessionId,
-          agentId,
-          blocked: false,
-        }),
+        runAsyncPipeline(c.env, { ...basePipelineInput, usage }),
       ),
     );
 
@@ -90,19 +96,14 @@ google.all('/google/*', async (c) => {
   }
 
   const usage = googleProvider.extractUsage(parsedResponse);
+  const resTelemetry = extractResponseTelemetry(parsedResponse, 'google');
 
   c.executionCtx.waitUntil(
     runAsyncPipeline(c.env, {
-      requestId,
-      user,
-      provider: 'google',
-      model,
-      body: parsedBody,
+      ...basePipelineInput,
       usage,
-      latencyMs,
-      sessionId,
-      agentId,
-      blocked: false,
+      cachedTokens: resTelemetry.cachedTokens,
+      toolsUsed: resTelemetry.toolsUsed,
     }),
   );
 

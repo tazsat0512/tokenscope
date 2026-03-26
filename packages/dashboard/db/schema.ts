@@ -38,6 +38,14 @@ export const requestLogs = sqliteTable('request_logs', {
   timestamp: integer('timestamp').notNull(),
   blocked: integer('blocked', { mode: 'boolean' }).notNull().default(false),
   blockReason: text('block_reason'),
+  // Telemetry expansion fields
+  cachedTokens: integer('cached_tokens'),
+  hasCacheControl: integer('has_cache_control', { mode: 'boolean' }),
+  maxTokensSetting: integer('max_tokens_setting'),
+  isStreaming: integer('is_streaming', { mode: 'boolean' }),
+  toolCount: integer('tool_count'),
+  toolsUsed: text('tools_used'), // JSON array of tool names
+  systemPromptHash: text('system_prompt_hash'),
 });
 
 export const loopEvents = sqliteTable('loop_events', {
