@@ -4,6 +4,12 @@
 
 TokenScope is a transparent proxy that tracks AI agent costs in real-time, enforces budget limits, and auto-stops runaway loops. Works with OpenAI, Anthropic, and Google. One line change — that's it.
 
+## Why
+
+AI agents loop. A single stuck agent can burn $47,000 in 11 days. Existing tools either require code changes (AgentBudget) or only observe without stopping the bleed (Helicone, Langfuse).
+
+TokenScope is a proxy — change your base URL and it handles the rest. No SDK, no code changes, no vendor lock-in.
+
 ## Features
 
 - **Cost Visibility** — Real-time cost tracking across OpenAI, Anthropic, and Google. Per-session, per-agent, and per-model breakdowns.
