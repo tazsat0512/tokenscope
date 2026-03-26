@@ -2,7 +2,7 @@ import { FREE_PLAN_REQUEST_LIMIT, PRO_PLAN_REQUEST_LIMIT } from '@reivo/shared';
 import { createMiddleware } from 'hono/factory';
 import type { Env, UserRecord } from '../types/index.js';
 
-type HonoEnv = { Bindings: Env; Variables: { user: UserRecord } };
+type HonoEnv = { Bindings: Env; Variables: { user: UserRecord; budgetAlert?: boolean; forceAggressiveRouting?: boolean } };
 
 function getMonthStart(): number {
   const now = new Date();

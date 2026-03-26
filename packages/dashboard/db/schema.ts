@@ -13,6 +13,8 @@ export const users = sqliteTable('users', {
   stripeCustomerId: text('stripe_customer_id'),
   requestCount: integer('request_count').notNull().default(0),
   requestCountResetAt: integer('request_count_reset_at').notNull().default(0),
+  routingEnabled: integer('routing_enabled').notNull().default(0),
+  routingMode: text('routing_mode').notNull().default('auto'),
   createdAt: integer('created_at', { mode: 'timestamp' })
     .notNull()
     .$defaultFn(() => new Date()),
@@ -46,6 +48,21 @@ export const requestLogs = sqliteTable('request_logs', {
   toolCount: integer('tool_count'),
   toolsUsed: text('tools_used'), // JSON array of tool names
   systemPromptHash: text('system_prompt_hash'),
+  // Smart routing fields
+  routedModel: text('routed_model'),
+  routingReason: text('routing_reason'),
+});
+
+// Budget policies table for per-agent and global budget rules
+// UNIQUE constraint on (user_id, agent_id) enforced at application layer
+export const budgetPolicies = sqliteTable('budget_policies', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull(),
+  agentId: text('agent_id'), // null = global policy
+  limitUsd: real('limit_usd').notNull(),
+  action: text('action').notNull().default('block'),
+  createdAt: integer('created_at').notNull(),
+  updatedAt: integer('updated_at').notNull(),
 });
 
 export const loopEvents = sqliteTable('loop_events', {

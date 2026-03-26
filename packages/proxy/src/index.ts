@@ -13,7 +13,7 @@ import type { Env, UserRecord } from './types/index.js';
 
 type HonoEnv = {
   Bindings: Env;
-  Variables: { user: UserRecord; requestId: string; startTime: number };
+  Variables: { user: UserRecord; requestId: string; startTime: number; budgetAlert?: boolean; forceAggressiveRouting?: boolean };
 };
 
 const app = new Hono<HonoEnv>();

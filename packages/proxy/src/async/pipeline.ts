@@ -20,6 +20,7 @@ export interface PipelineInput {
   agentId: string | null;
   blocked: boolean;
   blockReason?: string;
+  budgetAlert?: boolean;
   // Smart routing
   routedModel?: string;
   routingReason?: string;

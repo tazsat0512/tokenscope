@@ -11,7 +11,7 @@ import { extractRequestTelemetry, extractResponseTelemetry } from '../utils/tele
 
 type HonoEnv = {
   Bindings: Env;
-  Variables: { user: UserRecord; requestId: string; startTime: number };
+  Variables: { user: UserRecord; requestId: string; startTime: number; budgetAlert?: boolean; forceAggressiveRouting?: boolean };
 };
 
 const openai = new Hono<HonoEnv>();
@@ -41,7 +41,8 @@ openai.all('/openai/*', async (c) => {
   const reqTelemetry = await extractRequestTelemetry(parsedBody);
 
   // Smart routing: potentially downgrade model
-  const routing = routeModel(parsedBody, 'openai', model, user);
+  const forceAggressive = c.get('forceAggressiveRouting');
+  const routing = routeModel(parsedBody, 'openai', model, user, forceAggressive);
   if (routing.routedModel !== model && parsedBody && typeof parsedBody === 'object') {
     (parsedBody as Record<string, unknown>).model = routing.routedModel;
   }

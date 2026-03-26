@@ -1,3 +1,11 @@
+export type BudgetAction = 'block' | 'alert' | 'downgrade';
+
+export interface BudgetPolicy {
+  agentId: string | null;  // null = global
+  limitUsd: number;
+  action: BudgetAction;
+}
+
 export interface Env {
   BUDGET_KV: KVNamespace;
   USERS_KV: KVNamespace;
@@ -19,6 +27,8 @@ export interface UserRecord {
   plan: 'free' | 'pro';
   requestCount: number;
   requestCountResetAt: number;
+  budgetAction: BudgetAction;
+  agentBudgets?: BudgetPolicy[];
   routingEnabled?: boolean;
   routingMode?: 'auto' | 'conservative' | 'aggressive' | 'off';
 }

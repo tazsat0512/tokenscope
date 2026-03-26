@@ -141,8 +141,25 @@ export function routeModel(
   provider: ProviderName,
   model: string,
   user: UserRecord,
+  forceAggressive?: boolean,
 ): RoutingDecision {
   const passthrough: RoutingDecision = { originalModel: model, routedModel: model, reason: 'passthrough' };
+
+  // When budget-driven downgrade is active, force aggressive routing even if
+  // the user hasn't explicitly enabled routing.
+  if (forceAggressive) {
+    const providerMap = MODEL_DOWNGRADE_MAP[provider];
+    if (!providerMap) return passthrough;
+    const downgradeTarget = providerMap[model];
+    if (!downgradeTarget) return { ...passthrough, reason: 'model_not_in_map' };
+
+    const signals = analyzeComplexity(parsedBody);
+    const { downgrade, reason } = shouldDowngrade(signals, 'aggressive');
+    if (downgrade) {
+      return { originalModel: model, routedModel: downgradeTarget, reason: `budget_${reason}` };
+    }
+    return { originalModel: model, routedModel: model, reason };
+  }
 
   // Check if routing is enabled for this user
   if (!user.routingEnabled) return passthrough;

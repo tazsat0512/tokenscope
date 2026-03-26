@@ -11,7 +11,7 @@ import { extractRequestTelemetry, extractResponseTelemetry } from '../utils/tele
 
 type HonoEnv = {
   Bindings: Env;
-  Variables: { user: UserRecord; requestId: string; startTime: number };
+  Variables: { user: UserRecord; requestId: string; startTime: number; budgetAlert?: boolean; forceAggressiveRouting?: boolean };
 };
 
 const google = new Hono<HonoEnv>();
@@ -50,7 +50,8 @@ google.all('/google/*', async (c) => {
   reqTelemetry.isStreaming = isStream;
 
   // Smart routing: potentially downgrade model (Google model is in URL, not body)
-  const routing = routeModel(parsedBody, 'google', model, user);
+  const forceAggressive = c.get('forceAggressiveRouting');
+  const routing = routeModel(parsedBody, 'google', model, user, forceAggressive);
   if (routing.routedModel !== model) {
     upstreamUrl = upstreamUrl.replace(`/models/${model}`, `/models/${routing.routedModel}`);
   }

@@ -1,8 +1,8 @@
 import { auth } from '@clerk/nextjs/server';
 import { initTRPC, TRPCError } from '@trpc/server';
-import { and, desc, eq, gte, sql } from 'drizzle-orm';
+import { and, desc, eq, gte, isNull, sql } from 'drizzle-orm';
 import { z } from 'zod';
-import { loopEvents, requestLogs, users } from '../../db/schema';
+import { budgetPolicies, loopEvents, requestLogs, users } from '../../db/schema';
 import { sha256 } from '../crypto';
 import { db } from '../db';
 import { decrypt, encrypt } from '../encryption';
@@ -419,6 +419,8 @@ export const appRouter = t.router({
       z.object({
         budgetLimitUsd: z.number().nullable().optional(),
         slackWebhookUrl: z.string().nullable().optional(),
+        routingEnabled: z.boolean().optional(),
+        routingMode: z.enum(['auto', 'conservative', 'aggressive', 'off']).optional(),
         providerKeys: z
           .object({
             openai: z.string().nullable().optional(),
@@ -436,6 +438,12 @@ export const appRouter = t.router({
       }
       if (input.slackWebhookUrl !== undefined) {
         updates.slackWebhookUrl = input.slackWebhookUrl;
+      }
+      if (input.routingEnabled !== undefined) {
+        updates.routingEnabled = input.routingEnabled ? 1 : 0;
+      }
+      if (input.routingMode !== undefined) {
+        updates.routingMode = input.routingMode;
       }
 
       // Handle provider keys
@@ -484,6 +492,127 @@ export const appRouter = t.router({
       }
 
       return { success: true };
+    }),
+
+  // --- Budget Policies ---
+  getBudgetPolicies: authedProcedure.query(async ({ ctx }) => {
+    const policies = await db
+      .select()
+      .from(budgetPolicies)
+      .where(eq(budgetPolicies.userId, ctx.userId))
+      .orderBy(budgetPolicies.agentId);
+    return policies;
+  }),
+
+  upsertBudgetPolicy: authedProcedure
+    .input(
+      z.object({
+        agentId: z.string().nullable(),
+        limitUsd: z.number().min(0),
+        action: z.enum(['block', 'alert', 'downgrade']),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const now = Date.now();
+      // Check for existing policy with same userId + agentId
+      const existing = await db
+        .select()
+        .from(budgetPolicies)
+        .where(
+          and(
+            eq(budgetPolicies.userId, ctx.userId),
+            input.agentId
+              ? eq(budgetPolicies.agentId, input.agentId)
+              : isNull(budgetPolicies.agentId),
+          ),
+        )
+        .limit(1);
+
+      if (existing[0]) {
+        await db
+          .update(budgetPolicies)
+          .set({ limitUsd: input.limitUsd, action: input.action, updatedAt: now })
+          .where(eq(budgetPolicies.id, existing[0].id));
+      } else {
+        await db.insert(budgetPolicies).values({
+          id: crypto.randomUUID(),
+          userId: ctx.userId,
+          agentId: input.agentId,
+          limitUsd: input.limitUsd,
+          action: input.action,
+          createdAt: now,
+          updatedAt: now,
+        });
+      }
+
+      // Sync budget policies to KV
+      try {
+        const user = await db.select().from(users).where(eq(users.id, ctx.userId)).limit(1);
+        if (user[0]) await syncUserToKV(user[0]);
+      } catch (err) {
+        console.error('KV sync failed:', err);
+      }
+
+      return { success: true };
+    }),
+
+  deleteBudgetPolicy: authedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      await db
+        .delete(budgetPolicies)
+        .where(and(eq(budgetPolicies.id, input.id), eq(budgetPolicies.userId, ctx.userId)));
+
+      try {
+        const user = await db.select().from(users).where(eq(users.id, ctx.userId)).limit(1);
+        if (user[0]) await syncUserToKV(user[0]);
+      } catch (err) {
+        console.error('KV sync failed:', err);
+      }
+
+      return { success: true };
+    }),
+
+  // --- Routing Stats ---
+  getRoutingStats: authedProcedure
+    .input(z.object({ days: z.number().default(30) }))
+    .query(async ({ ctx, input }) => {
+      const since = Date.now() - input.days * 24 * 60 * 60 * 1000;
+
+      const stats = await db
+        .select({
+          totalRouted: sql<number>`sum(case when ${requestLogs.routedModel} is not null then 1 else 0 end)`,
+          totalRequests: sql<number>`count(*)`,
+        })
+        .from(requestLogs)
+        .where(and(eq(requestLogs.userId, ctx.userId), gte(requestLogs.timestamp, since)));
+
+      const recentDecisions = await db
+        .select({
+          id: requestLogs.id,
+          model: requestLogs.model,
+          routedModel: requestLogs.routedModel,
+          routingReason: requestLogs.routingReason,
+          costUsd: requestLogs.costUsd,
+          timestamp: requestLogs.timestamp,
+          agentId: requestLogs.agentId,
+        })
+        .from(requestLogs)
+        .where(
+          and(
+            eq(requestLogs.userId, ctx.userId),
+            gte(requestLogs.timestamp, since),
+            sql`${requestLogs.routedModel} is not null`,
+          ),
+        )
+        .orderBy(desc(requestLogs.timestamp))
+        .limit(50);
+
+      return {
+        totalRouted: stats[0]?.totalRouted ?? 0,
+        totalRequests: stats[0]?.totalRequests ?? 0,
+        recentDecisions,
+      };
     }),
 });
 

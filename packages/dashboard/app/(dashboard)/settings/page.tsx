@@ -199,11 +199,30 @@ export default function SettingsPage() {
     onError: () => toast({ title: 'Failed to save settings', variant: 'destructive' }),
   });
 
+  const { data: budgetPoliciesData } = trpc.getBudgetPolicies.useQuery();
+  const upsertPolicy = trpc.upsertBudgetPolicy.useMutation({
+    onSuccess: () => {
+      utils.getBudgetPolicies.invalidate();
+      toast({ title: 'Budget policy saved' });
+    },
+    onError: () => toast({ title: 'Failed to save policy', variant: 'destructive' }),
+  });
+  const deletePolicy = trpc.deleteBudgetPolicy.useMutation({
+    onSuccess: () => {
+      utils.getBudgetPolicies.invalidate();
+      toast({ title: 'Budget policy removed' });
+    },
+  });
+
   const [newApiKey, setNewApiKey] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [budgetLimit, setBudgetLimit] = useState<string>('');
+  const [budgetAction, setBudgetAction] = useState<string>('block');
   const [slackUrl, setSlackUrl] = useState<string>('');
   const [showConfirm, setShowConfirm] = useState(false);
+  const [newAgentId, setNewAgentId] = useState('');
+  const [newAgentLimit, setNewAgentLimit] = useState('');
+  const [newAgentAction, setNewAgentAction] = useState<string>('block');
 
   if (isLoading) {
     return <SettingsSkeleton />;
@@ -315,15 +334,65 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
+      {/* Smart Routing */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Smart Routing</CardTitle>
+          <CardDescription>
+            Automatically route requests to cost-optimal models based on task complexity
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <Label>Enable Smart Routing</Label>
+              <p className="text-sm text-muted-foreground">Route simple requests to cheaper models automatically</p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={settings?.routingEnabled ? true : false}
+              onClick={() => {
+                updateSettings.mutate({ routingEnabled: !settings?.routingEnabled });
+              }}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                settings?.routingEnabled ? 'bg-primary' : 'bg-muted'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  settings?.routingEnabled ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+          {settings?.routingEnabled && (
+            <div>
+              <Label>Routing Mode</Label>
+              <select
+                value={settings?.routingMode ?? 'auto'}
+                onChange={(e) => updateSettings.mutate({ routingMode: e.target.value as 'auto' | 'conservative' | 'aggressive' | 'off' })}
+                className="mt-1 block w-full max-w-xs rounded-md border bg-background px-3 py-2 text-sm"
+              >
+                <option value="auto">Auto (Conservative)</option>
+                <option value="conservative">Conservative - downgrade only when confident</option>
+                <option value="aggressive">Aggressive - downgrade unless complexity detected</option>
+                <option value="off">Off - passthrough only</option>
+              </select>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Budget Limit */}
       <Card>
         <CardHeader>
-          <CardTitle>Budget Limit</CardTitle>
+          <CardTitle>Global Budget</CardTitle>
           <CardDescription>
-            Set a monthly spending limit. Requests will be blocked when exceeded.
+            Set a monthly spending limit and choose what happens when it&apos;s exceeded
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">$</span>
@@ -337,14 +406,106 @@ export default function SettingsPage() {
                 min="0"
               />
             </div>
+            <select
+              value={budgetAction}
+              onChange={(e) => setBudgetAction(e.target.value)}
+              className="rounded-md border bg-background px-3 py-2 text-sm"
+            >
+              <option value="block">Block requests</option>
+              <option value="alert">Alert only (continue)</option>
+              <option value="downgrade">Auto-downgrade model</option>
+            </select>
             <Button
               onClick={() => {
                 updateSettings.mutate({
                   budgetLimitUsd: budgetLimit ? Number.parseFloat(budgetLimit) : null,
                 });
+                if (budgetLimit) {
+                  upsertPolicy.mutate({
+                    agentId: null,
+                    limitUsd: Number.parseFloat(budgetLimit),
+                    action: budgetAction as 'block' | 'alert' | 'downgrade',
+                  });
+                }
               }}
             >
               Save
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            <strong>Block</strong> = reject requests (429). <strong>Alert</strong> = notify via Slack but continue. <strong>Downgrade</strong> = auto-switch to cheaper models.
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Per-Agent Budgets */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Agent Budgets</CardTitle>
+          <CardDescription>
+            Set individual spending limits per agent. Overrides the global budget for matching agents.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {budgetPoliciesData?.filter((p) => p.agentId).map((policy) => (
+            <div key={policy.id} className="flex items-center gap-3 rounded-md border px-3 py-2">
+              <code className="text-sm font-medium">{policy.agentId}</code>
+              <span className="text-sm text-muted-foreground">${policy.limitUsd.toFixed(2)}</span>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-xs capitalize">{policy.action}</span>
+              <div className="flex-1" />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => deletePolicy.mutate({ id: policy.id })}
+                className="text-xs text-destructive hover:text-destructive"
+              >
+                Remove
+              </Button>
+            </div>
+          ))}
+          <div className="flex items-center gap-2">
+            <Input
+              placeholder="Agent ID"
+              value={newAgentId}
+              onChange={(e) => setNewAgentId(e.target.value)}
+              className="w-40"
+            />
+            <div className="flex items-center gap-1">
+              <span className="text-sm text-muted-foreground">$</span>
+              <Input
+                type="number"
+                placeholder="Limit"
+                value={newAgentLimit}
+                onChange={(e) => setNewAgentLimit(e.target.value)}
+                className="w-24"
+                step="0.01"
+                min="0"
+              />
+            </div>
+            <select
+              value={newAgentAction}
+              onChange={(e) => setNewAgentAction(e.target.value)}
+              className="rounded-md border bg-background px-3 py-2 text-sm"
+            >
+              <option value="block">Block</option>
+              <option value="alert">Alert</option>
+              <option value="downgrade">Downgrade</option>
+            </select>
+            <Button
+              size="sm"
+              disabled={!newAgentId || !newAgentLimit}
+              onClick={() => {
+                upsertPolicy.mutate({
+                  agentId: newAgentId,
+                  limitUsd: Number.parseFloat(newAgentLimit),
+                  action: newAgentAction as 'block' | 'alert' | 'downgrade',
+                });
+                setNewAgentId('');
+                setNewAgentLimit('');
+                setNewAgentAction('block');
+              }}
+            >
+              Add
             </Button>
           </div>
         </CardContent>

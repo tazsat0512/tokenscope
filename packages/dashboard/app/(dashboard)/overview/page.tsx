@@ -42,6 +42,7 @@ function OverviewSkeleton() {
 export default function OverviewPage() {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const { data, isLoading } = trpc.getOverview.useQuery({ days: 30, tz });
+  const { data: routingStats } = trpc.getRoutingStats.useQuery({ days: 30 });
 
   if (isLoading) {
     return <OverviewSkeleton />;
@@ -107,6 +108,49 @@ export default function OverviewPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Routing Stats */}
+      {routingStats && routingStats.totalRouted > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Smart Routing</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div>
+                <p className="text-sm text-muted-foreground">Routed Requests</p>
+                <p className="text-2xl font-bold">
+                  {formatNumber(routingStats.totalRouted)}
+                  <span className="ml-1 text-sm font-normal text-muted-foreground">
+                    / {formatNumber(routingStats.totalRequests)}
+                  </span>
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Routing Rate</p>
+                <p className="text-2xl font-bold">
+                  {routingStats.totalRequests > 0
+                    ? Math.round((routingStats.totalRouted / routingStats.totalRequests) * 100)
+                    : 0}%
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Recent Decisions</p>
+                <div className="mt-1 max-h-24 space-y-1 overflow-y-auto">
+                  {routingStats.recentDecisions.slice(0, 5).map((d) => (
+                    <div key={d.id} className="flex items-center gap-2 text-xs">
+                      <code className="rounded bg-muted px-1">{d.model}</code>
+                      <span className="text-muted-foreground">&rarr;</span>
+                      <code className="rounded bg-primary/10 px-1 text-primary">{d.routedModel}</code>
+                      <span className="text-muted-foreground">{d.routingReason}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>

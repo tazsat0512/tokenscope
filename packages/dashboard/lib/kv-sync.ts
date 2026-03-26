@@ -1,5 +1,13 @@
 import { decrypt } from './encryption';
 
+type BudgetAction = 'block' | 'alert' | 'downgrade';
+
+interface BudgetPolicy {
+  agentId: string | null;
+  limitUsd: number;
+  action: BudgetAction;
+}
+
 interface UserRecord {
   id: string;
   apiKeyHash: string;
@@ -9,10 +17,14 @@ interface UserRecord {
     google?: string;
   };
   budgetLimitUsd: number | null;
+  budgetAction: BudgetAction;
+  agentBudgets?: BudgetPolicy[];
   slackWebhookUrl?: string;
   plan: 'free' | 'pro';
   requestCount: number;
   requestCountResetAt: number;
+  routingEnabled?: boolean;
+  routingMode?: 'auto' | 'conservative' | 'aggressive' | 'off';
 }
 
 const CF_API_BASE = 'https://api.cloudflare.com/client/v4';
@@ -66,7 +78,9 @@ export async function syncUserToKV(user: {
   plan?: string;
   requestCount?: number;
   requestCountResetAt?: number;
-}): Promise<void> {
+  routingEnabled?: number | boolean;
+  routingMode?: string;
+}, agentBudgets?: BudgetPolicy[]): Promise<void> {
   if (!user.apiKeyHash) return;
 
   let providerKeys: UserRecord['providerKeys'] = {};
@@ -106,10 +120,14 @@ export async function syncUserToKV(user: {
     apiKeyHash: user.apiKeyHash,
     providerKeys,
     budgetLimitUsd: user.budgetLimitUsd,
+    budgetAction: 'block',
+    agentBudgets: agentBudgets ?? undefined,
     slackWebhookUrl: user.slackWebhookUrl ?? undefined,
     plan: (user.plan as 'free' | 'pro') ?? 'free',
     requestCount: user.requestCount ?? 0,
     requestCountResetAt: user.requestCountResetAt ?? 0,
+    routingEnabled: user.routingEnabled ? true : false,
+    routingMode: (user.routingMode as UserRecord['routingMode']) ?? 'auto',
   };
 
   await kvPut(`key:${user.apiKeyHash}`, JSON.stringify(record));
