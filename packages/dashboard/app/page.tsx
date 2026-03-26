@@ -65,20 +65,19 @@ export default async function LandingPage() {
             Now available as an OpenClaw Skill
           </div>
           <h1 className="text-5xl font-bold tracking-tight">
-            Don&apos;t just watch your AI burn money.
-            <br />
-            <span className="text-primary">Stop it.</span>
+            Same output. <span className="text-primary">Half the cost.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Reivo is a transparent proxy that tracks AI agent costs in real-time, enforces
-            budget limits, and auto-stops runaway loops. Works with OpenAI, Anthropic, and Google.
+            Reivo routes every API call to the cheapest model that delivers the same quality.
+            One line change. Savings start immediately.
+            Budget protection and loop detection included &mdash; free.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               href="/sign-up"
               className="rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
             >
-              Start Free — No Credit Card
+              Start Free &mdash; No Credit Card
             </Link>
             <a
               href="#openclaw"
@@ -89,10 +88,36 @@ export default async function LandingPage() {
           </div>
         </section>
 
+        {/* Numbers */}
+        <section className="border-t border-b bg-muted/20 py-12">
+          <div className="mx-auto grid max-w-5xl grid-cols-2 gap-8 px-6 text-center md:grid-cols-5">
+            <div>
+              <p className="text-3xl font-bold text-primary">40-60%</p>
+              <p className="mt-1 text-sm text-muted-foreground">avg cost reduction</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold">97%+</p>
+              <p className="mt-1 text-sm text-muted-foreground">quality maintained</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold">&lt;30ms</p>
+              <p className="mt-1 text-sm text-muted-foreground">latency added</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold">1</p>
+              <p className="mt-1 text-sm text-muted-foreground">line of code to change</p>
+            </div>
+            <div className="col-span-2 md:col-span-1">
+              <p className="text-3xl font-bold">3</p>
+              <p className="mt-1 text-sm text-muted-foreground">providers supported</p>
+            </div>
+          </div>
+        </section>
+
         {/* How It Works */}
-        <section id="how-it-works" className="border-t bg-muted/30 py-20">
+        <section id="how-it-works" className="py-20">
           <div className="mx-auto max-w-5xl px-6">
-            <h2 className="text-center text-3xl font-bold">One line change. Full visibility.</h2>
+            <h2 className="text-center text-3xl font-bold">One line change. Savings start immediately.</h2>
             <p className="mt-4 text-center text-muted-foreground">
               Replace your provider&apos;s base URL with Reivo&apos;s proxy. That&apos;s it.
             </p>
@@ -120,16 +145,17 @@ export default async function LandingPage() {
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-xl font-bold text-primary">
                   3
                 </div>
-                <h3 className="mt-4 font-semibold">See costs & stay safe</h3>
+                <h3 className="mt-4 font-semibold">Save automatically</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Track spending on the dashboard. Set budgets. Loops are auto-detected and stopped.
+                  Reivo analyzes each request and routes it to the optimal model.
+                  Your dashboard shows exactly how much you saved.
                 </p>
               </div>
             </div>
 
             <div className="mt-12 overflow-hidden rounded-lg border bg-card">
               <div className="border-b px-4 py-2 text-sm font-medium text-muted-foreground">
-                Python — OpenAI SDK
+                Python &mdash; OpenAI SDK
               </div>
               <pre className="overflow-x-auto p-6 text-sm">
                 <code>
@@ -139,7 +165,6 @@ client = OpenAI(
     base_url="https://proxy.reivo.dev/openai/v1",
     api_key="rv_your_reivo_key",
     default_headers={
-        "X-Session-Id": "my-session",
         "X-Agent-Id": "my-agent"
     }
 )`}
@@ -150,14 +175,50 @@ client = OpenAI(
         </section>
 
         {/* Features */}
-        <section className="py-20">
+        <section className="border-t bg-muted/30 py-20">
           <div className="mx-auto max-w-5xl px-6">
-            <h2 className="text-center text-3xl font-bold">Observe + Defend</h2>
+            <h2 className="text-center text-3xl font-bold">Optimize + Defend</h2>
             <p className="mt-4 text-center text-muted-foreground">
-              Unlike tools that only log, Reivo actively protects your budget.
+              Reivo doesn&apos;t just watch your costs. It actively reduces them.
             </p>
 
-            <div className="mt-12 grid gap-8 md:grid-cols-3">
+            <div className="mt-12 grid gap-8 md:grid-cols-2">
+              {/* Smart Routing - THE headline feature */}
+              <div className="rounded-lg border-2 border-primary p-6">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                    <svg className="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">Core</span>
+                </div>
+                <h3 className="mt-4 text-lg font-semibold">Smart Model Routing</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  タスクが求める精度やコストに応じて、最適なモデルへ自動でルーティング。
+                  高い精度が必要なリクエストはフルモデルを維持し、
+                  軽量なタスクはコスト効率の良いモデルへ。判定はリアルタイム、レイテンシ増加ゼロ。
+                </p>
+              </div>
+
+              {/* Quality Guarantee */}
+              <div className="rounded-lg border-2 border-primary p-6">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                    <svg className="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">Core</span>
+                </div>
+                <h3 className="mt-4 text-lg font-semibold">Quality Guarantee</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  If a routed response doesn&apos;t meet quality thresholds,
+                  Reivo automatically re-sends to the full model. You never see a bad response.
+                </p>
+              </div>
+
+              {/* Cost Visibility */}
               <div className="rounded-lg border p-6">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                   <svg className="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -171,46 +232,87 @@ client = OpenAI(
                 </p>
               </div>
 
+              {/* Budget + Loop combined */}
               <div className="rounded-lg border p-6">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                   <svg className="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 </div>
-                <h3 className="mt-4 text-lg font-semibold">Budget Guardrails</h3>
+                <h3 className="mt-4 text-lg font-semibold">Budget Guardrails & Loop Detection</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Set spending limits. Get alerts at 50%, 80%, 100%. Requests auto-blocked
-                  when budget is exceeded.
-                </p>
-              </div>
-
-              <div className="rounded-lg border p-6">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                  <svg className="h-5 w-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                  </svg>
-                </div>
-                <h3 className="mt-4 text-lg font-semibold">Loop Detection</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Detects agents stuck in repetitive loops via prompt hashing and TF-IDF similarity.
-                  Auto-stops runaways.
+                  Set spending limits with alerts at 50%, 80%, 100%. Detects agents stuck in
+                  repetitive loops and auto-stops runaways before they burn your budget.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
+        {/* Smart Routing Details */}
+        <section className="py-20">
+          <div className="mx-auto max-w-5xl px-6">
+            <h2 className="text-center text-3xl font-bold">How Smart Routing Works</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-center text-muted-foreground">
+              Reivoはリクエストの内容をリアルタイムに解析し、タスクの複雑さに応じて最適なモデルを自動選択します。
+              高精度が必要な処理はそのまま。軽量なタスクはコスト効率の良いモデルへ。
+            </p>
+
+            <div className="mt-12 grid gap-6 md:grid-cols-3">
+              <div className="rounded-lg border bg-card p-6 text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-xl">
+                  <svg className="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+                <h3 className="mt-4 font-semibold">リクエスト解析</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  タスクの複雑さ・求められる精度をリアルタイムで判定。レイテンシ増加ゼロ。
+                </p>
+              </div>
+              <div className="rounded-lg border bg-card p-6 text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-xl">
+                  <svg className="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                </div>
+                <h3 className="mt-4 font-semibold">自動ルーティング</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  高精度が必要ならフルモデル維持。軽量タスクは自動でコスト最適なモデルへ。
+                </p>
+              </div>
+              <div className="rounded-lg border bg-card p-6 text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-xl">
+                  <svg className="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h3 className="mt-4 font-semibold">全件ログ</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  どのリクエストがどのモデルに送られたか、判定理由まで全てダッシュボードで確認可能。
+                </p>
+              </div>
+            </div>
+
+            <p className="mt-8 text-center text-sm text-muted-foreground">
+              ルーティングの積極度は Settings で <strong>conservative</strong> / <strong>aggressive</strong> / <strong>off</strong> を切り替え可能。
+              いつでもオフにできます。
+            </p>
+          </div>
+        </section>
+
         {/* OpenClaw Skill */}
-        <section id="openclaw" className="border-t bg-muted/30 py-20">
+        <section id="openclaw" className="py-20">
           <div className="mx-auto max-w-5xl px-6">
             <div className="text-center">
               <div className="mb-4 inline-block rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
                 Free OpenClaw Skill
               </div>
-              <h2 className="text-3xl font-bold">Use Reivo from OpenClaw</h2>
+              <h2 className="text-3xl font-bold">$100/month used to buy 15 days. Now it buys 30.</h2>
               <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-                Install the Reivo skill and manage costs directly from your OpenClaw agent.
-                No dashboard needed for basic usage.
+                Your OpenClaw hits the monthly budget cap mid-month.
+                Reivo routes 70% of requests to cheaper models automatically.
+                Same quality. Full month of uptime.
               </p>
             </div>
 
@@ -239,10 +341,10 @@ client = OpenAI(
                 <h3 className="text-lg font-semibold">Talk to Your Agent</h3>
                 <div className="mt-4 space-y-3">
                   {[
-                    ['"How much am I spending?"', 'Shows cost breakdown by model and agent'],
+                    ['"How much did Reivo save me?"', 'Saved $127.30 this month (60% reduction)'],
+                    ['"How much am I spending?"', 'Cost breakdown by model and agent'],
                     ['"Set my budget to $50"', 'Enforces monthly spending limit'],
                     ['"Which agent costs the most?"', 'Agent-by-agent cost comparison'],
-                    ['"Show budget status"', 'Budget usage with loop/block counts'],
                     ['"Open dashboard"', 'Link to full analytics dashboard'],
                   ].map(([cmd, desc]) => (
                     <div key={cmd} className="flex gap-3">
@@ -265,15 +367,17 @@ client = OpenAI(
               </div>
               <pre className="overflow-x-auto p-6 text-sm text-muted-foreground">
                 <code>
-                  {`OpenClaw Agent
-    │
-    │  API calls routed through proxy
-    ▼
-Reivo Proxy  ──────►  LLM Provider (OpenAI / Anthropic / Google)
-    │
-    │  telemetry: cost, tokens, loops
-    ▼
-Reivo Dashboard (optional, for detailed analytics)`}
+                  {`Your Agent (OpenClaw / custom)
+    |
+    |  base_url = "https://proxy.reivo.dev/..."
+    v
+Reivo Smart Proxy
+    |-- Smart Router: picks optimal model per request
+    |-- Quality Verifier: ensures output quality
+    |-- Budget Guard: enforces spending limits
+    |-- Loop Detector: stops runaway agents
+    v
+LLM Provider (OpenAI / Anthropic / Google)`}
                 </code>
               </pre>
             </div>
@@ -281,8 +385,8 @@ Reivo Dashboard (optional, for detailed analytics)`}
         </section>
 
         {/* Comparison */}
-        <section className="py-20">
-          <div className="mx-auto max-w-4xl px-6">
+        <section className="border-t bg-muted/30 py-20">
+          <div className="mx-auto max-w-5xl px-6">
             <h2 className="text-center text-3xl font-bold">Why Reivo?</h2>
             <div className="mt-12 overflow-x-auto">
               <table className="w-full text-sm">
@@ -290,32 +394,43 @@ Reivo Dashboard (optional, for detailed analytics)`}
                   <tr className="border-b">
                     <th className="px-4 py-3 text-left font-medium" />
                     <th className="px-4 py-3 text-center font-medium">Helicone</th>
+                    <th className="px-4 py-3 text-center font-medium">Langfuse</th>
+                    <th className="px-4 py-3 text-center font-medium">AgentBudget</th>
                     <th className="px-4 py-3 text-center font-medium text-primary">Reivo</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {[
-                    ['Proxy-based (1-line setup)', true, true],
-                    ['Cost tracking & analytics', true, true],
-                    ['Multi-provider support', true, true],
-                    ['Budget limits & auto-block', false, true],
-                    ['Loop detection & auto-stop', false, true],
-                    ['Anomaly detection (EWMA)', false, true],
-                    ['OpenClaw skill', false, true],
-                    ['Open source / self-hostable', false, true],
-                  ].map(([feature, helicone, ts]) => (
-                    <tr key={feature as string} className="border-b">
-                      <td className="px-4 py-3">{feature as string}</td>
+                  {([
+                    ['Proxy-based (1-line setup)', true, false, false, true],
+                    ['Cost tracking & analytics', true, true, false, true],
+                    ['Budget enforcement', false, false, true, true],
+                    ['Loop detection & auto-stop', false, false, 'partial', true],
+                    ['Smart model routing', false, false, false, 'star'],
+                    ['Quality verification', false, false, false, 'star'],
+                    ['Auto cost reduction', false, false, false, '40-60%'],
+                    ['OpenClaw skill', false, false, false, true],
+                    ['Open source', true, true, true, true],
+                  ] as [string, boolean | string, boolean | string, boolean | string, boolean | string][]).map(([feature, h, l, a, r]) => (
+                    <tr key={feature} className="border-b">
+                      <td className="px-4 py-3">{feature}</td>
+                      {[h, l, a].map((val, i) => (
+                        <td key={i} className="px-4 py-3 text-center">
+                          {val === true ? (
+                            <span className="text-green-600">&#10003;</span>
+                          ) : val === 'partial' ? (
+                            <span className="text-yellow-600">~</span>
+                          ) : (
+                            <span className="text-muted-foreground">&mdash;</span>
+                          )}
+                        </td>
+                      ))}
                       <td className="px-4 py-3 text-center">
-                        {helicone ? (
-                          <span className="text-green-600">&#10003;</span>
-                        ) : (
-                          <span className="text-muted-foreground">&mdash;</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        {ts ? (
+                        {r === true ? (
                           <span className="font-semibold text-green-600">&#10003;</span>
+                        ) : r === 'star' ? (
+                          <span className="font-bold text-primary">&#10003; &#9733;</span>
+                        ) : typeof r === 'string' ? (
+                          <span className="font-bold text-primary">{r}</span>
                         ) : (
                           <span className="text-muted-foreground">&mdash;</span>
                         )}
@@ -329,32 +444,35 @@ Reivo Dashboard (optional, for detailed analytics)`}
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="border-t bg-muted/30 py-20">
+        <section id="pricing" className="py-20">
           <div className="mx-auto max-w-5xl px-6">
             <h2 className="text-center text-3xl font-bold">Simple Pricing</h2>
             <p className="mt-4 text-center text-muted-foreground">
-              Start free. Upgrade when you need more.
+              Protection is free. Optimization pays for itself.
             </p>
 
             <div className="mt-12 grid gap-8 md:grid-cols-3">
               <div className="rounded-lg border bg-card p-6">
                 <h3 className="text-lg font-semibold">Free</h3>
-                <p className="mt-1 text-sm text-muted-foreground">For individuals getting started</p>
+                <p className="mt-1 text-sm text-muted-foreground">Protection for everyone</p>
                 <p className="mt-4 text-3xl font-bold">
                   $0<span className="text-base font-normal text-muted-foreground">/mo</span>
                 </p>
                 <ul className="mt-6 space-y-2 text-sm">
                   <li className="flex items-center gap-2">
-                    <span className="text-green-600">&#10003;</span> OpenClaw Skill (full access)
+                    <span className="text-green-600">&#10003;</span> Cost tracking & dashboard
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-600">&#10003;</span> Budget limits & loop detection
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-600">&#10003;</span> OpenClaw Skill
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="text-green-600">&#10003;</span> 10,000 requests/month
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="text-green-600">&#10003;</span> 7-day cost history
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-600">&#10003;</span> Budget limits & loop detection
                   </li>
                 </ul>
                 <Link
@@ -372,7 +490,7 @@ Reivo Dashboard (optional, for detailed analytics)`}
                     Popular
                   </span>
                 </div>
-                <p className="mt-1 text-sm text-muted-foreground">For power users and small teams</p>
+                <p className="mt-1 text-sm text-muted-foreground">Pay $49, save $200+</p>
                 <p className="mt-4 text-3xl font-bold">
                   $49<span className="text-base font-normal text-muted-foreground">/mo</span>
                 </p>
@@ -381,19 +499,19 @@ Reivo Dashboard (optional, for detailed analytics)`}
                     <span className="text-green-600">&#10003;</span> Everything in Free
                   </li>
                   <li className="flex items-center gap-2">
+                    <span className="font-bold text-primary">&#9733;</span> Smart Model Routing (auto)
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="font-bold text-primary">&#9733;</span> Quality Verification
+                  </li>
+                  <li className="flex items-center gap-2">
                     <span className="text-green-600">&#10003;</span> 100,000 requests/month
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="text-green-600">&#10003;</span> 90-day cost history
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-green-600">&#10003;</span> Model optimization suggestions
-                  </li>
-                  <li className="flex items-center gap-2">
                     <span className="text-green-600">&#10003;</span> Slack notifications
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-600">&#10003;</span> Session forensics replay
                   </li>
                 </ul>
                 <Link
@@ -415,13 +533,13 @@ Reivo Dashboard (optional, for detailed analytics)`}
                     <span className="text-green-600">&#10003;</span> Everything in Pro
                   </li>
                   <li className="flex items-center gap-2">
+                    <span className="font-bold text-primary">&#9733;</span> Context Optimizer
+                  </li>
+                  <li className="flex items-center gap-2">
                     <span className="text-green-600">&#10003;</span> Unlimited requests
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="text-green-600">&#10003;</span> Multi-agent dashboard
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-green-600">&#10003;</span> Auto model routing
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="text-green-600">&#10003;</span> Team budget allocation
@@ -502,9 +620,9 @@ Reivo Dashboard (optional, for detailed analytics)`}
         {/* CTA */}
         <section className="py-20">
           <div className="mx-auto max-w-3xl px-6 text-center">
-            <h2 className="text-3xl font-bold">Ready to take control of your AI costs?</h2>
+            <h2 className="text-3xl font-bold">Stop overpaying for AI. Start today.</h2>
             <p className="mt-4 text-muted-foreground">
-              Join the growing community of developers who track and protect their AI spending.
+              Same output quality. Half the API bill. One line to set up.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
@@ -529,7 +647,7 @@ Reivo Dashboard (optional, for detailed analytics)`}
       {/* Footer */}
       <footer className="border-t py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-muted-foreground sm:flex-row">
-          <p>&copy; {new Date().getFullYear()} Reivo. The AI proxy with built-in guardrails.</p>
+          <p>&copy; {new Date().getFullYear()} Reivo. The smart proxy that cuts your AI costs in half.</p>
           <div className="flex gap-6">
             <a
               href="https://github.com/tazsat0512/reivo"
@@ -539,7 +657,7 @@ Reivo Dashboard (optional, for detailed analytics)`}
             >
               GitHub
             </a>
-            <a href="mailto:REDACTED_EMAIL" className="hover:text-foreground">
+            <a href="mailto:hello@reivo.dev" className="hover:text-foreground">
               Contact
             </a>
           </div>

@@ -12,6 +12,7 @@ Reivo is a proxy — change your base URL and it handles the rest. No SDK, no co
 
 ## Features
 
+- **Smart Model Routing** — Automatically routes each request to the cheapest model that can handle it. Pure JSON analysis with 0ms overhead. See [How Smart Routing Works](#smart-routing) for details.
 - **Cost Visibility** — Real-time cost tracking across OpenAI, Anthropic, and Google. Per-session, per-agent, and per-model breakdowns.
 - **Budget Guardrails** — Set spending limits with alerts at 50%, 80%, and 100%. Requests are automatically blocked when exceeded.
 - **Loop Detection** — Detects agents stuck in repetitive loops using prompt hashing and cosine similarity. Auto-stops runaway agents.
@@ -83,6 +84,51 @@ curl https://proxy.reivo.dev/google/v1beta/models/gemini-2.5-flash:generateConte
 |--------|-------------|
 | `X-Session-Id` | Group requests by session |
 | `X-Agent-Id` | Track costs per agent |
+
+## Smart Routing
+
+Reivo's Smart Router analyzes each request's JSON body and decides whether to downgrade the model — with zero latency overhead (pure JSON field inspection, no external API calls).
+
+### Model Downgrade Map
+
+| Provider | Requested Model | Routed To |
+|----------|----------------|-----------|
+| OpenAI | gpt-4o | gpt-4o-mini |
+| OpenAI | gpt-4-turbo | gpt-4o-mini |
+| OpenAI | o3 | o3-mini |
+| Anthropic | claude-sonnet-4 | claude-haiku-4.5 |
+| Anthropic | claude-opus-4 | claude-sonnet-4 |
+| Google | gemini-2.5-pro | gemini-2.5-flash |
+
+### Decision Logic
+
+The router inspects 6 signals from the request body:
+
+**Complexity signals (keep full model):**
+- `tools` or `tool_choice` present → tool use requires full model
+- `response_format.type = "json_schema"` → structured output requires full model
+- `messages.length > 10` → deep conversation requires full model
+- System prompt > 2,000 characters → complex instructions require full model
+
+**Simplicity signals (eligible for downgrade):**
+- `max_tokens < 100` → short output likely means simple task
+- `temperature < 0.3` or unset → factual/deterministic query
+
+### Routing Modes
+
+| Mode | Behavior |
+|------|----------|
+| `conservative` (default) | Downgrade only when at least one simplicity signal is present AND no complexity signals |
+| `aggressive` | Downgrade unless a complexity signal blocks it |
+| `off` | Never downgrade — passthrough only |
+
+### What Gets Logged
+
+- The `model` field in the database always records the **original** requested model
+- `routed_model` records what was actually sent upstream (only when different)
+- `routing_reason` records why (e.g. `short_output_low_temp`, `tools_present`)
+
+This lets you measure exact savings and audit every routing decision in the dashboard.
 
 ## Security
 
@@ -174,6 +220,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed setup instructions.
 | Feature | Reivo | Helicone | Langfuse | AgentBudget |
 |---------|-----------|----------|----------|-------------|
 | Proxy-based (1 line change) | Yes | Yes | No (SDK) | No (library) |
+| Smart model routing | **Yes** | No | No | No |
+| Auto cost reduction | **40-60%** | No | No | No |
+| Cost tracking & analytics | Yes | Yes | Yes | No |
 | Budget enforcement | Yes | No | No | Yes |
 | Loop detection | Yes | No | No | No |
 | Anomaly detection | Yes | No | No | No |

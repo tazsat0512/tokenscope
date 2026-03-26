@@ -6,6 +6,7 @@ import type { Env, UserRecord } from '../types/index.js';
 import { fetchUpstream } from '../utils/error.js';
 import { resolveSessionId } from '../utils/session.js';
 import { createStreamPassthrough } from '../utils/streaming.js';
+import { routeModel } from '../services/router.js';
 import { extractRequestTelemetry, extractResponseTelemetry } from '../utils/telemetry.js';
 
 type HonoEnv = {
@@ -39,12 +40,20 @@ anthropic.all('/anthropic/*', async (c) => {
   const model = anthropicProvider.extractModel(parsedBody);
   const reqTelemetry = await extractRequestTelemetry(parsedBody);
 
+  // Smart routing: potentially downgrade model
+  const routing = routeModel(parsedBody, 'anthropic', model, user);
+  let upstreamBody = body;
+  if (routing.routedModel !== model && parsedBody && typeof parsedBody === 'object') {
+    (parsedBody as Record<string, unknown>).model = routing.routedModel;
+    upstreamBody = JSON.stringify(parsedBody);
+  }
+
   const headers = anthropicProvider.buildHeaders(providerKey, c.req.raw.headers);
   headers.set('Content-Type', 'application/json');
 
   const result = await fetchUpstream(
     upstreamUrl,
-    { method: c.req.method, headers, body: c.req.method !== 'GET' ? body : undefined },
+    { method: c.req.method, headers, body: c.req.method !== 'GET' ? upstreamBody : undefined },
     c,
     requestId,
   );
@@ -65,6 +74,8 @@ anthropic.all('/anthropic/*', async (c) => {
     agentId,
     blocked: !upstreamResponse.ok,
     blockReason: upstreamResponse.ok ? undefined : `upstream_${upstreamResponse.status}`,
+    routedModel: routing.routedModel !== routing.originalModel ? routing.routedModel : undefined,
+    routingReason: routing.routedModel !== routing.originalModel ? routing.reason : undefined,
     ...reqTelemetry,
   };
 

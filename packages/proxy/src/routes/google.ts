@@ -6,6 +6,7 @@ import type { Env, UserRecord } from '../types/index.js';
 import { fetchUpstream } from '../utils/error.js';
 import { resolveSessionId } from '../utils/session.js';
 import { createStreamPassthrough } from '../utils/streaming.js';
+import { routeModel } from '../services/router.js';
 import { extractRequestTelemetry, extractResponseTelemetry } from '../utils/telemetry.js';
 
 type HonoEnv = {
@@ -33,7 +34,7 @@ google.all('/google/*', async (c) => {
     return c.json({ error: 'no_provider_key', message: 'No Google API key configured', request_id: requestId }, 400);
   }
 
-  const upstreamUrl = googleProvider.buildUpstreamUrl(c.req.path);
+  let upstreamUrl = googleProvider.buildUpstreamUrl(c.req.path);
   const model = extractModelFromPath(c.req.path);
   const body = await c.req.text();
   let parsedBody: unknown;
@@ -47,6 +48,12 @@ google.all('/google/*', async (c) => {
   // Google streaming is determined by URL path, not body field
   const isStream = c.req.path.includes('streamGenerateContent');
   reqTelemetry.isStreaming = isStream;
+
+  // Smart routing: potentially downgrade model (Google model is in URL, not body)
+  const routing = routeModel(parsedBody, 'google', model, user);
+  if (routing.routedModel !== model) {
+    upstreamUrl = upstreamUrl.replace(`/models/${model}`, `/models/${routing.routedModel}`);
+  }
 
   const headers = googleProvider.buildHeaders(providerKey, c.req.raw.headers);
 
@@ -73,6 +80,8 @@ google.all('/google/*', async (c) => {
     agentId,
     blocked: !upstreamResponse.ok,
     blockReason: upstreamResponse.ok ? undefined : `upstream_${upstreamResponse.status}`,
+    routedModel: routing.routedModel !== routing.originalModel ? routing.routedModel : undefined,
+    routingReason: routing.routedModel !== routing.originalModel ? routing.reason : undefined,
     ...reqTelemetry,
   };
 

@@ -20,6 +20,9 @@ export interface PipelineInput {
   agentId: string | null;
   blocked: boolean;
   blockReason?: string;
+  // Smart routing
+  routedModel?: string;
+  routingReason?: string;
   // Telemetry expansion
   cachedTokens?: number;
   hasCacheControl?: boolean;
@@ -81,6 +84,8 @@ export async function runAsyncPipeline(env: Env, input: PipelineInput): Promise<
     toolCount: input.toolCount ?? null,
     toolsUsed: input.toolsUsed ? JSON.stringify(input.toolsUsed) : null,
     systemPromptHash: input.systemPromptHash ?? null,
+    routedModel: input.routedModel ?? null,
+    routingReason: input.routingReason ?? null,
   });
 
   // 2. Increment request count in KV (for plan limit enforcement)

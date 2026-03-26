@@ -19,6 +19,8 @@ export interface UserRecord {
   plan: 'free' | 'pro';
   requestCount: number;
   requestCountResetAt: number;
+  routingEnabled?: boolean;
+  routingMode?: 'auto' | 'conservative' | 'aggressive' | 'off';
 }
 
 export interface BudgetState {

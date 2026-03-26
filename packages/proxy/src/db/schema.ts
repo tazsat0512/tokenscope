@@ -44,6 +44,9 @@ export const requestLogs = sqliteTable('request_logs', {
   toolCount: integer('tool_count'),
   toolsUsed: text('tools_used'), // JSON array of tool names
   systemPromptHash: text('system_prompt_hash'),
+  // Smart routing fields
+  routedModel: text('routed_model'),
+  routingReason: text('routing_reason'),
 });
 
 export const ewmaStates = sqliteTable('ewma_states', {
