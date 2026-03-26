@@ -1,5 +1,6 @@
 'use client';
 
+import { Activity } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent } from '../../../components/ui/card';
 import { Skeleton } from '../../../components/ui/skeleton';
@@ -100,6 +101,28 @@ export default function SessionsPage() {
                     </td>
                   </tr>
                 ))}
+                {data?.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="p-12 text-center">
+                      <div className="mx-auto max-w-sm">
+                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                          <Activity className="h-6 w-6 text-muted-foreground" />
+                        </div>
+                        <h3 className="mt-4 text-sm font-semibold">No sessions yet</h3>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          Sessions appear when you send requests through the Reivo proxy. Change
+                          your base URL and send your first request.
+                        </p>
+                        <Link
+                          href="/settings"
+                          className="mt-4 inline-block rounded-md bg-primary px-4 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90"
+                        >
+                          Set up API Keys
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

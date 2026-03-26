@@ -2,6 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { SavingsCalculator } from '../components/savings-calculator';
 
 export default async function LandingPage() {
   const { userId } = await auth();
@@ -60,31 +61,95 @@ export default async function LandingPage() {
 
       <main>
         {/* Hero */}
-        <section className="mx-auto max-w-4xl px-6 py-24 text-center">
-          <div className="mb-6 inline-block rounded-full border bg-muted/50 px-4 py-1.5 text-sm">
-            Now available as an OpenClaw Skill
-          </div>
-          <h1 className="text-5xl font-bold tracking-tight">
-            Same output. <span className="text-primary">Half the cost.</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Reivo routes every API call to the cheapest model that delivers the same quality. One
-            line change. Savings start immediately. Budget protection and loop detection included
-            &mdash; free.
-          </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              href="/sign-up"
-              className="rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-            >
-              Start Free &mdash; No Credit Card
-            </Link>
-            <a
-              href="#openclaw"
-              className="rounded-md border px-6 py-3 text-sm font-medium hover:bg-accent"
-            >
-              Install OpenClaw Skill
-            </a>
+        <section className="mx-auto max-w-6xl px-6 py-20">
+          <div className="grid items-center gap-12 md:grid-cols-2">
+            <div>
+              <h1 className="text-5xl font-bold tracking-tight">
+                Same output. <span className="text-primary">Half the cost.</span>
+              </h1>
+              <p className="mt-6 text-lg text-muted-foreground">
+                Reivo routes every API call to the cheapest model that delivers the same quality.
+                One line change. Savings start immediately. Budget protection and loop detection
+                included &mdash; free.
+              </p>
+              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+                <Link
+                  href="/sign-up"
+                  className="rounded-md bg-primary px-6 py-3 text-center text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                >
+                  Start Free &mdash; No Credit Card
+                </Link>
+                <a
+                  href="#how-it-works"
+                  className="rounded-md border px-6 py-3 text-center text-sm font-medium hover:bg-accent"
+                >
+                  See how it works &darr;
+                </a>
+              </div>
+            </div>
+            {/* Dashboard Preview */}
+            <div className="relative">
+              <div className="overflow-hidden rounded-xl border bg-card shadow-2xl">
+                <div className="border-b bg-muted/50 px-4 py-2">
+                  <div className="flex items-center gap-1.5">
+                    <div className="h-2.5 w-2.5 rounded-full bg-red-400" />
+                    <div className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
+                    <div className="h-2.5 w-2.5 rounded-full bg-green-400" />
+                    <span className="ml-3 text-xs text-muted-foreground">Reivo Dashboard</span>
+                  </div>
+                </div>
+                <div className="p-4 space-y-3">
+                  {/* Mock KPI cards */}
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="rounded-md border bg-background p-3">
+                      <p className="text-[10px] text-muted-foreground">Saved (30d)</p>
+                      <p className="text-lg font-bold text-green-600">$247.80</p>
+                    </div>
+                    <div className="rounded-md border bg-background p-3">
+                      <p className="text-[10px] text-muted-foreground">Total Cost</p>
+                      <p className="text-lg font-bold">$182.40</p>
+                    </div>
+                    <div className="rounded-md border bg-background p-3">
+                      <p className="text-[10px] text-muted-foreground">Budget</p>
+                      <p className="text-lg font-bold text-primary">42%</p>
+                    </div>
+                  </div>
+                  {/* Mock chart */}
+                  <div className="rounded-md border bg-background p-3">
+                    <p className="text-[10px] font-medium text-muted-foreground mb-2">Cost Trend</p>
+                    <div className="flex items-end gap-1 h-16">
+                      {[40, 35, 55, 45, 30, 25, 38, 28, 22, 20, 18, 15].map((h, i) => (
+                        <div
+                          key={i}
+                          className="flex-1 rounded-t bg-primary/60"
+                          style={{ height: `${h}%` }}
+                        />
+                      ))}
+                    </div>
+                    <div className="mt-1 flex justify-between text-[8px] text-muted-foreground">
+                      <span>Mar 1</span>
+                      <span>Mar 15</span>
+                      <span>Mar 27</span>
+                    </div>
+                  </div>
+                  {/* Mock routing row */}
+                  <div className="rounded-md border bg-background p-2">
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">
+                        gpt-4o
+                      </span>
+                      <span className="text-muted-foreground">&rarr;</span>
+                      <span className="rounded bg-green-500/10 px-1.5 py-0.5 font-mono text-[10px] text-green-600">
+                        gpt-4o-mini
+                      </span>
+                      <span className="ml-auto text-[10px] text-green-600 font-medium">
+                        -87% cost
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -104,12 +169,12 @@ export default async function LandingPage() {
               <p className="mt-1 text-sm text-muted-foreground">latency added</p>
             </div>
             <div>
-              <p className="text-3xl font-bold">1</p>
-              <p className="mt-1 text-sm text-muted-foreground">line of code to change</p>
+              <p className="text-3xl font-bold">60s</p>
+              <p className="mt-1 text-sm text-muted-foreground">to integrate</p>
             </div>
             <div className="col-span-2 md:col-span-1">
-              <p className="text-3xl font-bold">3</p>
-              <p className="mt-1 text-sm text-muted-foreground">providers supported</p>
+              <p className="text-3xl font-bold">32+</p>
+              <p className="mt-1 text-sm text-muted-foreground">models supported</p>
             </div>
           </div>
         </section>
@@ -527,11 +592,76 @@ LLM Provider (OpenAI / Anthropic / Google)`}
                 </tbody>
               </table>
             </div>
+
+            {/* Trust Badges */}
+            <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <svg
+                  className="h-4 w-4 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                  />
+                </svg>
+                AES-256 Encrypted
+              </div>
+              <div className="flex items-center gap-2">
+                <svg
+                  className="h-4 w-4 text-primary"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Edge-deployed on Cloudflare
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                  />
+                </svg>
+                Open Source
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
+                </svg>
+                No prompt data stored
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Savings Calculator */}
+        <section className="py-20">
+          <div className="mx-auto max-w-3xl px-6">
+            <SavingsCalculator />
           </div>
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="py-20">
+        <section id="pricing" className="border-t py-20">
           <div className="mx-auto max-w-5xl px-6">
             <h2 className="text-center text-3xl font-bold">Simple Pricing</h2>
             <p className="mt-4 text-center text-muted-foreground">
@@ -642,7 +772,7 @@ LLM Provider (OpenAI / Anthropic / Google)`}
                   href="/sign-up"
                   className="mt-6 block rounded-md border py-2 text-center text-sm font-medium hover:bg-accent"
                 >
-                  Contact Us
+                  Start Free Trial
                 </Link>
               </div>
             </div>

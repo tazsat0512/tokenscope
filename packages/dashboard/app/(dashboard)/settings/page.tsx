@@ -223,6 +223,10 @@ export default function SettingsPage() {
   const [newAgentLimit, setNewAgentLimit] = useState('');
   const [newAgentAction, setNewAgentAction] = useState<string>('block');
 
+  const [activeTab, setActiveTab] = useState<'api-keys' | 'budget' | 'routing' | 'notifications'>(
+    'api-keys',
+  );
+
   if (isLoading) {
     return <SettingsSkeleton />;
   }
@@ -242,6 +246,13 @@ export default function SettingsPage() {
     }
   };
 
+  const tabs = [
+    { id: 'api-keys' as const, label: 'API Keys' },
+    { id: 'budget' as const, label: 'Budget & Safety' },
+    { id: 'routing' as const, label: 'Routing' },
+    { id: 'notifications' as const, label: 'Notifications' },
+  ];
+
   return (
     <div className="space-y-8">
       <div>
@@ -249,306 +260,357 @@ export default function SettingsPage() {
         <p className="text-muted-foreground">Configure your Reivo proxy</p>
       </div>
 
-      {/* API Key */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Reivo API Key</CardTitle>
-          <CardDescription>
-            Use this key as your Authorization bearer token when calling the proxy
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {newApiKey ? (
-            <div className="space-y-3">
-              <div className="rounded-md border border-yellow-500/50 bg-yellow-500/10 p-4">
-                <p className="text-sm font-medium text-yellow-600 mb-2">
-                  This key will only be shown once. Copy it now!
-                </p>
-                <div className="flex items-center gap-3">
-                  <code className="flex-1 rounded bg-muted px-3 py-2 font-mono text-sm break-all">
-                    {newApiKey}
-                  </code>
-                  <Button onClick={handleCopyKey} size="sm">
-                    {copied ? 'Copied!' : 'Copy'}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <div className="flex items-center gap-4">
-                <code className="rounded bg-muted px-3 py-2 font-mono text-sm">
-                  {settings?.apiKeyHash
-                    ? `rv_****${settings.apiKeyHash.slice(-8)}`
-                    : 'No key generated'}
-                </code>
-              </div>
-              {showConfirm ? (
-                <div className="flex items-center gap-3">
-                  <p className="text-sm text-destructive">
-                    {settings?.apiKeyHash
-                      ? 'This will invalidate your current key. Continue?'
-                      : 'Generate a new API key?'}
-                  </p>
-                  <Button onClick={handleGenerateKey} disabled={generateApiKey.isPending} size="sm">
-                    {generateApiKey.isPending ? 'Generating...' : 'Confirm'}
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => setShowConfirm(false)}>
-                    Cancel
-                  </Button>
+      {/* Tab Bar */}
+      <div className="flex gap-1 border-b">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${
+              activeTab === tab.id
+                ? 'border-b-2 border-primary bg-primary/10 text-primary'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* API Keys Tab */}
+      {activeTab === 'api-keys' && (
+        <div className="space-y-8">
+          {/* API Key */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Reivo API Key</CardTitle>
+              <CardDescription>
+                Use this key as your Authorization bearer token when calling the proxy
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {newApiKey ? (
+                <div className="space-y-3">
+                  <div className="rounded-md border border-yellow-500/50 bg-yellow-500/10 p-4">
+                    <p className="text-sm font-medium text-yellow-600 mb-2">
+                      This key will only be shown once. Copy it now!
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <code className="flex-1 rounded bg-muted px-3 py-2 font-mono text-sm break-all">
+                        {newApiKey}
+                      </code>
+                      <Button onClick={handleCopyKey} size="sm">
+                        {copied ? 'Copied!' : 'Copy'}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               ) : (
-                <Button onClick={() => setShowConfirm(true)}>
-                  {settings?.apiKeyHash ? 'Regenerate Key' : 'Generate API Key'}
-                </Button>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-4">
+                    <code className="rounded bg-muted px-3 py-2 font-mono text-sm">
+                      {settings?.apiKeyHash
+                        ? `rv_****${settings.apiKeyHash.slice(-8)}`
+                        : 'No key generated'}
+                    </code>
+                  </div>
+                  {showConfirm ? (
+                    <div className="flex items-center gap-3">
+                      <p className="text-sm text-destructive">
+                        {settings?.apiKeyHash
+                          ? 'This will invalidate your current key. Continue?'
+                          : 'Generate a new API key?'}
+                      </p>
+                      <Button
+                        onClick={handleGenerateKey}
+                        disabled={generateApiKey.isPending}
+                        size="sm"
+                      >
+                        {generateApiKey.isPending ? 'Generating...' : 'Confirm'}
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => setShowConfirm(false)}>
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button onClick={() => setShowConfirm(true)}>
+                      {settings?.apiKeyHash ? 'Regenerate Key' : 'Generate API Key'}
+                    </Button>
+                  )}
+                </div>
               )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
 
-      {/* Provider API Keys */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Provider API Keys</CardTitle>
-          <CardDescription>
-            Add your API keys for each provider. You can add multiple keys and choose a default.
-            Keys are encrypted at rest.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {PROVIDERS.map((provider) => (
-              <ProviderKeySection
-                key={provider}
-                provider={provider}
-                keys={providerKeys?.[provider] ?? []}
-              />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+          {/* Provider API Keys */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Provider API Keys</CardTitle>
+              <CardDescription>
+                Add your API keys for each provider. You can add multiple keys and choose a default.
+                Keys are encrypted at rest.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {PROVIDERS.map((provider) => (
+                  <ProviderKeySection
+                    key={provider}
+                    provider={provider}
+                    keys={providerKeys?.[provider] ?? []}
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
-      {/* Smart Routing */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Smart Routing</CardTitle>
-          <CardDescription>
-            Automatically route requests to cost-optimal models based on task complexity
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <Label>Enable Smart Routing</Label>
-              <p className="text-sm text-muted-foreground">
-                Route simple requests to cheaper models automatically
-              </p>
-            </div>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={settings?.routingEnabled ? true : false}
-              onClick={() => {
-                updateSettings.mutate({ routingEnabled: !settings?.routingEnabled });
-              }}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                settings?.routingEnabled ? 'bg-primary' : 'bg-muted'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  settings?.routingEnabled ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-          </div>
-          {settings?.routingEnabled && (
-            <div>
-              <Label>Routing Mode</Label>
-              <select
-                value={settings?.routingMode ?? 'auto'}
-                onChange={(e) =>
-                  updateSettings.mutate({
-                    routingMode: e.target.value as 'auto' | 'conservative' | 'aggressive' | 'off',
-                  })
-                }
-                className="mt-1 block w-full max-w-xs rounded-md border bg-background px-3 py-2 text-sm"
-              >
-                <option value="auto">Auto (Conservative)</option>
-                <option value="conservative">Conservative - downgrade only when confident</option>
-                <option value="aggressive">
-                  Aggressive - downgrade unless complexity detected
-                </option>
-                <option value="off">Off - passthrough only</option>
-              </select>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Budget Limit */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Global Budget</CardTitle>
-          <CardDescription>
-            Set a monthly spending limit and choose what happens when it&apos;s exceeded
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">$</span>
-              <Input
-                type="number"
-                placeholder={settings?.budgetLimitUsd?.toString() ?? 'No limit'}
-                value={budgetLimit}
-                onChange={(e) => setBudgetLimit(e.target.value)}
-                className="w-32"
-                step="0.01"
-                min="0"
-              />
-            </div>
-            <select
-              value={budgetAction}
-              onChange={(e) => setBudgetAction(e.target.value)}
-              className="rounded-md border bg-background px-3 py-2 text-sm"
-            >
-              <option value="block">Block requests</option>
-              <option value="alert">Alert only (continue)</option>
-              <option value="downgrade">Auto-downgrade model</option>
-            </select>
-            <Button
-              onClick={() => {
-                updateSettings.mutate({
-                  budgetLimitUsd: budgetLimit ? Number.parseFloat(budgetLimit) : null,
-                });
-                if (budgetLimit) {
-                  upsertPolicy.mutate({
-                    agentId: null,
-                    limitUsd: Number.parseFloat(budgetLimit),
-                    action: budgetAction as 'block' | 'alert' | 'downgrade',
-                  });
-                }
-              }}
-            >
-              Save
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            <strong>Block</strong> = reject requests (429). <strong>Alert</strong> = notify via
-            Slack but continue. <strong>Downgrade</strong> = auto-switch to cheaper models.
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Per-Agent Budgets */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Agent Budgets</CardTitle>
-          <CardDescription>
-            Set individual spending limits per agent. Overrides the global budget for matching
-            agents.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {budgetPoliciesData
-            ?.filter((p) => p.agentId)
-            .map((policy) => (
-              <div key={policy.id} className="flex items-center gap-3 rounded-md border px-3 py-2">
-                <code className="text-sm font-medium">{policy.agentId}</code>
-                <span className="text-sm text-muted-foreground">${policy.limitUsd.toFixed(2)}</span>
-                <span className="rounded-full bg-muted px-2 py-0.5 text-xs capitalize">
-                  {policy.action}
-                </span>
-                <div className="flex-1" />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => deletePolicy.mutate({ id: policy.id })}
-                  className="text-xs text-destructive hover:text-destructive"
+      {/* Budget & Safety Tab */}
+      {activeTab === 'budget' && (
+        <div className="space-y-8">
+          {/* Budget Limit */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Global Budget</CardTitle>
+              <CardDescription>
+                Set a monthly spending limit and choose what happens when it&apos;s exceeded
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">$</span>
+                  <Input
+                    type="number"
+                    placeholder={settings?.budgetLimitUsd?.toString() ?? 'No limit'}
+                    value={budgetLimit}
+                    onChange={(e) => setBudgetLimit(e.target.value)}
+                    className="w-32"
+                    step="0.01"
+                    min="0"
+                  />
+                </div>
+                <select
+                  value={budgetAction}
+                  onChange={(e) => setBudgetAction(e.target.value)}
+                  className="rounded-md border bg-background px-3 py-2 text-sm"
                 >
-                  Remove
+                  <option value="block">Block requests</option>
+                  <option value="alert">Alert only (continue)</option>
+                  <option value="downgrade">Auto-downgrade model</option>
+                </select>
+                <Button
+                  onClick={() => {
+                    updateSettings.mutate({
+                      budgetLimitUsd: budgetLimit ? Number.parseFloat(budgetLimit) : null,
+                    });
+                    if (budgetLimit) {
+                      upsertPolicy.mutate({
+                        agentId: null,
+                        limitUsd: Number.parseFloat(budgetLimit),
+                        action: budgetAction as 'block' | 'alert' | 'downgrade',
+                      });
+                    }
+                  }}
+                >
+                  Save
                 </Button>
               </div>
-            ))}
-          <div className="flex items-center gap-2">
-            <Input
-              placeholder="Agent ID"
-              value={newAgentId}
-              onChange={(e) => setNewAgentId(e.target.value)}
-              className="w-40"
-            />
-            <div className="flex items-center gap-1">
-              <span className="text-sm text-muted-foreground">$</span>
-              <Input
-                type="number"
-                placeholder="Limit"
-                value={newAgentLimit}
-                onChange={(e) => setNewAgentLimit(e.target.value)}
-                className="w-24"
-                step="0.01"
-                min="0"
-              />
-            </div>
-            <select
-              value={newAgentAction}
-              onChange={(e) => setNewAgentAction(e.target.value)}
-              className="rounded-md border bg-background px-3 py-2 text-sm"
-            >
-              <option value="block">Block</option>
-              <option value="alert">Alert</option>
-              <option value="downgrade">Downgrade</option>
-            </select>
-            <Button
-              size="sm"
-              disabled={!newAgentId || !newAgentLimit}
-              onClick={() => {
-                upsertPolicy.mutate({
-                  agentId: newAgentId,
-                  limitUsd: Number.parseFloat(newAgentLimit),
-                  action: newAgentAction as 'block' | 'alert' | 'downgrade',
-                });
-                setNewAgentId('');
-                setNewAgentLimit('');
-                setNewAgentAction('block');
-              }}
-            >
-              Add
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+              <p className="text-xs text-muted-foreground">
+                <strong>Block</strong> = reject requests (429). <strong>Alert</strong> = notify via
+                Slack but continue. <strong>Downgrade</strong> = auto-switch to cheaper models.
+              </p>
+            </CardContent>
+          </Card>
 
-      {/* Slack Notifications */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Slack Notifications</CardTitle>
-          <CardDescription>
-            Get alerts for budget warnings, loop detection, and anomalies
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-4">
-            <Input
-              type="url"
-              placeholder={settings?.slackWebhookUrl ?? 'https://hooks.slack.com/services/...'}
-              value={slackUrl}
-              onChange={(e) => setSlackUrl(e.target.value)}
-              className="flex-1"
-            />
-            <Button
-              onClick={() => {
-                updateSettings.mutate({
-                  slackWebhookUrl: slackUrl || null,
-                });
-              }}
-            >
-              Save
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          {/* Per-Agent Budgets */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Agent Budgets</CardTitle>
+              <CardDescription>
+                Set individual spending limits per agent. Overrides the global budget for matching
+                agents.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {budgetPoliciesData
+                ?.filter((p) => p.agentId)
+                .map((policy) => (
+                  <div
+                    key={policy.id}
+                    className="flex items-center gap-3 rounded-md border px-3 py-2"
+                  >
+                    <code className="text-sm font-medium">{policy.agentId}</code>
+                    <span className="text-sm text-muted-foreground">
+                      ${policy.limitUsd.toFixed(2)}
+                    </span>
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs capitalize">
+                      {policy.action}
+                    </span>
+                    <div className="flex-1" />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => deletePolicy.mutate({ id: policy.id })}
+                      className="text-xs text-destructive hover:text-destructive"
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+              <div className="flex items-center gap-2">
+                <Input
+                  placeholder="Agent ID"
+                  value={newAgentId}
+                  onChange={(e) => setNewAgentId(e.target.value)}
+                  className="w-40"
+                />
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-muted-foreground">$</span>
+                  <Input
+                    type="number"
+                    placeholder="Limit"
+                    value={newAgentLimit}
+                    onChange={(e) => setNewAgentLimit(e.target.value)}
+                    className="w-24"
+                    step="0.01"
+                    min="0"
+                  />
+                </div>
+                <select
+                  value={newAgentAction}
+                  onChange={(e) => setNewAgentAction(e.target.value)}
+                  className="rounded-md border bg-background px-3 py-2 text-sm"
+                >
+                  <option value="block">Block</option>
+                  <option value="alert">Alert</option>
+                  <option value="downgrade">Downgrade</option>
+                </select>
+                <Button
+                  size="sm"
+                  disabled={!newAgentId || !newAgentLimit}
+                  onClick={() => {
+                    upsertPolicy.mutate({
+                      agentId: newAgentId,
+                      limitUsd: Number.parseFloat(newAgentLimit),
+                      action: newAgentAction as 'block' | 'alert' | 'downgrade',
+                    });
+                    setNewAgentId('');
+                    setNewAgentLimit('');
+                    setNewAgentAction('block');
+                  }}
+                >
+                  Add
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Routing Tab */}
+      {activeTab === 'routing' && (
+        <div className="space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Smart Routing</CardTitle>
+              <CardDescription>
+                Automatically route requests to cost-optimal models based on task complexity
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Enable Smart Routing</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Route simple requests to cheaper models automatically
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={!!settings?.routingEnabled}
+                  onClick={() => {
+                    updateSettings.mutate({ routingEnabled: !settings?.routingEnabled });
+                  }}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    settings?.routingEnabled ? 'bg-primary' : 'bg-muted'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      settings?.routingEnabled ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+              {settings?.routingEnabled && (
+                <div>
+                  <Label>Routing Mode</Label>
+                  <select
+                    value={settings?.routingMode ?? 'auto'}
+                    onChange={(e) =>
+                      updateSettings.mutate({
+                        routingMode: e.target.value as
+                          | 'auto'
+                          | 'conservative'
+                          | 'aggressive'
+                          | 'off',
+                      })
+                    }
+                    className="mt-1 block w-full max-w-xs rounded-md border bg-background px-3 py-2 text-sm"
+                  >
+                    <option value="auto">Auto (Conservative)</option>
+                    <option value="conservative">
+                      Conservative - downgrade only when confident
+                    </option>
+                    <option value="aggressive">
+                      Aggressive - downgrade unless complexity detected
+                    </option>
+                    <option value="off">Off - passthrough only</option>
+                  </select>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Notifications Tab */}
+      {activeTab === 'notifications' && (
+        <div className="space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Slack Notifications</CardTitle>
+              <CardDescription>
+                Get alerts for budget warnings, loop detection, and anomalies
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-4">
+                <Input
+                  type="url"
+                  placeholder={settings?.slackWebhookUrl ?? 'https://hooks.slack.com/services/...'}
+                  value={slackUrl}
+                  onChange={(e) => setSlackUrl(e.target.value)}
+                  className="flex-1"
+                />
+                <Button
+                  onClick={() => {
+                    updateSettings.mutate({
+                      slackWebhookUrl: slackUrl || null,
+                    });
+                  }}
+                >
+                  Save
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

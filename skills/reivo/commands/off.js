@@ -1,9 +1,17 @@
-const { ProxyClient } = require("../lib/proxy-client");
+const DASHBOARD_URL = "https://app.reivo.dev";
 
-async function execute(config) {
-  const client = new ProxyClient(config.reivo.api_key);
-  await client.setRouting(false);
-  return "Routing disabled. All requests pass through without model switching.";
+async function execute() {
+  const lines = [
+    "Disable Routing",
+    "",
+    "To disable smart routing, visit your dashboard:",
+    `  ${DASHBOARD_URL}/settings`,
+    "",
+    "When routing is off, all requests pass through to the",
+    "original provider without model switching.",
+  ];
+
+  return lines.join("\n");
 }
 
-module.exports = { execute, description: "Disable smart routing" };
+module.exports = { execute, description: "Disable smart routing (via dashboard)" };

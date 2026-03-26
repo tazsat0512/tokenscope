@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { CostTrendChart } from '../../../components/charts/cost-trend';
 import { DefenseStatus } from '../../../components/defense-status';
 import { OnboardingChecklist } from '../../../components/onboarding';
@@ -43,6 +44,7 @@ export default function OverviewPage() {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const { data, isLoading } = trpc.getOverview.useQuery({ days: 30, tz });
   const { data: routingStats } = trpc.getRoutingStats.useQuery({ days: 30 });
+  const { data: settings } = trpc.getSettings.useQuery();
 
   if (isLoading) {
     return <OverviewSkeleton />;
@@ -60,6 +62,26 @@ export default function OverviewPage() {
       <OnboardingChecklist />
 
       <DefenseStatus />
+
+      {settings?.plan === 'free' && (!routingStats || routingStats.totalRouted === 0) && (
+        <Card className="border-primary/20 bg-primary/5">
+          <CardContent className="flex items-center justify-between py-4">
+            <p className="text-sm text-muted-foreground">
+              Smart Routing could save you{' '}
+              <span className="font-medium text-foreground">
+                {formatCost((summary?.totalCost ?? 0) * 0.15)}
+              </span>
+              /month based on your usage.
+            </p>
+            <Link
+              href="/billing"
+              className="ml-4 shrink-0 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            >
+              Upgrade to Pro
+            </Link>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
@@ -87,23 +109,32 @@ export default function OverviewPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Input Tokens
+              Estimated Savings (30d)
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatNumber(summary?.totalInputTokens ?? 0)}</div>
+            {routingStats && routingStats.totalRouted > 0 ? (
+              <div className="text-2xl font-bold text-green-600">
+                {formatCost(routingStats.totalRouted * 0.003)}
+              </div>
+            ) : (
+              <>
+                <div className="text-2xl font-bold text-green-600">$0.00</div>
+                <p className="mt-1 text-xs text-muted-foreground">Enable Smart Routing to save</p>
+              </>
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Output Tokens
+              Avg Cost/Request
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatNumber(summary?.totalOutputTokens ?? 0)}
+              {summary?.totalRequests ? formatCost(summary.totalCost / summary.totalRequests) : '—'}
             </div>
           </CardContent>
         </Card>
