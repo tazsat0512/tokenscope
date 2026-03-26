@@ -646,6 +646,13 @@ LLM Provider (OpenAI / Anthropic / Google)`}
                 </Link>
               </div>
             </div>
+            <p className="mt-6 text-center text-xs text-muted-foreground">
+              Cancel anytime. 14-day money-back guarantee on first purchase. See{' '}
+              <Link href="/terms" className="underline hover:text-foreground">
+                Terms of Service
+              </Link>{' '}
+              for details.
+            </p>
           </div>
         </section>
 

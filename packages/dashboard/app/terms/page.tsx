@@ -93,7 +93,26 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-foreground">8. Limitation of Liability</h2>
+          <h2 className="text-lg font-semibold text-foreground">8. Refund Policy</h2>
+          <ul className="mt-2 list-disc space-y-1 pl-5">
+            <li>
+              If you are unsatisfied with the service, you may request a refund within 14 days of
+              your initial purchase by contacting{' '}
+              <a href="mailto:hello@reivo.dev" className="text-primary hover:underline">
+                hello@reivo.dev
+              </a>
+              .
+            </li>
+            <li>Refunds are not available for partial billing periods after the 14-day window.</li>
+            <li>
+              Cancellation takes effect at the end of the current billing period. No prorated
+              refunds for unused time.
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 className="text-lg font-semibold text-foreground">9. Limitation of Liability</h2>
           <p className="mt-2">
             To the maximum extent permitted by law, Reivo shall not be liable for any indirect,
             incidental, or consequential damages arising from your use of the service, including but
@@ -102,7 +121,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-foreground">9. Termination</h2>
+          <h2 className="text-lg font-semibold text-foreground">10. Termination</h2>
           <p className="mt-2">
             We may suspend or terminate your account if you violate these terms. You may delete your
             account at any time from the Settings page. Upon termination, your data will be deleted
@@ -115,7 +134,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-foreground">10. Changes</h2>
+          <h2 className="text-lg font-semibold text-foreground">11. Changes</h2>
           <p className="mt-2">
             We may update these terms from time to time. Continued use of the service after changes
             constitutes acceptance. Material changes will be communicated via email or dashboard
@@ -124,7 +143,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-foreground">11. Contact</h2>
+          <h2 className="text-lg font-semibold text-foreground">12. Contact</h2>
           <p className="mt-2">
             Questions about these terms? Contact us at{' '}
             <a href="mailto:hello@reivo.dev" className="text-primary hover:underline">
