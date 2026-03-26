@@ -51,6 +51,10 @@ export const requestLogs = sqliteTable('request_logs', {
   // Smart routing fields
   routedModel: text('routed_model'),
   routingReason: text('routing_reason'),
+  // Quality verification fields
+  qualityScore: real('quality_score'),
+  qualityReason: text('quality_reason'),
+  qualityFallback: integer('quality_fallback', { mode: 'boolean' }),
 });
 
 // Budget policies table for per-agent and global budget rules

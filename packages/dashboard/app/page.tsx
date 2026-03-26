@@ -65,9 +65,8 @@ export default async function LandingPage() {
           <div className="grid items-center gap-12 md:grid-cols-2">
             <div>
               <h1 className="text-5xl font-bold tracking-tight">
-                Same output.
-                <br />
-                <span className="text-primary">Half the cost.</span>
+                <span className="block">Same output.</span>
+                <span className="block text-primary">Half the cost.</span>
               </h1>
               <p className="mt-6 text-lg text-muted-foreground">
                 Reivo routes every API call to the cheapest model that delivers the same quality.
@@ -305,10 +304,13 @@ client = OpenAI(
                     Core
                   </span>
                 </div>
-                <h3 className="mt-4 text-lg font-semibold">Quality Guarantee</h3>
+                <h3 className="mt-4 text-lg font-semibold">Quality Verification</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  If a routed response doesn&apos;t meet quality thresholds, Reivo automatically
-                  re-sends to the full model. You never see a bad response.
+                  Routed responses are scored via logprob confidence analysis. If quality falls
+                  below threshold, Reivo automatically retries with the original model.
+                  <span className="ml-1 text-xs opacity-70">
+                    Currently available for OpenAI non-streaming requests.
+                  </span>
                 </p>
               </div>
 

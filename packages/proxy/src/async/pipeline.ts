@@ -24,6 +24,10 @@ export interface PipelineInput {
   // Smart routing
   routedModel?: string;
   routingReason?: string;
+  // Quality verification
+  qualityScore?: number;
+  qualityReason?: string;
+  qualityFallback?: boolean;
   // Telemetry expansion
   cachedTokens?: number;
   hasCacheControl?: boolean;
@@ -87,6 +91,9 @@ export async function runAsyncPipeline(env: Env, input: PipelineInput): Promise<
     systemPromptHash: input.systemPromptHash ?? null,
     routedModel: input.routedModel ?? null,
     routingReason: input.routingReason ?? null,
+    qualityScore: input.qualityScore ?? null,
+    qualityReason: input.qualityReason ?? null,
+    qualityFallback: input.qualityFallback ?? null,
   });
 
   // 2. Increment request count in KV (for plan limit enforcement)

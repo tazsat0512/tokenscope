@@ -24,14 +24,4 @@ class ProxyClient {
   }
 }
 
-function getClient() {
-  const apiKey = process.env.REIVO_API_KEY;
-  if (!apiKey) {
-    throw new Error(
-      "REIVO_API_KEY is not set. Get your key at https://reivo.dev/settings and set it as an environment variable."
-    );
-  }
-  return new ProxyClient(apiKey);
-}
-
-module.exports = { ProxyClient, getClient };
+module.exports = { ProxyClient, BASE_URL };

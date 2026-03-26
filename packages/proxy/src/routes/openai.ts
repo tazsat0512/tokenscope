@@ -2,6 +2,7 @@ import { HEADER_AGENT_ID } from '@reivo/shared';
 import { Hono } from 'hono';
 import { runAsyncPipeline } from '../async/pipeline.js';
 import { openaiProvider } from '../providers/openai.js';
+import { assessQuality, stripLogprobs } from '../services/quality-verifier.js';
 import { routeModel } from '../services/router.js';
 import type { Env, UserRecord } from '../types/index.js';
 import { fetchUpstream } from '../utils/error.js';
@@ -59,6 +60,14 @@ openai.all('/openai/*', async (c) => {
   const headers = openaiProvider.buildHeaders(providerKey, c.req.raw.headers);
   headers.set('Content-Type', 'application/json');
 
+  // Track whether we injected logprobs for quality verification
+  const wasRouted = routing.routedModel !== model;
+  const clientRequestedLogprobs =
+    parsedBody &&
+    typeof parsedBody === 'object' &&
+    (parsedBody as Record<string, unknown>).logprobs === true;
+  const shouldVerifyQuality = wasRouted && !reqTelemetry.isStreaming && !clientRequestedLogprobs;
+
   // When the request is streaming, inject stream_options to ensure OpenAI
   // returns a final chunk containing token usage data.
   let upstreamBody: string;
@@ -67,8 +76,13 @@ openai.all('/openai/*', async (c) => {
     const existingOpts = (patched.stream_options ?? {}) as Record<string, unknown>;
     patched.stream_options = { ...existingOpts, include_usage: true };
     upstreamBody = JSON.stringify(patched);
-  } else if (routing.routedModel !== model) {
-    upstreamBody = JSON.stringify(parsedBody);
+  } else if (wasRouted && parsedBody && typeof parsedBody === 'object') {
+    const patched = { ...(parsedBody as Record<string, unknown>) };
+    // Inject logprobs for quality verification on routed requests
+    if (shouldVerifyQuality) {
+      patched.logprobs = true;
+    }
+    upstreamBody = JSON.stringify(patched);
   } else {
     upstreamBody = body;
   }
@@ -126,19 +140,77 @@ openai.all('/openai/*', async (c) => {
     parsedResponse = {};
   }
 
-  const usage = openaiProvider.extractUsage(parsedResponse);
+  let usage = openaiProvider.extractUsage(parsedResponse);
   const resTelemetry = extractResponseTelemetry(parsedResponse, 'openai');
+
+  // Quality Verifier: check routed response confidence via logprobs
+  let qualityScore: number | undefined;
+  let qualityReason: string | undefined;
+  let qualityFallback = false;
+  let finalResponseBody = responseBody;
+
+  if (shouldVerifyQuality && upstreamResponse.ok) {
+    const assessment = assessQuality(parsedResponse);
+    qualityScore = assessment.score;
+    qualityReason = assessment.reason;
+
+    if (assessment.shouldFallback) {
+      // Retry with the original (full) model
+      const retryBody: Record<string, unknown> = {
+        ...(parsedBody as Record<string, unknown>),
+        model,
+      };
+      // Remove injected logprobs for the retry
+      delete retryBody.logprobs;
+
+      const retryResult = await fetchUpstream(
+        upstreamUrl,
+        {
+          method: c.req.method,
+          headers,
+          body: JSON.stringify(retryBody),
+        },
+        c,
+        requestId,
+      );
+
+      if (!('error' in retryResult) && retryResult.ok) {
+        const retryResponseBody = await retryResult.text();
+        let retryParsed: unknown;
+        try {
+          retryParsed = JSON.parse(retryResponseBody);
+        } catch {
+          retryParsed = {};
+        }
+        usage = openaiProvider.extractUsage(retryParsed);
+        finalResponseBody = retryResponseBody;
+        qualityFallback = true;
+      }
+    } else {
+      // Strip injected logprobs from response before returning to client
+      const cleaned = stripLogprobs(parsedResponse);
+      finalResponseBody = JSON.stringify(cleaned);
+    }
+  }
 
   c.executionCtx.waitUntil(
     runAsyncPipeline(c.env, {
       ...basePipelineInput,
+      // If fallback was used, record original model (not the routed one)
+      routedModel: qualityFallback ? undefined : basePipelineInput.routedModel,
+      routingReason: qualityFallback
+        ? `fallback:${qualityReason}`
+        : basePipelineInput.routingReason,
       usage,
       cachedTokens: resTelemetry.cachedTokens,
       toolsUsed: resTelemetry.toolsUsed,
+      qualityScore,
+      qualityReason,
+      qualityFallback,
     }),
   );
 
-  return new Response(responseBody, {
+  return new Response(finalResponseBody, {
     status: upstreamResponse.status,
     headers: upstreamResponse.headers,
   });
