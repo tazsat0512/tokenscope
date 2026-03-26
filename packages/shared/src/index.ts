@@ -1,3 +1,3 @@
-export * from './constants.js';
-export * from './pricing.js';
-export * from './types.js';
+export * from './constants';
+export * from './pricing';
+export * from './types';

@@ -3,7 +3,10 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import { and, desc, eq, gte, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { loopEvents, requestLogs, users } from '../../db/schema';
+import { sha256 } from '../crypto';
 import { db } from '../db';
+import { decrypt, encrypt } from '../encryption';
+import { deleteOldKVEntry, syncUserToKV } from '../kv-sync';
 
 const t = initTRPC.create();
 
@@ -139,8 +142,71 @@ export const appRouter = t.router({
 
   getSettings: authedProcedure.query(async ({ ctx }) => {
     const user = await db.select().from(users).where(eq(users.id, ctx.userId)).limit(1);
-
     return user[0] ?? null;
+  }),
+
+  getProviderKeyStatus: authedProcedure.query(async ({ ctx }) => {
+    const user = await db
+      .select({ providerKeysEncrypted: users.providerKeysEncrypted })
+      .from(users)
+      .where(eq(users.id, ctx.userId))
+      .limit(1);
+
+    if (!user[0]?.providerKeysEncrypted || user[0].providerKeysEncrypted === '{}') {
+      return { openai: false, anthropic: false, google: false };
+    }
+
+    try {
+      const decrypted = await decrypt(user[0].providerKeysEncrypted);
+      const keys = JSON.parse(decrypted);
+      return {
+        openai: !!keys.openai,
+        anthropic: !!keys.anthropic,
+        google: !!keys.google,
+      };
+    } catch {
+      // Legacy unencrypted data
+      try {
+        const keys = JSON.parse(user[0].providerKeysEncrypted);
+        return {
+          openai: !!keys.openai,
+          anthropic: !!keys.anthropic,
+          google: !!keys.google,
+        };
+      } catch {
+        return { openai: false, anthropic: false, google: false };
+      }
+    }
+  }),
+
+  generateApiKey: authedProcedure.mutation(async ({ ctx }) => {
+    const apiKey = `ts_${crypto.randomUUID().replace(/-/g, '')}`;
+    const apiKeyHash = await sha256(apiKey);
+
+    // Get old hash to clean up KV
+    const existing = await db
+      .select({ apiKeyHash: users.apiKeyHash })
+      .from(users)
+      .where(eq(users.id, ctx.userId))
+      .limit(1);
+    const oldHash = existing[0]?.apiKeyHash;
+
+    // Update DB
+    await db
+      .update(users)
+      .set({ apiKeyHash, updatedAt: new Date() })
+      .where(eq(users.id, ctx.userId));
+
+    // Sync to KV
+    try {
+      if (oldHash) await deleteOldKVEntry(oldHash);
+      const user = await db.select().from(users).where(eq(users.id, ctx.userId)).limit(1);
+      if (user[0]) await syncUserToKV(user[0]);
+    } catch (err) {
+      console.error('KV sync failed:', err);
+    }
+
+    return { apiKey };
   }),
 
   updateSettings: authedProcedure
@@ -148,17 +214,69 @@ export const appRouter = t.router({
       z.object({
         budgetLimitUsd: z.number().nullable().optional(),
         slackWebhookUrl: z.string().nullable().optional(),
+        providerKeys: z
+          .object({
+            openai: z.string().nullable().optional(),
+            anthropic: z.string().nullable().optional(),
+            google: z.string().nullable().optional(),
+          })
+          .optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await db
-        .update(users)
-        .set({
-          ...(input.budgetLimitUsd !== undefined && { budgetLimitUsd: input.budgetLimitUsd }),
-          ...(input.slackWebhookUrl !== undefined && { slackWebhookUrl: input.slackWebhookUrl }),
-          updatedAt: new Date(),
-        })
-        .where(eq(users.id, ctx.userId));
+      const updates: Record<string, any> = { updatedAt: new Date() };
+
+      if (input.budgetLimitUsd !== undefined) {
+        updates.budgetLimitUsd = input.budgetLimitUsd;
+      }
+      if (input.slackWebhookUrl !== undefined) {
+        updates.slackWebhookUrl = input.slackWebhookUrl;
+      }
+
+      // Handle provider keys
+      if (input.providerKeys) {
+        const user = await db
+          .select({ providerKeysEncrypted: users.providerKeysEncrypted })
+          .from(users)
+          .where(eq(users.id, ctx.userId))
+          .limit(1);
+
+        let existing: Record<string, string | null> = {};
+        const raw = user[0]?.providerKeysEncrypted;
+        if (raw && raw !== '{}') {
+          try {
+            existing = JSON.parse(await decrypt(raw));
+          } catch {
+            try {
+              existing = JSON.parse(raw);
+            } catch {
+              existing = {};
+            }
+          }
+        }
+
+        // Merge: undefined = don't change, null = remove, string = set
+        for (const [provider, value] of Object.entries(input.providerKeys)) {
+          if (value === undefined) continue;
+          if (value === null) {
+            delete existing[provider];
+          } else {
+            existing[provider] = value;
+          }
+        }
+
+        updates.providerKeysEncrypted = await encrypt(JSON.stringify(existing));
+      }
+
+      await db.update(users).set(updates).where(eq(users.id, ctx.userId));
+
+      // Sync to KV
+      try {
+        const user = await db.select().from(users).where(eq(users.id, ctx.userId)).limit(1);
+        if (user[0]) await syncUserToKV(user[0]);
+      } catch (err) {
+        console.error('KV sync failed:', err);
+      }
 
       return { success: true };
     }),

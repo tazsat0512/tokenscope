@@ -34,9 +34,9 @@ export default function SessionsPage() {
                 </tr>
               </thead>
               <tbody>
-                {data?.map((session) => (
+                {data?.map((session, index) => (
                   <tr
-                    key={session.sessionId ?? 'no-session'}
+                    key={`${session.sessionId ?? 'no-session'}-${index}`}
                     className="border-b hover:bg-muted/50"
                   >
                     <td className="p-4">

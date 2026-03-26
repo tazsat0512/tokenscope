@@ -5,7 +5,7 @@ import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 export const users = sqliteTable('users', {
   id: text('id').primaryKey(),
   email: text('email').notNull(),
-  apiKeyHash: text('api_key_hash').notNull().unique(),
+  apiKeyHash: text('api_key_hash').unique(),
   providerKeysEncrypted: text('provider_keys_encrypted').notNull().default('{}'),
   budgetLimitUsd: real('budget_limit_usd'),
   slackWebhookUrl: text('slack_webhook_url'),
