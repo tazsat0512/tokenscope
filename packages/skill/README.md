@@ -23,7 +23,7 @@ npx clawhub@latest install tokenscope
 
 ### 2. Get Your API Key
 
-1. Sign up at [tokenscope-dashboard.vercel.app](https://tokenscope-dashboard.vercel.app)
+1. Sign up at [tokenscope-amber.vercel.app](https://tokenscope-amber.vercel.app)
 2. Go to Settings → Generate API Key
 3. Set the environment variable:
 
@@ -79,6 +79,6 @@ The skill itself is **completely free**. The dashboard offers extended history a
 
 ## Links
 
-- **Dashboard:** [tokenscope-dashboard.vercel.app](https://tokenscope-dashboard.vercel.app)
+- **Dashboard:** [tokenscope-amber.vercel.app](https://tokenscope-amber.vercel.app)
 - **GitHub:** [github.com/tazsat0512/tokenscope](https://github.com/tazsat0512/tokenscope)
 - **Docs:** See `references/` directory

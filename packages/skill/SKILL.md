@@ -14,7 +14,7 @@ metadata:
         - python3
     primaryEnv: TOKENSCOPE_API_KEY
     emoji: "💰"
-    homepage: https://tokenscope-dashboard.vercel.app
+    homepage: https://tokenscope-amber.vercel.app
     os:
       - darwin
       - linux
@@ -41,7 +41,7 @@ The user's TokenScope API key is available as `$TOKENSCOPE_API_KEY`.
 - Anthropic: `https://tokenscope-proxy.tazoelab.workers.dev/anthropic/v1`
 - Google: `https://tokenscope-proxy.tazoelab.workers.dev/google/v1beta`
 
-**Dashboard:** https://tokenscope-dashboard.vercel.app
+**Dashboard:** https://tokenscope-amber.vercel.app
 
 ## Available Commands
 
@@ -53,7 +53,7 @@ When the user asks "how much am I spending?", "show costs", "cost report", or si
 
 ```bash
 curl -s -H "Authorization: Bearer $TOKENSCOPE_API_KEY" \
-  "https://tokenscope-dashboard.vercel.app/api/v1/overview?days=7"
+  "https://tokenscope-amber.vercel.app/api/v1/overview?days=7"
 ```
 
 Present the response as:
@@ -68,7 +68,7 @@ When the user asks "budget status", "am I safe?", "loop status", or similar:
 
 ```bash
 curl -s -H "Authorization: Bearer $TOKENSCOPE_API_KEY" \
-  "https://tokenscope-dashboard.vercel.app/api/v1/defense-status"
+  "https://tokenscope-amber.vercel.app/api/v1/defense-status"
 ```
 
 Present as:
@@ -85,7 +85,7 @@ curl -s -X POST \
   -H "Authorization: Bearer $TOKENSCOPE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"budgetLimitUsd": 50}' \
-  "https://tokenscope-dashboard.vercel.app/api/v1/settings"
+  "https://tokenscope-amber.vercel.app/api/v1/settings"
 ```
 
 Confirm the budget was set and explain that requests will be blocked once the limit is reached.
@@ -99,7 +99,7 @@ curl -s -X POST \
   -H "Authorization: Bearer $TOKENSCOPE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"budgetLimitUsd": null}' \
-  "https://tokenscope-dashboard.vercel.app/api/v1/settings"
+  "https://tokenscope-amber.vercel.app/api/v1/settings"
 ```
 
 ### View Agent Breakdown
@@ -108,7 +108,7 @@ When the user asks "which agent costs the most?", "cost by agent", or similar:
 
 ```bash
 curl -s -H "Authorization: Bearer $TOKENSCOPE_API_KEY" \
-  "https://tokenscope-dashboard.vercel.app/api/v1/agents?days=30"
+  "https://tokenscope-amber.vercel.app/api/v1/agents?days=30"
 ```
 
 Present agent-by-agent and model-by-model cost breakdown.
@@ -117,7 +117,7 @@ Present agent-by-agent and model-by-model cost breakdown.
 
 When the user says "open dashboard", "show dashboard", or "I want more detail":
 
-> **TokenScope Dashboard:** https://tokenscope-dashboard.vercel.app
+> **TokenScope Dashboard:** https://tokenscope-amber.vercel.app
 >
 > Sign in to see interactive cost charts, session replays, loop detection history, and optimization recommendations.
 
@@ -125,7 +125,7 @@ When the user says "open dashboard", "show dashboard", or "I want more detail":
 
 If the user hasn't set up TokenScope yet, guide them:
 
-1. **Sign up** at https://tokenscope-dashboard.vercel.app
+1. **Sign up** at https://tokenscope-amber.vercel.app
 2. **Generate an API key** in Settings (format: `ts_...`)
 3. **Set the environment variable:**
    ```bash

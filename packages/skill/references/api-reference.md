@@ -6,7 +6,7 @@ All endpoints require authentication via API key header:
 Authorization: Bearer ts_your_api_key
 ```
 
-Base URL: `https://tokenscope-dashboard.vercel.app/api/v1`
+Base URL: `https://tokenscope-amber.vercel.app/api/v1`
 
 ---
 
