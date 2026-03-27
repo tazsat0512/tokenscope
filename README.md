@@ -24,7 +24,7 @@ The smart proxy for LLM APIs. Routes each request to the cheapest model that can
 
 AI agents loop. A single stuck agent can burn $47,000 in 11 days. Existing tools either require code changes (AgentBudget) or only observe without stopping the bleed (Helicone, Langfuse).
 
-Reivo is a proxy — change your base URL and it handles the rest. No SDK, no code changes, no vendor lock-in.
+Reivo is a proxy — `pip install reivo` and change one line. Or just change the base URL — no SDK required, no vendor lock-in.
 
 ## Features
 
@@ -51,10 +51,61 @@ Go to **Settings** and click "Generate API Key". Copy the key — it's only show
 
 In **Settings**, add your OpenAI, Anthropic, or Google API key. Keys are encrypted at rest with AES-256-GCM.
 
-### 4. Change your base URL
+### 4. Install the SDK and send a request
+
+#### Python
+
+```bash
+pip install reivo openai    # or: pip install reivo anthropic / reivo google-genai
+```
 
 ```python
-# Python — OpenAI
+from reivo import Reivo
+
+# OpenAI
+client = Reivo("rv_your_reivo_key").openai()
+resp = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Hello"}],
+)
+
+# Anthropic
+client = Reivo("rv_your_reivo_key").anthropic()
+resp = client.messages.create(
+    model="claude-sonnet-4-20250514",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "Hello"}],
+)
+
+# Google
+client = Reivo("rv_your_reivo_key").google()
+resp = client.models.generate_content(
+    model="gemini-2.5-flash",
+    contents="Hello",
+)
+```
+
+#### JavaScript / TypeScript
+
+```bash
+npm install reivo openai    # or: npm install reivo @anthropic-ai/sdk / @google/genai
+```
+
+```typescript
+import { Reivo } from "reivo";
+
+const client = await new Reivo({ apiKey: "rv_your_reivo_key" }).openai();
+const resp = await client.chat.completions.create({
+  model: "gpt-4o",
+  messages: [{ role: "user", content: "Hello" }],
+});
+```
+
+#### Without SDK (base URL only)
+
+No SDK required — just change the base URL in any existing client:
+
+```python
 from openai import OpenAI
 client = OpenAI(
     base_url="https://proxy.reivo.dev/openai/v1",
@@ -62,26 +113,7 @@ client = OpenAI(
 )
 ```
 
-```python
-# Python — Anthropic
-from anthropic import Anthropic
-client = Anthropic(
-    base_url="https://proxy.reivo.dev/anthropic/v1",
-    api_key="rv_your_reivo_key"
-)
-```
-
-```typescript
-// TypeScript — OpenAI
-import OpenAI from "openai";
-const client = new OpenAI({
-  baseURL: "https://proxy.reivo.dev/openai/v1",
-  apiKey: "rv_your_reivo_key",
-});
-```
-
 ```bash
-# curl — Google Gemini
 curl https://proxy.reivo.dev/google/v1beta/models/gemini-2.5-flash:generateContent \
   -H "Authorization: Bearer rv_your_reivo_key" \
   -H "Content-Type: application/json" \

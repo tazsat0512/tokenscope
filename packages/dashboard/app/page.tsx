@@ -223,23 +223,44 @@ export default async function LandingPage() {
               </div>
             </div>
 
-            <div className="mt-12 overflow-hidden rounded-lg border bg-card">
-              <div className="border-b px-4 py-2 text-sm font-medium text-muted-foreground">
-                Python &mdash; OpenAI SDK
+            <div className="mt-12 grid gap-4 md:grid-cols-2">
+              <div className="overflow-hidden rounded-lg border bg-card">
+                <div className="border-b px-4 py-2 text-sm font-medium text-muted-foreground">
+                  With SDK (recommended)
+                </div>
+                <pre className="overflow-x-auto p-6 text-sm">
+                  <code>
+                    {`pip install reivo openai
+
+from reivo import Reivo
+
+client = Reivo("rv_your_key").openai()
+res = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Hello"}],
+)`}
+                  </code>
+                </pre>
               </div>
-              <pre className="overflow-x-auto p-6 text-sm">
-                <code>
-                  {`from openai import OpenAI
+              <div className="overflow-hidden rounded-lg border bg-card">
+                <div className="border-b px-4 py-2 text-sm font-medium text-muted-foreground">
+                  Without SDK (base URL only)
+                </div>
+                <pre className="overflow-x-auto p-6 text-sm">
+                  <code>
+                    {`from openai import OpenAI
 
 client = OpenAI(
     base_url="https://proxy.reivo.dev/openai/v1",
-    api_key="rv_your_reivo_key",
-    default_headers={
-        "X-Agent-Id": "my-agent"
-    }
+    api_key="rv_your_key",
+)
+res = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Hello"}],
 )`}
-                </code>
-              </pre>
+                  </code>
+                </pre>
+              </div>
             </div>
           </div>
         </section>

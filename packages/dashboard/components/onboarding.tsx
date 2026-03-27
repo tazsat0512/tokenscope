@@ -31,6 +31,15 @@ const steps = [
 const codeExamples = {
   openai: {
     label: 'OpenAI',
+    sdk: `pip install reivo openai
+
+from reivo import Reivo
+
+client = Reivo("rv_your_reivo_key").openai()
+res = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Hello"}],
+)`,
     python: `from openai import OpenAI
 
 client = OpenAI(
@@ -49,6 +58,16 @@ res = client.chat.completions.create(
   },
   anthropic: {
     label: 'Anthropic',
+    sdk: `pip install reivo anthropic
+
+from reivo import Reivo
+
+client = Reivo("rv_your_reivo_key").anthropic()
+res = client.messages.create(
+    model="claude-sonnet-4-20250514",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "Hello"}],
+)`,
     python: `from anthropic import Anthropic
 
 client = Anthropic(
@@ -69,15 +88,23 @@ res = client.messages.create(
   },
   google: {
     label: 'Google',
-    python: `import google.generativeai as genai
+    sdk: `pip install reivo google-genai
 
-# For Google, set the API key in your Reivo dashboard,
-# then use the proxy URL:
-genai.configure(
-    api_key="rv_your_reivo_key",
-    transport="rest",
-    client_options={"api_endpoint": "https://proxy.reivo.dev/google"},
+from reivo import Reivo
+
+client = Reivo("rv_your_reivo_key").google()
+res = client.models.generate_content(
+    model="gemini-2.5-flash",
+    contents="Hello",
 )`,
+    python: `from google import genai
+
+client = genai.Client(
+    api_key="rv_your_reivo_key",
+)
+# Note: Google GenAI SDK base URL override
+# requires additional configuration.
+# Using the Reivo SDK above is recommended.`,
     curl: `curl "https://proxy.reivo.dev/google/v1beta/models/gemini-2.5-flash:generateContent" \\
   -H "Authorization: Bearer rv_your_reivo_key" \\
   -H "Content-Type: application/json" \\
@@ -86,11 +113,11 @@ genai.configure(
 };
 
 type Provider = keyof typeof codeExamples;
-type Lang = 'python' | 'curl';
+type Lang = 'sdk' | 'python' | 'curl';
 
 function CodeExampleBlock() {
   const [provider, setProvider] = useState<Provider>('openai');
-  const [lang, setLang] = useState<Lang>('python');
+  const [lang, setLang] = useState<Lang>('sdk');
 
   const example = codeExamples[provider];
 
@@ -114,7 +141,7 @@ function CodeExampleBlock() {
           ))}
         </div>
         <div className="flex gap-1 rounded-md bg-muted p-0.5">
-          {(['python', 'curl'] as const).map((l) => (
+          {(['sdk', 'python', 'curl'] as const).map((l) => (
             <button
               type="button"
               key={l}
@@ -125,7 +152,7 @@ function CodeExampleBlock() {
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              {l === 'python' ? 'Python' : 'cURL'}
+              {l === 'sdk' ? 'SDK' : l === 'python' ? 'Direct' : 'cURL'}
             </button>
           ))}
         </div>
