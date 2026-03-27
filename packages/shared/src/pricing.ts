@@ -93,11 +93,11 @@ export const PRICING_TABLE: Record<string, ModelPricing> = {
   'gpt-realtime-mini': { inputPerMillion: 0.6, outputPerMillion: 2.4 },
   'gpt-realtime-mini-2025-10-06': { inputPerMillion: 0.6, outputPerMillion: 2.4 },
   'gpt-realtime-mini-2025-12-15': { inputPerMillion: 0.6, outputPerMillion: 2.4 },
-  'o1': { inputPerMillion: 15, outputPerMillion: 60 },
+  o1: { inputPerMillion: 15, outputPerMillion: 60 },
   'o1-2024-12-17': { inputPerMillion: 15, outputPerMillion: 60 },
   'o1-mini': { inputPerMillion: 3, outputPerMillion: 12 },
   'o1-mini-2024-09-12': { inputPerMillion: 3, outputPerMillion: 12 },
-  'o3': { inputPerMillion: 2, outputPerMillion: 8 },
+  o3: { inputPerMillion: 2, outputPerMillion: 8 },
   'o3-2025-04-16': { inputPerMillion: 2, outputPerMillion: 8 },
   'o3-mini': { inputPerMillion: 1.1, outputPerMillion: 4.4 },
   'o3-mini-2025-01-31': { inputPerMillion: 1.1, outputPerMillion: 4.4 },
@@ -163,7 +163,6 @@ export const PRICING_TABLE: Record<string, ModelPricing> = {
   'gemini-flash-latest': { inputPerMillion: 0.3, outputPerMillion: 2.5 },
   'gemini-flash-lite-latest': { inputPerMillion: 0.1, outputPerMillion: 0.4 },
   'gemini-pro-latest': { inputPerMillion: 1.25, outputPerMillion: 10 },
-
 };
 
 // Fallback pricing for unknown models

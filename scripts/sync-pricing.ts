@@ -9,12 +9,7 @@ const LITELLM_URL =
   'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json';
 
 // Providers we support — only include these
-const SUPPORTED_PROVIDERS = new Set([
-  'openai',
-  'anthropic',
-  'vertex_ai-language-models',
-  'gemini',
-]);
+const SUPPORTED_PROVIDERS = new Set(['openai', 'anthropic', 'vertex_ai-language-models', 'gemini']);
 
 // Map LiteLLM provider names to our provider labels
 const PROVIDER_LABELS: Record<string, string> = {
@@ -98,7 +93,12 @@ async function main() {
   const existingNames = new Set(entries.map((e) => e.name));
   for (const [name, override] of Object.entries(MANUAL_OVERRIDES)) {
     if (!existingNames.has(name)) {
-      entries.push({ name, provider: override.provider, input: override.input, output: override.output });
+      entries.push({
+        name,
+        provider: override.provider,
+        input: override.input,
+        output: override.output,
+      });
     }
   }
 
