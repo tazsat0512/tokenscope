@@ -1,4 +1,5 @@
 import { auth } from '@clerk/nextjs/server';
+import { calculateCost } from '@reivo/shared';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { and, desc, eq, gte, isNull, sql } from 'drizzle-orm';
 import { z } from 'zod';
@@ -583,6 +584,35 @@ export const appRouter = t.router({
         .from(requestLogs)
         .where(and(eq(requestLogs.userId, ctx.userId), gte(requestLogs.timestamp, since)));
 
+      // Fetch routed requests to compute real savings
+      const routedRequests = await db
+        .select({
+          model: requestLogs.model,
+          routedModel: requestLogs.routedModel,
+          inputTokens: requestLogs.inputTokens,
+          outputTokens: requestLogs.outputTokens,
+          costUsd: requestLogs.costUsd,
+          qualityFallback: requestLogs.qualityFallback,
+        })
+        .from(requestLogs)
+        .where(
+          and(
+            eq(requestLogs.userId, ctx.userId),
+            gte(requestLogs.timestamp, since),
+            sql`${requestLogs.routedModel} is not null`,
+          ),
+        );
+
+      // Calculate actual savings: original model cost - actual cost paid
+      let totalSavedUsd = 0;
+      let totalOriginalCostUsd = 0;
+      for (const r of routedRequests) {
+        if (r.qualityFallback) continue; // Fallback used original model, no savings
+        const originalCost = calculateCost(r.model, r.inputTokens, r.outputTokens);
+        totalOriginalCostUsd += originalCost;
+        totalSavedUsd += originalCost - r.costUsd;
+      }
+
       const recentDecisions = await db
         .select({
           id: requestLogs.id,
@@ -607,6 +637,8 @@ export const appRouter = t.router({
       return {
         totalRouted: stats[0]?.totalRouted ?? 0,
         totalRequests: stats[0]?.totalRequests ?? 0,
+        totalSavedUsd,
+        totalOriginalCostUsd,
         recentDecisions,
       };
     }),

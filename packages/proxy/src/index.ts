@@ -9,6 +9,7 @@ import { anthropic } from './routes/anthropic.js';
 import { google } from './routes/google.js';
 import { health } from './routes/health.js';
 import { openai } from './routes/openai.js';
+import { stats } from './routes/stats.js';
 import type { Env, UserRecord } from './types/index.js';
 
 type HonoEnv = {
@@ -36,6 +37,10 @@ app.use('*', async (c, next) => {
 
 // Health check (no auth required)
 app.route('/', health);
+
+// Stats API (auth required, no budget guard)
+app.use('/v1/stats', requestLoggerMiddleware, authMiddleware);
+app.route('/', stats);
 
 // Auth + plan guard + budget guard for proxy routes
 app.use(

@@ -5,6 +5,7 @@ export interface RoutingDecision {
   originalModel: string;
   routedModel: string;
   reason: string;
+  signals?: ComplexitySignals;
 }
 
 /**
@@ -26,7 +27,7 @@ const MODEL_DOWNGRADE_MAP: Record<string, Record<string, string>> = {
   },
 };
 
-interface ComplexitySignals {
+export interface ComplexitySignals {
   hasTools: boolean;
   hasJsonSchema: boolean;
   longConversation: boolean;
@@ -169,9 +170,14 @@ export function routeModel(
     const signals = analyzeComplexity(parsedBody);
     const { downgrade, reason } = shouldDowngrade(signals, 'aggressive');
     if (downgrade) {
-      return { originalModel: model, routedModel: downgradeTarget, reason: `budget_${reason}` };
+      return {
+        originalModel: model,
+        routedModel: downgradeTarget,
+        reason: `budget_${reason}`,
+        signals,
+      };
     }
-    return { originalModel: model, routedModel: model, reason };
+    return { originalModel: model, routedModel: model, reason, signals };
   }
 
   // Check if routing is enabled for this user
@@ -192,8 +198,8 @@ export function routeModel(
   const { downgrade, reason } = shouldDowngrade(signals, mode === 'auto' ? 'conservative' : mode);
 
   if (downgrade) {
-    return { originalModel: model, routedModel: downgradeTarget, reason };
+    return { originalModel: model, routedModel: downgradeTarget, reason, signals };
   }
 
-  return { originalModel: model, routedModel: model, reason };
+  return { originalModel: model, routedModel: model, reason, signals };
 }

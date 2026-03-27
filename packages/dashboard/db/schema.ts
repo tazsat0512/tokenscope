@@ -51,6 +51,7 @@ export const requestLogs = sqliteTable('request_logs', {
   // Smart routing fields
   routedModel: text('routed_model'),
   routingReason: text('routing_reason'),
+  routingSignals: text('routing_signals'), // JSON: ComplexitySignals
   // Quality verification fields
   qualityScore: real('quality_score'),
   qualityReason: text('quality_reason'),

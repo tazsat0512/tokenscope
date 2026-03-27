@@ -92,6 +92,7 @@ google.all('/google/*', async (c) => {
     blockReason: upstreamResponse.ok ? undefined : `upstream_${upstreamResponse.status}`,
     routedModel: routing.routedModel !== routing.originalModel ? routing.routedModel : undefined,
     routingReason: routing.routedModel !== routing.originalModel ? routing.reason : undefined,
+    routingSignals: routing.signals,
     ...reqTelemetry,
   };
 

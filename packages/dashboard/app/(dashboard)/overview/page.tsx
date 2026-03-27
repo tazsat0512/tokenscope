@@ -109,14 +109,24 @@ export default function OverviewPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Estimated Savings (30d)
+              Savings (30d)
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {routingStats && routingStats.totalRouted > 0 ? (
-              <div className="text-2xl font-bold text-green-600">
-                {formatCost(routingStats.totalRouted * 0.003)}
-              </div>
+            {routingStats && routingStats.totalSavedUsd > 0 ? (
+              <>
+                <div className="text-2xl font-bold text-green-600">
+                  {formatCost(routingStats.totalSavedUsd)}
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {Math.round(
+                    (routingStats.totalSavedUsd /
+                      (routingStats.totalSavedUsd + (summary?.totalCost ?? 0))) *
+                      100,
+                  )}
+                  % reduction via Smart Routing
+                </p>
+              </>
             ) : (
               <>
                 <div className="text-2xl font-bold text-green-600">$0.00</div>
@@ -147,7 +157,7 @@ export default function OverviewPage() {
             <CardTitle>Smart Routing</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-4">
               <div>
                 <p className="text-sm text-muted-foreground">Routed Requests</p>
                 <p className="text-2xl font-bold">
@@ -164,6 +174,12 @@ export default function OverviewPage() {
                     ? Math.round((routingStats.totalRouted / routingStats.totalRequests) * 100)
                     : 0}
                   %
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Total Saved</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {formatCost(routingStats.totalSavedUsd)}
                 </p>
               </div>
               <div>

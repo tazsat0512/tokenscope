@@ -5,6 +5,7 @@ import { addCost, getTriggeredAlertThreshold, setBudgetState } from '../services
 import { estimateCost } from '../services/cost-calculator.js';
 import { detectLoopByHash, getLoopState, setLoopState } from '../services/loop-detector.js';
 import { sendSlackNotification } from '../services/notifier.js';
+import type { ComplexitySignals } from '../services/router.js';
 import type { Env, UserRecord } from '../types/index.js';
 import { hashPrompt } from '../utils/hash.js';
 
@@ -24,6 +25,7 @@ export interface PipelineInput {
   // Smart routing
   routedModel?: string;
   routingReason?: string;
+  routingSignals?: ComplexitySignals;
   // Quality verification
   qualityScore?: number;
   qualityReason?: string;
@@ -91,6 +93,7 @@ export async function runAsyncPipeline(env: Env, input: PipelineInput): Promise<
     systemPromptHash: input.systemPromptHash ?? null,
     routedModel: input.routedModel ?? null,
     routingReason: input.routingReason ?? null,
+    routingSignals: input.routingSignals ? JSON.stringify(input.routingSignals) : null,
     qualityScore: input.qualityScore ?? null,
     qualityReason: input.qualityReason ?? null,
     qualityFallback: input.qualityFallback ?? null,
