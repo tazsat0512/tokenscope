@@ -41,7 +41,7 @@
   "files": {
     "includes": [
       "packages/proxy/**/*.ts",
-      "packages/shared/**/*.ts",
+      "packages/shared/src/**/*.ts",
       "packages/dashboard/app/**/*.tsx",
       "packages/dashboard/app/**/*.ts",
       "packages/dashboard/lib/**/*.ts",

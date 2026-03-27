@@ -4,6 +4,7 @@ import { logger } from 'hono/logger';
 import { authMiddleware } from './middleware/auth.js';
 import { budgetGuardMiddleware } from './middleware/budget-guard.js';
 import { planGuardMiddleware } from './middleware/plan-guard.js';
+import { rateLimitMiddleware } from './middleware/rate-limit.js';
 import { requestLoggerMiddleware } from './middleware/request-logger.js';
 import { anthropic } from './routes/anthropic.js';
 import { google } from './routes/google.js';
@@ -47,6 +48,7 @@ app.use(
   '/openai/*',
   requestLoggerMiddleware,
   authMiddleware,
+  rateLimitMiddleware,
   planGuardMiddleware,
   budgetGuardMiddleware,
 );
@@ -54,6 +56,7 @@ app.use(
   '/anthropic/*',
   requestLoggerMiddleware,
   authMiddleware,
+  rateLimitMiddleware,
   planGuardMiddleware,
   budgetGuardMiddleware,
 );
@@ -61,6 +64,7 @@ app.use(
   '/google/*',
   requestLoggerMiddleware,
   authMiddleware,
+  rateLimitMiddleware,
   planGuardMiddleware,
   budgetGuardMiddleware,
 );

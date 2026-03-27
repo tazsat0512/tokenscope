@@ -25,3 +25,7 @@ export const PROVIDER_URLS = {
 export const FREE_PLAN_REQUEST_LIMIT = 10_000;
 export const PRO_PLAN_REQUEST_LIMIT = 100_000;
 export const PRO_PLAN_PRICE_USD = 49;
+
+export const RATE_LIMIT_FREE_PER_MINUTE = 60;
+export const RATE_LIMIT_PRO_PER_MINUTE = 300;
+export const RATE_LIMIT_WINDOW_SECONDS = 60;
