@@ -118,7 +118,7 @@ export async function syncUserToKV(
     plan: (user.plan as 'free' | 'pro') ?? 'free',
     requestCount: user.requestCount ?? 0,
     requestCountResetAt: user.requestCountResetAt ?? 0,
-    routingEnabled: user.routingEnabled ? true : false,
+    routingEnabled: !!user.routingEnabled,
     routingMode: (user.routingMode as UserRecord['routingMode']) ?? 'auto',
   };
 

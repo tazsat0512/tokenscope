@@ -315,9 +315,7 @@ export const appRouter = t.router({
     const countResult = await db
       .select({ count: sql<number>`count(*)` })
       .from(requestLogs)
-      .where(
-        and(eq(requestLogs.userId, ctx.userId), gte(requestLogs.timestamp, monthStartUnix)),
-      );
+      .where(and(eq(requestLogs.userId, ctx.userId), gte(requestLogs.timestamp, monthStartUnix)));
 
     return {
       ...user[0],
