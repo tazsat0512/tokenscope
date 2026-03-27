@@ -24,10 +24,10 @@ export default function CommercialDisclosurePage() {
           <table className="w-full border-collapse">
             <tbody className="divide-y">
               <Row label="販売業者" sublabel="Business Name">
-                田添 聡志（個人事業）
+                田添 聡士（個人事業）
               </Row>
               <Row label="代表者" sublabel="Representative">
-                田添 聡志
+                田添 聡士
               </Row>
               <Row label="所在地" sublabel="Address">
                 請求があった場合は遅滞なく開示します

@@ -1,5 +1,6 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { eq } from 'drizzle-orm';
+import { Footer } from '../../components/footer';
 import { Sidebar } from '../../components/ui/nav';
 import { users } from '../../db/schema';
 import { db } from '../../lib/db';
@@ -36,7 +37,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="flex h-screen">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto p-4 pt-16 md:p-8 md:pt-8">{children}</main>
+      <div className="flex flex-1 flex-col overflow-y-auto">
+        <main className="flex-1 p-4 pt-16 md:p-8 md:pt-8">{children}</main>
+        <Footer />
+      </div>
     </div>
   );
 }
