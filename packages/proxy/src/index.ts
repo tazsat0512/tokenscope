@@ -27,7 +27,30 @@ type HonoEnv = {
 const app = new Hono<HonoEnv>();
 
 // Global middleware
-app.use('*', cors());
+app.use(
+  '*',
+  cors({
+    origin: ['https://app.reivo.dev', 'https://reivo.dev', 'http://localhost:3000'],
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: [
+      'Content-Type',
+      'Authorization',
+      'x-session-id',
+      'x-agent-id',
+      'anthropic-version',
+    ],
+    exposeHeaders: [
+      'X-RateLimit-Limit',
+      'X-RateLimit-Remaining',
+      'X-RateLimit-Reset',
+      'X-Reivo-Budget-Used',
+      'X-Reivo-Budget-Remaining',
+      'X-Reivo-Budget-Limit',
+      'X-Reivo-Request-Id',
+    ],
+    maxAge: 86400,
+  }),
+);
 app.use('*', logger());
 app.use('*', async (c, next) => {
   await next();
